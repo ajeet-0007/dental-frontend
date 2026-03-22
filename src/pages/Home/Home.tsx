@@ -1,23 +1,24 @@
-import { Link } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
-import api from '@/api'
-import { Package, Shield, Truck, CreditCard } from 'lucide-react'
+import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import api from "@/api";
+import { Package, Shield, Truck, CreditCard } from "lucide-react";
 
-const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=400&h=400&fit=crop'
+const DEFAULT_IMAGE =
+  "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=400&h=400&fit=crop";
 
 export default function Home() {
   const { data: productsData } = useQuery({
-    queryKey: ['products', 'featured'],
-    queryFn: () => api.get('/products/featured?limit=8'),
-  })
+    queryKey: ["products", "featured"],
+    queryFn: () => api.get("/products/featured?limit=8"),
+  });
 
   const { data: categoriesData } = useQuery({
-    queryKey: ['categories'],
-    queryFn: () => api.get('/categories'),
-  })
+    queryKey: ["categories"],
+    queryFn: () => api.get("/categories"),
+  });
 
-  const products = productsData?.data?.products || []
-  const categories = categoriesData?.data || []
+  const products = productsData?.data?.products || productsData?.data || [];
+  const categories = categoriesData?.data || [];
 
   return (
     <div>
@@ -28,7 +29,8 @@ export default function Home() {
               Your Trusted Dental Supplies Partner
             </h1>
             <p className="text-xl mb-8 text-primary-100">
-              Shop the widest range of dental products online. Quality products at best prices.
+              Shop the widest range of dental products online. Quality products
+              at best prices.
             </p>
             <div className="flex gap-4">
               <Link
@@ -63,7 +65,9 @@ export default function Home() {
               <CreditCard className="h-10 w-10 text-primary-600" />
               <div>
                 <h3 className="font-semibold">Secure Payment</h3>
-                <p className="text-sm text-gray-600">Multiple payment options</p>
+                <p className="text-sm text-gray-600">
+                  Multiple payment options
+                </p>
               </div>
             </div>
             <div className="flex items-center space-x-4">
@@ -85,7 +89,7 @@ export default function Home() {
               {categories.slice(0, 6).map((category: any) => (
                 <Link
                   key={category.id}
-                  to={`/products?category=${category.slug}`}
+                  to={`/products?category=${category.slug}&categoryName=${encodeURIComponent(category.name)}`}
                   className="p-4 bg-white border rounded-lg hover:shadow-md transition-shadow text-center"
                 >
                   <Package className="h-8 w-8 mx-auto text-primary-600 mb-2" />
@@ -158,5 +162,5 @@ export default function Home() {
         </div>
       </section>
     </div>
-  )
+  );
 }

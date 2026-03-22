@@ -1,40 +1,59 @@
-import { useState } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
-import api from '@/api'
-import { Package, Search, Filter } from 'lucide-react'
+import { useState, useEffect } from "react";
+import { Link, useSearchParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import api from "@/api";
+import { Package, Search } from "lucide-react";
 
-const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=400&h=400&fit=crop'
+const DEFAULT_IMAGE =
+  "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=400&h=400&fit=crop";
 
 export default function Products() {
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [search, setSearch] = useState(searchParams.get('search') || '')
-  const [page, setPage] = useState(1)
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [search, setSearch] = useState(searchParams.get("search") || "");
+  const [page, setPage] = useState(1);
+
+  const categorySlug = searchParams.get("category");
+  const categoryName = searchParams.get("categoryName");
+
+  useEffect(() => {
+    setPage(1);
+  }, [categorySlug, search]);
 
   const { data, isLoading } = useQuery({
-    queryKey: ['products', search, page],
+    queryKey: ["products", categorySlug, search, page],
     queryFn: () =>
-      api.get('/products', {
-        params: { search: search || undefined, page, limit: 12 },
+      api.get("/products", {
+        params: {
+          category: categorySlug || undefined,
+          search: search || undefined,
+          page,
+          limit: 12,
+        },
       }),
-  })
+  });
 
-  const products = data?.data?.products || []
-  const totalPages = data?.data?.totalPages || 0
+  const products = data?.data?.products || [];
+  const totalPages = data?.data?.totalPages || 0;
 
   const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
-    setPage(1)
-    if (search) {
-      setSearchParams({ search })
-    } else {
-      setSearchParams({})
-    }
-  }
+    e.preventDefault();
+    setPage(1);
+    const params: Record<string, string> = {};
+    if (search) params.search = search;
+    if (categorySlug) params.category = categorySlug;
+    setSearchParams(params);
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-8">All Products</h1>
+      <h1 className="text-2xl font-bold mb-2">
+        {categoryName ? `${categoryName} Products` : "All Products"}
+      </h1>
+      {categoryName && (
+        <p className="text-gray-500 mb-6">
+          Showing products in {categoryName} category
+        </p>
+      )}
 
       <form onSubmit={handleSearch} className="mb-8">
         <div className="flex gap-2 max-w-md">
@@ -57,7 +76,10 @@ export default function Products() {
       {isLoading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-            <div key={i} className="bg-white border rounded-lg overflow-hidden animate-pulse">
+            <div
+              key={i}
+              className="bg-white border rounded-lg overflow-hidden animate-pulse"
+            >
               <div className="aspect-square bg-gray-200"></div>
               <div className="p-4 space-y-3">
                 <div className="h-4 bg-gray-200 rounded w-3/4"></div>
@@ -139,5 +161,5 @@ export default function Products() {
         </div>
       )}
     </div>
-  )
+  );
 }
