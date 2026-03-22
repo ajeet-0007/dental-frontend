@@ -4,7 +4,14 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/api";
 import { useAuthStore } from "@/stores/authStore";
 import toast from "react-hot-toast";
-import { ArrowLeft, MapPin, RefreshCw } from "lucide-react";
+import {
+  ArrowLeft,
+  MapPin,
+  RefreshCw,
+  Check,
+  X,
+  DollarSign,
+} from "lucide-react";
 
 const DEFAULT_IMAGE =
   "https://images.unsplash.com/photo-1629909613654-28e377c37b09";
@@ -50,6 +57,31 @@ export default function AdminOrderDetail() {
     },
   });
 
+  const confirmCODPaymentMutation = useMutation({
+    mutationFn: () => api.post(`/payments/confirm-cod/${id}`),
+    onSuccess: () => {
+      toast.success("Payment confirmed successfully");
+      refetch();
+      queryClient.invalidateQueries({ queryKey: ["admin-order", id] });
+    },
+    onError: () => {
+      toast.error("Failed to confirm payment");
+    },
+  });
+
+  const markCODFailedMutation = useMutation({
+    mutationFn: (reason: string) =>
+      api.post(`/payments/cod-failed/${id}`, { reason }),
+    onSuccess: () => {
+      toast.success("Payment marked as failed");
+      refetch();
+      queryClient.invalidateQueries({ queryKey: ["admin-order", id] });
+    },
+    onError: () => {
+      toast.error("Failed to mark payment as failed");
+    },
+  });
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "delivered":
@@ -68,6 +100,8 @@ export default function AdminOrderDetail() {
         return "bg-gray-100 text-gray-800";
     }
   };
+
+  const isCODOrder = order?.payments?.some((p: any) => p.method === "cod");
 
   if (isLoading) {
     return (
@@ -218,7 +252,15 @@ export default function AdminOrderDetail() {
 
       {order.payments?.length > 0 && (
         <div className="bg-white rounded-lg shadow-sm p-6">
-          <h2 className="text-lg font-semibold mb-4">Payment Details</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold">Payment Details</h2>
+            {isCODOrder && (
+              <span className="flex items-center gap-1 text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full">
+                <DollarSign className="w-3 h-3" />
+                Cash on Delivery
+              </span>
+            )}
+          </div>
           <div className="space-y-3">
             {order.payments.map((payment: any) => (
               <div
@@ -227,21 +269,54 @@ export default function AdminOrderDetail() {
               >
                 <div>
                   <p className="font-medium">₹{payment.amount}</p>
-                  <p className="text-sm text-gray-500">
-                    {payment.paymentMethod || "Card"}
+                  <p className="text-sm text-gray-500 capitalize">
+                    {payment.method === "cod"
+                      ? "Cash on Delivery"
+                      : payment.method || "Card"}
                   </p>
                 </div>
-                <span
-                  className={`px-3 py-1 rounded-full text-xs font-medium ${
-                    payment.status === "completed"
-                      ? "bg-green-100 text-green-800"
-                      : payment.status === "pending"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : "bg-red-100 text-red-800"
-                  }`}
-                >
-                  {payment.status}
-                </span>
+                <div className="flex items-center gap-3">
+                  {payment.method === "cod" && payment.status === "pending" && (
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => confirmCODPaymentMutation.mutate()}
+                        disabled={confirmCODPaymentMutation.isPending}
+                        className="flex items-center gap-1 px-3 py-1.5 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 disabled:opacity-50"
+                      >
+                        <Check className="w-4 h-4" />
+                        {confirmCODPaymentMutation.isPending
+                          ? "Processing..."
+                          : "Confirm Payment"}
+                      </button>
+                      <button
+                        onClick={() => {
+                          const reason = prompt(
+                            "Enter reason for marking payment as failed:",
+                          );
+                          if (reason) {
+                            markCODFailedMutation.mutate(reason);
+                          }
+                        }}
+                        disabled={markCODFailedMutation.isPending}
+                        className="flex items-center gap-1 px-3 py-1.5 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 disabled:opacity-50"
+                      >
+                        <X className="w-4 h-4" />
+                        Failed
+                      </button>
+                    </div>
+                  )}
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-medium ${
+                      payment.status === "completed"
+                        ? "bg-green-100 text-green-800"
+                        : payment.status === "pending"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : "bg-red-100 text-red-800"
+                    }`}
+                  >
+                    {payment.status}
+                  </span>
+                </div>
               </div>
             ))}
           </div>

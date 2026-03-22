@@ -1,70 +1,78 @@
-import { Link, useNavigate } from 'react-router-dom'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import api from '@/api'
-import { Trash2, Plus, Minus, ShoppingCart } from 'lucide-react'
-import { useAuthStore } from '@/stores/authStore'
-import { useCartStore } from '@/stores/cartStore'
+import { Link, useNavigate } from "react-router-dom";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import api from "@/api";
+import { Trash2, Plus, Minus, ShoppingCart } from "lucide-react";
+import { useAuthStore } from "@/stores/authStore";
+import { useCartStore } from "@/stores/cartStore";
+import { useEffect } from "react";
 
-const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=400&h=400&fit=crop'
+const DEFAULT_IMAGE =
+  "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=400&h=400&fit=crop";
 
 export default function Cart() {
-  const navigate = useNavigate()
-  const queryClient = useQueryClient()
-  const { isAuthenticated } = useAuthStore()
-  const { items, removeItem, updateQuantity } = useCartStore()
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { isAuthenticated } = useAuthStore();
+  const { items, removeItem, updateQuantity, setCart } = useCartStore();
 
   const { data, isLoading } = useQuery({
-    queryKey: ['cart'],
-    queryFn: () => api.get('/cart'),
+    queryKey: ["cart"],
+    queryFn: () => api.get("/cart"),
     enabled: isAuthenticated,
-  })
+  });
+
+  useEffect(() => {
+    if (isAuthenticated && data?.data) {
+      setCart(data.data, data.data.length);
+    }
+  }, [data, isAuthenticated, setCart]);
 
   const removeMutation = useMutation({
     mutationFn: (id: string) => api.delete(`/cart/${id}`),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cart'] })
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
-  })
+  });
 
   const updateMutation = useMutation({
     mutationFn: ({ id, quantity }: { id: string; quantity: number }) =>
       api.put(`/cart/${id}`, { quantity }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cart'] })
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
     onError: () => {
-      queryClient.invalidateQueries({ queryKey: ['cart'] })
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
-  })
+  });
 
-  const serverItems = data?.data || []
-  const allItems = isAuthenticated ? serverItems : items
+  const serverItems = data?.data || [];
+  const allItems = items.length > 0 ? items : serverItems;
 
   const subtotal = allItems.reduce(
     (sum: number, item: any) =>
       sum + (item.variant?.price || item.product.sellingPrice) * item.quantity,
-    0
-  )
+    0,
+  );
 
   const handleRemove = async (id: string) => {
-    removeItem(id)
+    removeItem(id);
     if (isAuthenticated) {
-      await removeMutation.mutateAsync(id)
+      await removeMutation.mutateAsync(id);
     }
-  }
+  };
 
   const handleQuantityChange = async (id: string, quantity: number) => {
-    updateQuantity(id, quantity)
+    updateQuantity(id, quantity);
     if (isAuthenticated) {
       try {
-        await updateMutation.mutateAsync({ id, quantity })
+        await updateMutation.mutateAsync({ id, quantity });
       } catch {
-        queryClient.invalidateQueries({ queryKey: ['cart'] })
+        queryClient.invalidateQueries({ queryKey: ["cart"] });
       }
     }
-  }
+  };
 
-  if (!isAuthenticated && items.length === 0) {
+  if (allItems.length === 0 && !isLoading) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
         <ShoppingCart className="h-16 w-16 mx-auto text-gray-300 mb-4" />
@@ -77,7 +85,7 @@ export default function Cart() {
           Continue Shopping
         </Link>
       </div>
-    )
+    );
   }
 
   if (isLoading) {
@@ -96,7 +104,7 @@ export default function Cart() {
           ))}
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -112,10 +120,7 @@ export default function Cart() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
             {allItems.map((item: any) => (
-              <div
-                key={item.id}
-                className="flex gap-4 py-4 border-b"
-              >
+              <div key={item.id} className="flex gap-4 py-4 border-b">
                 <div className="w-24 h-24 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
                   {item.product.images?.[0] || item.variant?.image ? (
                     <img
@@ -140,7 +145,10 @@ export default function Cart() {
                     <div className="flex items-center border rounded-lg">
                       <button
                         onClick={() =>
-                          handleQuantityChange(item.id, Math.max(1, item.quantity - 1))
+                          handleQuantityChange(
+                            item.id,
+                            Math.max(1, item.quantity - 1),
+                          )
                         }
                         className="p-2 hover:bg-gray-100"
                       >
@@ -148,7 +156,9 @@ export default function Cart() {
                       </button>
                       <span className="px-4">{item.quantity}</span>
                       <button
-                        onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
+                        onClick={() =>
+                          handleQuantityChange(item.id, item.quantity + 1)
+                        }
                         className="p-2 hover:bg-gray-100"
                       >
                         <Plus className="h-4 w-4" />
@@ -185,15 +195,17 @@ export default function Cart() {
                 </div>
                 <div className="flex justify-between">
                   <span>Shipping</span>
-                  <span>{subtotal > 500 ? 'Free' : '₹50.00'}</span>
+                  <span>{subtotal > 500 ? "Free" : "₹50.00"}</span>
                 </div>
                 <div className="border-t pt-2 flex justify-between font-semibold">
                   <span>Total</span>
-                  <span>₹{(subtotal + (subtotal > 500 ? 0 : 50)).toFixed(2)}</span>
+                  <span>
+                    ₹{(subtotal + (subtotal > 500 ? 0 : 50)).toFixed(2)}
+                  </span>
                 </div>
               </div>
               <button
-                onClick={() => navigate('/checkout')}
+                onClick={() => navigate("/checkout")}
                 className="w-full py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
               >
                 Proceed to Checkout
@@ -203,5 +215,5 @@ export default function Cart() {
         </div>
       )}
     </div>
-  )
+  );
 }

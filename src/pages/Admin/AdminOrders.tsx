@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/api";
 import { useAuthStore } from "@/stores/authStore";
@@ -23,13 +23,34 @@ export default function AdminOrders() {
   const [page, setPage] = useState(1);
   const [status, setStatus] = useState("");
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  useEffect(() => {
+    if (debouncedSearch !== "" && page !== 1) {
+      setPage(1);
+    }
+  }, [debouncedSearch]);
 
   const { data, isLoading } = useQuery({
-    queryKey: ["admin-orders", page, status],
+    queryKey: ["admin-orders", page, status, debouncedSearch],
     queryFn: () =>
-      api.get(`/admin/orders?page=${page}&limit=10&status=${status}`),
+      api.get(
+        `/admin/orders?page=${page}&limit=10&status=${status}&search=${debouncedSearch}`,
+      ),
     enabled: user?.role === "admin",
   });
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    setPage(1);
+  };
 
   const updateStatusMutation = useMutation({
     mutationFn: ({ id, status }: { id: string; status: string }) =>
@@ -43,9 +64,9 @@ export default function AdminOrders() {
     },
   });
 
-  const orders = data?.data?.orders || [];
-  const totalPages = data?.data?.totalPages || 1;
-  const total = data?.data?.total || 0;
+  const orders = (data?.data as any)?.orders || [];
+  const totalPages = (data?.data as any)?.totalPages || 1;
+  const total = (data?.data as any)?.total || 0;
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -92,7 +113,7 @@ export default function AdminOrders() {
 
       {/* Filters */}
       <div className="bg-white rounded-lg shadow-sm p-4 flex flex-wrap gap-4">
-        <div className="flex-1 min-w-[200px]">
+        <form onSubmit={handleSearch} className="flex-1 min-w-[200px]">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
             <input
@@ -103,10 +124,13 @@ export default function AdminOrders() {
               className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             />
           </div>
-        </div>
+        </form>
         <select
           value={status}
-          onChange={(e) => setStatus(e.target.value)}
+          onChange={(e) => {
+            setStatus(e.target.value);
+            setPage(1);
+          }}
           className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
         >
           {ORDER_STATUSES.map((s) => (

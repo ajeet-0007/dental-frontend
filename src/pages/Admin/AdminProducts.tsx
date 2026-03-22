@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/api";
 import { useAuthStore } from "@/stores/authStore";
@@ -22,6 +22,7 @@ export default function AdminProducts() {
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState<any>(null);
   const [images, setImages] = useState<string[]>([]);
@@ -49,12 +50,27 @@ export default function AdminProducts() {
     isFeatured: false,
   });
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+      setPage(1);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [search]);
+
   const { data, isLoading } = useQuery({
-    queryKey: ["admin-products", page, search],
+    queryKey: ["admin-products", page, debouncedSearch],
     queryFn: () =>
-      api.get(`/admin/products?page=${page}&limit=10&search=${search}`),
+      api.get(
+        `/admin/products?page=${page}&limit=12&search=${debouncedSearch}`,
+      ),
     enabled: user?.role === "admin",
   });
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    setPage(1);
+  };
 
   const { data: categoriesData } = useQuery({
     queryKey: ["admin-categories"],
@@ -119,9 +135,9 @@ export default function AdminProducts() {
     onError: () => toast.error("Failed to delete product"),
   });
 
-  const products = data?.data?.products || [];
-  const totalPages = data?.data?.totalPages || 1;
-  const total = data?.data?.total || 0;
+  const products = (data?.data as any)?.products || [];
+  const totalPages = (data?.data as any)?.totalPages || 1;
+  const total = (data?.data as any)?.total || 0;
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -262,7 +278,10 @@ export default function AdminProducts() {
       </div>
 
       {/* Search */}
-      <div className="bg-white rounded-lg shadow-sm p-4">
+      <form
+        onSubmit={handleSearch}
+        className="bg-white rounded-lg shadow-sm p-4"
+      >
         <div className="relative max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
           <input
@@ -273,7 +292,7 @@ export default function AdminProducts() {
             className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
           />
         </div>
-      </div>
+      </form>
 
       {/* Products Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
