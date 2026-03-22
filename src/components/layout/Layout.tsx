@@ -6,7 +6,7 @@ import { useCartStore } from '@/stores/cartStore'
 
 export default function Layout() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const { isAuthenticated, logout, user } = useAuthStore()
+  const { isAuthenticated, logout } = useAuthStore()
   const { items } = useCartStore()
 
   const cartCount = items.reduce((sum, item) => sum + item.quantity, 0)
