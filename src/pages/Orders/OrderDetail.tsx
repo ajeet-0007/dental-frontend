@@ -20,7 +20,7 @@ export default function OrderDetail() {
     console.log('[OrderDetail] fetchOrder called with id:', id)
     try {
       const token = localStorage.getItem('accessToken')
-      const res = await fetch(`/api/orders/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/orders/${id}`, {
         headers: {
           'Authorization': token ? `Bearer ${token}` : '',
           'Content-Type': 'application/json'
