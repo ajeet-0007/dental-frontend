@@ -20,7 +20,7 @@ export default function OrderDetail() {
     console.log('[OrderDetail] fetchOrder called with id:', id)
     try {
       const token = localStorage.getItem('accessToken')
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/orders/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/orders/${id}`, {
         headers: {
           'Authorization': token ? `Bearer ${token}` : '',
           'Content-Type': 'application/json'
@@ -55,7 +55,7 @@ export default function OrderDetail() {
     console.log('[OrderDetail] Starting verification with sessionId:', sid)
     try {
       const token = localStorage.getItem('accessToken')
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/payments/verify-session`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/payments/verify-session`, {
         method: 'POST',
         headers: {
           'Authorization': token ? `Bearer ${token}` : '',
