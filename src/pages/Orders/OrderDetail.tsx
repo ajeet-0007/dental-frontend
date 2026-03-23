@@ -55,7 +55,7 @@ export default function OrderDetail() {
     console.log('[OrderDetail] Starting verification with sessionId:', sid)
     try {
       const token = localStorage.getItem('accessToken')
-      const res = await fetch('/api/payments/verify-session', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/payments/verify-session`, {
         method: 'POST',
         headers: {
           'Authorization': token ? `Bearer ${token}` : '',
