@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/api";
 import { useAuthStore } from "@/stores/authStore";
@@ -9,13 +9,21 @@ export default function AdminInventory() {
   const { user } = useAuthStore();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [newQuantity, setNewQuantity] = useState("");
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [search]);
+
   const { data, isLoading } = useQuery({
-    queryKey: ["admin-inventory"],
-    queryFn: () => api.get("/admin/inventory"),
+    queryKey: ["admin-inventory", debouncedSearch],
+    queryFn: () => api.get(`/admin/inventory?search=${debouncedSearch}`),
     enabled: user?.role === "admin",
   });
 
@@ -40,13 +48,7 @@ export default function AdminInventory() {
   const totalProducts = data?.data?.totalProducts || 0;
   const lowStockCount = data?.data?.lowStockCount || 0;
 
-  const filteredInventory = search
-    ? inventory.filter(
-        (item: any) =>
-          item.product?.name?.toLowerCase().includes(search.toLowerCase()) ||
-          item.productId?.includes(search),
-      )
-    : inventory;
+  const filteredInventory = inventory;
 
   const openModal = (item: any) => {
     setSelectedItem(item);
