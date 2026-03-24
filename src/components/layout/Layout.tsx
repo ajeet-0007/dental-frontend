@@ -1,6 +1,7 @@
 import { Outlet, Link } from 'react-router-dom'
 import { ShoppingCart, User, Menu, X, Package, Search, Heart } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useQuery } from '@tanstack/react-query'
 import { useAuthStore } from '@/stores/authStore'
 import { useCartStore } from '@/stores/cartStore'
@@ -76,152 +77,364 @@ export default function Layout() {
                   )}
                 </div>
 
-                {isSearchOpen && searchQuery.length >= 2 && (
-                  <div className="absolute top-full left-0 right-0 mt-3 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 max-h-96 overflow-y-auto">
-                    {searchData.categories && searchData.categories.length > 0 && (
-                      <div>
-                        <div className="px-5 py-3 bg-gray-50 border-b border-gray-100">
-                          <span className="text-xs font-bold text-gray-500 uppercase tracking-wide">Categories</span>
-                        </div>
-                        {searchData.categories.map((category: any) => (
-                          <Link
-                            key={category.id}
-                            to={`/products?category=${category.slug}&categoryName=${encodeURIComponent(category.name)}`}
-                            onClick={() => {
-                              setIsSearchOpen(false)
-                              setSearchQuery('')
-                            }}
-                            className="flex items-center gap-4 px-5 py-4 hover:bg-primary-50 transition-colors border-b border-gray-50 last:border-b-0"
-                          >
-                            <div className="w-10 h-10 rounded-xl bg-primary-100 flex items-center justify-center">
-                              <Package className="h-5 w-5 text-primary-600" />
-                            </div>
-                            <span className="text-gray-800 font-medium">{category.name}</span>
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-
-                    {searchData.products && searchData.products.length > 0 && (
-                      <div>
-                        <div className="px-5 py-3 bg-gray-50 border-b border-gray-100">
-                          <span className="text-xs font-bold text-gray-500 uppercase tracking-wide">Products</span>
-                        </div>
-                        {searchData.products.map((product: any) => (
-                          <Link
-                            key={product.id}
-                            to={`/products/${product.slug}`}
-                            onClick={() => {
-                              setIsSearchOpen(false)
-                              setSearchQuery('')
-                            }}
-                            className="flex items-center gap-4 px-5 py-3.5 hover:bg-primary-50 transition-colors border-b border-gray-50 last:border-b-0"
-                          >
-                            <div className="w-12 h-12 rounded-xl bg-gray-100 overflow-hidden flex-shrink-0 border border-gray-200">
-                              {product.images?.[0] && (
-                                <img src={product.images[0]} alt="" className="w-full h-full object-cover" />
-                              )}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <span className="text-gray-800 font-medium block truncate">{product.name}</span>
-                              <span className="text-primary-600 font-bold">₹{product.sellingPrice}</span>
-                            </div>
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-
-                    {(!searchData.categories || searchData.categories.length === 0) && 
-                     (!searchData.products || searchData.products.length === 0) && (
-                      <div className="px-5 py-10 text-center">
-                        <Search className="h-10 w-10 text-gray-300 mx-auto mb-3" />
-                        <p className="text-gray-500 font-medium">No results found</p>
-                      </div>
-                    )}
-
-                    <Link
-                      to={`/products?search=${encodeURIComponent(searchQuery)}`}
-                      onClick={() => {
-                        setIsSearchOpen(false)
-                      }}
-                      className="flex items-center justify-center gap-2 px-5 py-4 bg-primary-500 text-white font-semibold hover:bg-primary-600 transition-colors rounded-b-2xl"
+                <AnimatePresence>
+                  {isSearchOpen && searchQuery.length >= 2 && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute top-full left-0 right-0 mt-3 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 max-h-96 overflow-y-auto"
                     >
+                      {searchData.categories && searchData.categories.length > 0 && (
+                        <div>
+                          <div className="px-5 py-3 bg-gray-50 border-b border-gray-100">
+                            <span className="text-xs font-bold text-gray-500 uppercase tracking-wide">Categories</span>
+                          </div>
+                          {searchData.categories.map((category: any, index: number) => (
+                            <motion.div
+                              key={category.id}
+                              initial={{ opacity: 0, x: -10 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: index * 0.05 }}
+                            >
+                              <Link
+                                to={`/products?category=${category.slug}&categoryName=${encodeURIComponent(category.name)}`}
+                                onClick={() => {
+                                  setIsSearchOpen(false)
+                                  setSearchQuery('')
+                                }}
+                                className="flex items-center gap-4 px-5 py-4 hover:bg-primary-50 transition-colors border-b border-gray-50 last:border-b-0"
+                              >
+                                <div className="w-10 h-10 rounded-xl bg-primary-100 flex items-center justify-center">
+                                  <Package className="h-5 w-5 text-primary-600" />
+                                </div>
+                                <span className="text-gray-800 font-medium">{category.name}</span>
+                              </Link>
+                            </motion.div>
+                          ))}
+                        </div>
+                      )}
+
+                      {searchData.products && searchData.products.length > 0 && (
+                        <div>
+                          <div className="px-5 py-3 bg-gray-50 border-b border-gray-100">
+                            <span className="text-xs font-bold text-gray-500 uppercase tracking-wide">Products</span>
+                          </div>
+                          {searchData.products.map((product: any, index: number) => (
+                            <motion.div
+                              key={product.id}
+                              initial={{ opacity: 0, x: -10 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: index * 0.05 }}
+                            >
+                              <Link
+                                to={`/products/${product.slug}`}
+                                onClick={() => {
+                                  setIsSearchOpen(false)
+                                  setSearchQuery('')
+                                }}
+                                className="flex items-center gap-4 px-5 py-3.5 hover:bg-primary-50 transition-colors border-b border-gray-50 last:border-b-0"
+                              >
+                                <div className="w-12 h-12 rounded-xl bg-gray-100 overflow-hidden flex-shrink-0 border border-gray-200">
+                                  {product.images?.[0] && (
+                                    <img src={product.images[0]} alt="" className="w-full h-full object-cover" />
+                                  )}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <span className="text-gray-800 font-medium block truncate">{product.name}</span>
+                                  <span className="text-primary-600 font-bold">₹{product.sellingPrice}</span>
+                                </div>
+                              </Link>
+                            </motion.div>
+                          ))}
+                        </div>
+                      )}
+
+                      {(!searchData.categories || searchData.categories.length === 0) && 
+                       (!searchData.products || searchData.products.length === 0) && (
+                        <div className="px-5 py-10 text-center">
+                          <Search className="h-10 w-10 text-gray-300 mx-auto mb-3" />
+                          <p className="text-gray-500 font-medium">No results found</p>
+                        </div>
+                      )}
+
+                      <Link
+                        to={`/products?search=${encodeURIComponent(searchQuery)}`}
+                        onClick={() => {
+                          setIsSearchOpen(false)
+                        }}
+                        className="flex items-center justify-center gap-2 px-5 py-4 bg-primary-500 text-white font-semibold hover:bg-primary-600 transition-colors rounded-b-2xl"
+                      >
                       View all results
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
                     </Link>
-                  </div>
-                )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
 
-            <div className="flex items-center space-x-4">
-              <Link to="/cart" className="relative p-2 text-gray-600 hover:text-primary-600">
-                <ShoppingCart className="h-6 w-6" />
-                {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-primary-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                    {cartCount}
-                  </span>
-                )}
-              </Link>
-
-              <button
-                onClick={() => setIsWishlistOpen(true)}
-                className="relative p-2 text-gray-600 hover:text-primary-600"
-              >
-                <Heart className="h-6 w-6" />
-                {wishlistItems.length > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-primary-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                    {wishlistItems.length}
-                  </span>
-                )}
-              </button>
-
-              {isAuthenticated ? (
-                <div className="flex items-center space-x-2">
-                  <Link to="/profile" className="p-2 text-gray-600 hover:text-primary-600">
-                    <User className="h-6 w-6" />
+            <div className="flex items-center space-x-1 md:space-x-4">
+              {/* Desktop: Cart, Wishlist, User */}
+              <div className="hidden md:flex items-center space-x-2">
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Link to="/cart" className="relative p-2 text-gray-600 hover:text-primary-600 inline-block">
+                    <ShoppingCart className="h-6 w-6" />
+                    {cartCount > 0 && (
+                      <motion.span
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className="absolute -top-1 -right-1 bg-primary-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
+                      >
+                        {cartCount}
+                      </motion.span>
+                    )}
                   </Link>
-                  <button
-                    onClick={logout}
-                    className="p-2 text-gray-600 hover:text-red-600 transition-colors"
-                    title="Logout"
-                  >
-                    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M18.36 6.64a9 9 0 1 1-12.73 0" />
-                      <line x1="12" y1="2" x2="12" y2="12" />
-                    </svg>
-                  </button>
-                </div>
-              ) : (
-                <Link
-                  to="/login"
-                  className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
-                >
-                  Login
-                </Link>
-              )}
+                </motion.div>
 
-              <button
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setIsWishlistOpen(true)}
+                  className="relative p-2 text-gray-600 hover:text-primary-600"
+                >
+                  <Heart className="h-6 w-6" />
+                  {wishlistItems.length > 0 && (
+                    <motion.span
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="absolute -top-1 -right-1 bg-primary-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
+                    >
+                      {wishlistItems.length}
+                    </motion.span>
+                  )}
+                </motion.button>
+
+                {isAuthenticated ? (
+                  <>
+                    <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+                      <Link to="/profile" className="p-2 text-gray-600 hover:text-primary-600 inline-block">
+                        <User className="h-6 w-6" />
+                      </Link>
+                    </motion.div>
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={logout}
+                      className="p-2 text-gray-600 hover:text-red-600 transition-colors"
+                      title="Logout"
+                    >
+                      <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M18.36 6.64a9 9 0 1 1-12.73 0" />
+                        <line x1="12" y1="2" x2="12" y2="12" />
+                      </svg>
+                    </motion.button>
+                  </>
+                ) : (
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    <Link
+                      to="/login"
+                      className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+                    >
+                      Login
+                    </Link>
+                  </motion.div>
+                )}
+              </div>
+
+              {/* Mobile: Hamburger Menu */}
+              <motion.button
                 className="md:hidden p-2"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
+                whileTap={{ scale: 0.95 }}
               >
-                {isMenuOpen ? <X /> : <Menu />}
-              </button>
+                <motion.div
+                  initial={false}
+                  animate={{ rotate: isMenuOpen ? 90 : 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  {isMenuOpen ? <X /> : <Menu />}
+                </motion.div>
+              </motion.button>
             </div>
           </div>
         </div>
 
-        {isMenuOpen && (
-          <div className="md:hidden border-t">
-            <nav className="flex flex-col p-4 space-y-4">
-              <Link to="/" className="text-gray-600 hover:text-primary-600">
-                Home
-              </Link>
-            </nav>
-          </div>
-        )}
+        {/* Mobile Menu Drawer */}
+        <AnimatePresence>
+          {isMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
+              className="md:hidden overflow-hidden bg-white"
+            >
+              <div className="p-4 space-y-3">
+                {/* Search */}
+                <motion.div
+                  initial={{ x: -20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.1 }}
+                  className="relative"
+                >
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => {
+                      setSearchQuery(e.target.value)
+                      setIsSearchOpen(true)
+                    }}
+                    onFocus={() => setIsSearchOpen(true)}
+                    placeholder="Search products..."
+                    className="w-full px-4 py-2.5 pl-10 rounded-lg bg-gray-100 border border-gray-200 focus:border-primary-500 focus:outline-none text-sm"
+                  />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                </motion.div>
+
+                {/* Cart */}
+                <motion.div
+                  initial={{ x: -20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.15 }}
+                >
+                  <Link
+                    to="/cart"
+                    className="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-gray-50"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <div className="flex items-center gap-3">
+                      <ShoppingCart className="h-5 w-5 text-gray-600" />
+                      <span className="text-gray-700">Cart</span>
+                    </div>
+                    {cartCount > 0 && (
+                      <motion.span
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className="bg-primary-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
+                      >
+                        {cartCount}
+                      </motion.span>
+                    )}
+                  </Link>
+                </motion.div>
+
+                {/* Wishlist */}
+                <motion.div
+                  initial={{ x: -20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  <button
+                    onClick={() => {
+                      setIsMenuOpen(false)
+                      setIsWishlistOpen(true)
+                    }}
+                    className="w-full flex items-center justify-between px-3 py-3 rounded-lg hover:bg-gray-50"
+                  >
+                    <div className="flex items-center gap-3">
+                      <Heart className="h-5 w-5 text-gray-600" />
+                      <span className="text-gray-700">Wishlist</span>
+                    </div>
+                    {wishlistItems.length > 0 && (
+                      <motion.span
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className="bg-primary-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
+                      >
+                        {wishlistItems.length}
+                      </motion.span>
+                    )}
+                  </button>
+                </motion.div>
+
+                {/* User/Login */}
+                {isAuthenticated ? (
+                  <motion.div
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: 0.25 }}
+                    className="space-y-1"
+                  >
+                    <Link
+                      to="/profile"
+                      className="flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-gray-50"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <User className="h-5 w-5 text-gray-600" />
+                      <span className="text-gray-700">Profile</span>
+                    </Link>
+                    <button
+                      onClick={() => {
+                        logout()
+                        setIsMenuOpen(false)
+                      }}
+                      className="w-full flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-gray-50 text-left"
+                    >
+                      <svg className="h-5 w-5 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M18.36 6.64a9 9 0 1 1-12.73 0" />
+                        <line x1="12" y1="2" x2="12" y2="12" />
+                      </svg>
+                      <span className="text-gray-700">Logout</span>
+                    </button>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: 0.25 }}
+                  >
+                    <Link
+                      to="/login"
+                      className="block text-center px-4 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Login
+                    </Link>
+                  </motion.div>
+                )}
+
+                {/* Navigation Links */}
+                <motion.div
+                  initial={{ x: -20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className="pt-4 border-t space-y-1"
+                >
+                  <Link
+                    to="/"
+                    className="flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:text-primary-600 rounded-lg hover:bg-gray-50 transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Package className="h-5 w-5" />
+                    Home
+                  </Link>
+                  <Link
+                    to="/products"
+                    className="flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:text-primary-600 rounded-lg hover:bg-gray-50 transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <ShoppingCart className="h-5 w-5" />
+                    Products
+                  </Link>
+                  <Link
+                    to="/orders"
+                    className="flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:text-primary-600 rounded-lg hover:bg-gray-50 transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                    My Orders
+                  </Link>
+                </motion.div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
       <main className="flex-1">
