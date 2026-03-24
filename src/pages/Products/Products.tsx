@@ -1,12 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import api from "@/api";
 import { useCartStore } from "@/stores/cartStore";
 import { useWishlistStore } from "@/stores/wishlistStore";
-import { Package, ChevronDown, ChevronUp, X, SlidersHorizontal, ShoppingCart, Check, Heart } from "lucide-react";
+import { Package, ChevronDown, ChevronUp, X, SlidersHorizontal, ShoppingCart, Check, Heart, ArrowUpDown } from "lucide-react";
 import CartDrawer from "@/components/common/CartDrawer";
+import { PriceRangeSlider } from "@/components/common/PriceRangeSlider";
 
 const DEFAULT_IMAGE =
   "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=400&h=400&fit=crop";
@@ -18,11 +19,17 @@ interface Filters {
   inStock: boolean;
 }
 
+interface ExpandedSections {
+  categories: boolean;
+  price: boolean;
+  availability: boolean;
+}
+
 export default function Products() {
   const [searchParams] = useSearchParams();
   const [page, setPage] = useState(1);
   const [showFilters, setShowFilters] = useState(false);
-  const [expandedSections, setExpandedSections] = useState({
+  const [expandedSections, setExpandedSections] = useState<ExpandedSections>({
     categories: true,
     price: true,
     availability: true,
@@ -36,6 +43,17 @@ export default function Products() {
     maxPrice: "",
     inStock: false,
   });
+
+  const [sortBy, setSortBy] = useState("newest");
+  const [showSortMenu, setShowSortMenu] = useState(false);
+
+  const sortOptions = [
+    { value: "newest", label: "Newest First" },
+    { value: "price-asc", label: "Price: Low to High" },
+    { value: "price-desc", label: "Price: High to Low" },
+    { value: "name-asc", label: "Name: A to Z" },
+    { value: "name-desc", label: "Name: Z to A" },
+  ];
 
   const { items } = useCartStore();
   const { items: wishlistItems, addItem: addToWishlist, removeItem: removeFromWishlist } = useWishlistStore();
@@ -51,7 +69,7 @@ export default function Products() {
   const categories = categoriesData?.data || [];
 
   const { data, isLoading } = useQuery({
-    queryKey: ["products", categorySlug, searchQuery, page, filters],
+    queryKey: ["products", categorySlug, searchQuery, page, filters, sortBy],
     queryFn: () =>
       api.get("/products", {
         params: {
@@ -61,6 +79,7 @@ export default function Products() {
           maxPrice: filters.maxPrice || undefined,
           page,
           limit: 12,
+          sortBy,
         },
       }),
   });
@@ -70,7 +89,7 @@ export default function Products() {
 
   useEffect(() => {
     setPage(1);
-  }, [categorySlug, filters]);
+  }, [categorySlug]);
 
   const toggleCategory = (slug: string) => {
     setFilters((prev) => ({
@@ -81,19 +100,10 @@ export default function Products() {
     }));
   };
 
-  const clearFilters = () => {
-    setFilters({
-      categories: [],
-      minPrice: "",
-      maxPrice: "",
-      inStock: false,
-    });
-  };
-
   const hasActiveFilters = 
     filters.categories.length > 0 || 
-    filters.minPrice || 
-    filters.maxPrice || 
+    !!filters.minPrice || 
+    !!filters.maxPrice || 
     filters.inStock;
 
   const handleOpenCartDrawer = (e: React.MouseEvent, product: any) => {
@@ -106,6 +116,15 @@ export default function Products() {
   const handleCloseCartDrawer = () => {
     setIsCartDrawerOpen(false);
     setSelectedProduct(null);
+  };
+
+  const clearFilters = () => {
+    setFilters({
+      categories: [],
+      minPrice: "",
+      maxPrice: "",
+      inStock: false,
+    });
   };
 
   const isInCart = (productId: string) => {
@@ -150,7 +169,27 @@ export default function Products() {
     }));
   };
 
-  const FilterSidebar = () => (
+  const FilterSidebar = memo(({
+    filters,
+    categories,
+    expandedSections,
+    hasActiveFilters,
+    onToggleCategory,
+    onToggleSection,
+    onClearFilters,
+    onPriceChange,
+    onInStockChange,
+  }: {
+    filters: Filters;
+    categories: any[];
+    expandedSections: ExpandedSections;
+    hasActiveFilters: boolean;
+    onToggleCategory: (slug: string) => void;
+    onToggleSection: (section: keyof ExpandedSections) => void;
+    onClearFilters: () => void;
+    onPriceChange: (min: number, max: number) => void;
+    onInStockChange: (checked: boolean) => void;
+  }) => (
     <div className="space-y-1">
       <div className="flex items-center justify-between pb-4 mb-3 border-b border-gray-200">
         <div className="flex items-center gap-2">
@@ -159,7 +198,7 @@ export default function Products() {
         </div>
         {hasActiveFilters && (
           <button
-            onClick={clearFilters}
+            onClick={onClearFilters}
             className="text-sm text-primary-600 hover:text-primary-700 font-medium"
           >
             Clear all
@@ -170,7 +209,7 @@ export default function Products() {
       {/* Categories Section */}
       <div className="pb-4 border-b border-gray-100">
         <button
-          onClick={() => toggleSection("categories")}
+          onClick={() => onToggleSection("categories" as keyof ExpandedSections)}
           className="flex items-center justify-between w-full text-left py-2"
         >
           <span className="font-medium text-gray-800">Category</span>
@@ -190,7 +229,7 @@ export default function Products() {
                 <input
                   type="checkbox"
                   checked={filters.categories.includes(category.slug)}
-                  onChange={() => toggleCategory(category.slug)}
+                  onChange={() => onToggleCategory(category.slug)}
                   className="w-4 h-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                 />
                 <span className="text-sm text-gray-700">
@@ -205,7 +244,7 @@ export default function Products() {
       {/* Price Range Section */}
       <div className="pb-4 border-b border-gray-100">
         <button
-          onClick={() => toggleSection("price")}
+          onClick={() => onToggleSection("price" as keyof ExpandedSections)}
           className="flex items-center justify-between w-full text-left py-2"
         >
           <span className="font-medium text-gray-800">Price</span>
@@ -216,40 +255,21 @@ export default function Products() {
           )}
         </button>
         {expandedSections.price && (
-          <div className="mt-3 space-y-2">
-            <div className="flex items-center gap-3">
-              <div className="relative flex-1">
-                <input
-                  type="number"
-                  placeholder="Min"
-                  value={filters.minPrice}
-                  onChange={(e) =>
-                    setFilters((prev) => ({ ...prev, minPrice: e.target.value }))
-                  }
-                  className="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
-                />
-              </div>
-              <span className="text-gray-400 text-sm font-medium">-</span>
-              <div className="relative flex-1">
-                <input
-                  type="number"
-                  placeholder="Max"
-                  value={filters.maxPrice}
-                  onChange={(e) =>
-                    setFilters((prev) => ({ ...prev, maxPrice: e.target.value }))
-                  }
-                  className="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
-                />
-              </div>
-            </div>
-          </div>
+          <PriceRangeSlider
+            min={0}
+            max={100000}
+            step={500}
+            initialMin={filters.minPrice ? Number(filters.minPrice) : 0}
+            initialMax={filters.maxPrice ? Number(filters.maxPrice) : 100000}
+            onChange={onPriceChange}
+          />
         )}
       </div>
 
       {/* Availability Section */}
       <div>
         <button
-          onClick={() => toggleSection("availability")}
+          onClick={() => onToggleSection("availability" as keyof ExpandedSections)}
           className="flex items-center justify-between w-full text-left py-2"
         >
           <span className="font-medium text-gray-800">Availability</span>
@@ -265,9 +285,7 @@ export default function Products() {
               <input
                 type="checkbox"
                 checked={filters.inStock}
-                onChange={(e) =>
-                  setFilters((prev) => ({ ...prev, inStock: e.target.checked }))
-                }
+                onChange={(e) => onInStockChange(e.target.checked)}
                 className="w-4 h-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
               />
               <span className="text-sm text-gray-700">In Stock</span>
@@ -276,7 +294,7 @@ export default function Products() {
         )}
       </div>
     </div>
-  );
+  ));
 
   return (
     <div className="container mx-auto px-4 py-6">
@@ -298,7 +316,23 @@ export default function Products() {
         {/* Desktop Sidebar */}
         <aside className="hidden lg:block w-64 flex-shrink-0">
           <div className="sticky top-20 bg-white border rounded-xl p-5 h-[calc(100vh-6rem)] overflow-y-auto">
-            <FilterSidebar />
+            <FilterSidebar 
+              filters={filters}
+              categories={categories}
+              expandedSections={expandedSections}
+              hasActiveFilters={hasActiveFilters}
+              onToggleCategory={toggleCategory}
+              onToggleSection={(section) => toggleSection(section as keyof ExpandedSections)}
+              onClearFilters={clearFilters}
+              onPriceChange={(min, max) => {
+                setFilters((prev) => ({
+                  ...prev,
+                  minPrice: min.toString(),
+                  maxPrice: max.toString(),
+                }));
+              }}
+              onInStockChange={(checked) => setFilters((prev) => ({ ...prev, inStock: checked }))}
+            />
           </div>
         </aside>
 
@@ -312,7 +346,23 @@ export default function Products() {
                   <X className="h-5 w-5 text-gray-500" />
                 </button>
               </div>
-              <FilterSidebar />
+              <FilterSidebar 
+                filters={filters}
+                categories={categories}
+                expandedSections={expandedSections}
+                hasActiveFilters={hasActiveFilters}
+                onToggleCategory={toggleCategory}
+                onToggleSection={(section) => toggleSection(section as keyof ExpandedSections)}
+                onClearFilters={clearFilters}
+                onPriceChange={(min, max) => {
+                  setFilters((prev) => ({
+                    ...prev,
+                    minPrice: min.toString(),
+                    maxPrice: max.toString(),
+                  }));
+                }}
+                onInStockChange={(checked) => setFilters((prev) => ({ ...prev, inStock: checked }))}
+              />
               <button
                 onClick={() => setShowFilters(false)}
                 className="w-full mt-6 py-2.5 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700"
@@ -371,6 +421,44 @@ export default function Products() {
               )}
             </div>
           )}
+
+          {/* Sort and Results Count */}
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-sm text-gray-600">
+              {data?.data?.total || 0} products
+            </p>
+            <div className="relative">
+              <button
+                onClick={() => setShowSortMenu(!showSortMenu)}
+                className="flex items-center gap-2 px-3 py-2 text-sm border rounded-lg hover:bg-gray-50"
+              >
+                <ArrowUpDown className="h-4 w-4" />
+                <span className="hidden sm:inline">
+                  {sortOptions.find((o) => o.value === sortBy)?.label || "Sort"}
+                </span>
+                <ChevronDown className="h-4 w-4" />
+              </button>
+              {showSortMenu && (
+                <div className="absolute right-0 mt-1 w-48 bg-white border rounded-lg shadow-lg z-20 py-1">
+                  {sortOptions.map((option) => (
+                    <button
+                      key={option.value}
+                      onClick={() => {
+                        setSortBy(option.value);
+                        setShowSortMenu(false);
+                        setPage(1);
+                      }}
+                      className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 ${
+                        sortBy === option.value ? "text-primary-600 font-medium" : "text-gray-700"
+                      }`}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
 
           {isLoading ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
