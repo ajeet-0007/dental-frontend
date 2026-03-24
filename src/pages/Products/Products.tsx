@@ -103,13 +103,13 @@ export default function Products() {
                     <img
                       src={product.images[0]}
                       alt={product.name}
-                      className="w-full h-48 object-cover rounded-lg"
+                      className="w-full h-full object-cover"
                     />
                   ) : (
                     <img
                       src={DEFAULT_IMAGE}
                       alt={product.name}
-                      className="w-full h-48 object-cover rounded-lg"
+                      className="w-full h-full object-cover"
                     />
                   )}
                 </div>

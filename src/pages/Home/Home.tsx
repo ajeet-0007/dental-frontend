@@ -85,17 +85,26 @@ export default function Home() {
         <section className="py-12">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl font-bold mb-8">Shop by Category</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              {categories.slice(0, 6).map((category: any) => (
-                <Link
-                  key={category.id}
-                  to={`/products?category=${category.slug}&categoryName=${encodeURIComponent(category.name)}`}
-                  className="p-4 bg-white border rounded-lg hover:shadow-md transition-shadow text-center"
-                >
-                  <Package className="h-8 w-8 mx-auto text-primary-600 mb-2" />
-                  <span className="font-medium">{category.name}</span>
-                </Link>
-              ))}
+          </div>
+          <div className="relative">
+            <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
+            <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
+            <div className="overflow-hidden">
+              <div
+                className="flex gap-4 animate-scroll px-4"
+                style={{ width: "max-content" }}
+              >
+                {[...categories, ...categories].map((category: any, index: number) => (
+                  <Link
+                    key={`${category.id}-${index}`}
+                    to={`/products?category=${category.slug}&categoryName=${encodeURIComponent(category.name)}`}
+                    className="flex-shrink-0 p-3 bg-white border rounded-lg hover:shadow-md transition-shadow text-center w-40 min-h-[90px] flex flex-col items-center justify-center gap-2"
+                  >
+                    <Package className="h-7 w-7 text-primary-600 flex-shrink-0" />
+                    <span className="font-medium text-sm leading-tight">{category.name}</span>
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
         </section>
