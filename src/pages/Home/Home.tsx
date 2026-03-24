@@ -32,14 +32,12 @@ export default function Home() {
               Shop the widest range of dental products online. Quality products
               at best prices.
             </p>
-            <div className="flex gap-4">
-              <Link
-                to="/products"
-                className="px-8 py-3 bg-white text-primary-600 rounded-lg font-semibold hover:bg-primary-50"
-              >
-                Shop Now
-              </Link>
-            </div>
+            <Link
+              to="/products"
+              className="inline-block px-8 py-3 bg-white text-primary-600 rounded-lg font-semibold hover:bg-primary-50"
+            >
+              Shop Now
+            </Link>
           </div>
         </div>
       </section>
