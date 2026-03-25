@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
@@ -15,17 +15,47 @@ interface CartDrawerProps {
 
 export default function CartDrawer({ isOpen, onClose, product }: CartDrawerProps) {
   const [quantity, setQuantity] = useState(1);
+  const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null);
   const navigate = useNavigate();
   const { isAuthenticated } = useAuthStore();
   const { addItem, items } = useCartStore();
   const queryClient = useQueryClient();
 
-  const isInCart = items.some((item) => item.id === product?.id?.toString());
-  const existingItem = items.find((item) => item.id === product?.id?.toString());
+  const variants = product?.variants || [];
+  const activeVariants = variants.filter((v: any) => v.isActive);
+  const hasVariants = activeVariants.length > 0;
+
+  // Auto-select first variant when drawer opens with variants
+  useEffect(() => {
+    if (isOpen && hasVariants && !selectedVariantId) {
+      const firstVariant = activeVariants[0];
+      if (firstVariant) {
+        setSelectedVariantId(firstVariant.id);
+      }
+    }
+  }, [isOpen, hasVariants]);
+  const selectedVariant = selectedVariantId
+    ? activeVariants.find((v: any) => v.id === selectedVariantId)
+    : null;
+
+  const cartItemKey = selectedVariantId
+    ? `${product?.id}-${selectedVariantId}`
+    : product?.id?.toString();
+
+  const isInCart = items.some((item) => item.id === cartItemKey);
+  const existingItem = items.find((item) => item.id === cartItemKey);
   const currentQuantity = existingItem?.quantity || 0;
 
+  const currentPrice = selectedVariant?.sellingPrice || product?.sellingPrice || 0;
+  const currentMrp = selectedVariant?.mrp || product?.mrp || 0;
+
   const addToCartMutation = useMutation({
-    mutationFn: () => api.post("/cart/add", { productId: product.id, quantity }),
+    mutationFn: () =>
+      api.post("/cart/add", {
+        productId: product.id,
+        productVariantId: selectedVariantId || undefined,
+        quantity,
+      }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
@@ -42,7 +72,7 @@ export default function CartDrawer({ isOpen, onClose, product }: CartDrawerProps
     try {
       await addToCartMutation.mutateAsync();
       addItem({
-        id: product.id.toString(),
+        id: cartItemKey,
         quantity,
         product: {
           id: product.id.toString(),
@@ -50,15 +80,30 @@ export default function CartDrawer({ isOpen, onClose, product }: CartDrawerProps
           slug: product.slug,
           images: product.images,
           price: product.price,
-          sellingPrice: product.sellingPrice,
-          mrp: product.mrp,
+          sellingPrice: currentPrice,
+          mrp: currentMrp,
           unit: product.unit || "unit",
         },
-        variant: null,
+        variant: selectedVariant
+          ? {
+              id: selectedVariant.id,
+              name: selectedVariant.name,
+              sku: selectedVariant.sku,
+              color: selectedVariant.color,
+              size: selectedVariant.size,
+              flavor: selectedVariant.flavor,
+              packQuantity: selectedVariant.packQuantity,
+              price: selectedVariant.price,
+              sellingPrice: selectedVariant.sellingPrice,
+              mrp: selectedVariant.mrp,
+              image: selectedVariant.image,
+            }
+          : null,
       });
       toast.success("Added to cart!");
       onClose();
       setQuantity(1);
+      setSelectedVariantId(null);
     } catch (error) {
       toast.error("Failed to add to cart");
     }
@@ -71,8 +116,8 @@ export default function CartDrawer({ isOpen, onClose, product }: CartDrawerProps
 
   if (!isOpen || !product) return null;
 
-  const discountPercent = product.mrp > product.sellingPrice
-    ? Math.round((1 - product.sellingPrice / product.mrp) * 100)
+  const discountPercent = currentMrp > currentPrice
+    ? Math.round((1 - currentPrice / currentMrp) * 100)
     : 0;
 
   return (
@@ -119,11 +164,11 @@ export default function CartDrawer({ isOpen, onClose, product }: CartDrawerProps
               </h3>
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-lg font-bold text-primary-600">
-                  ₹{product.sellingPrice}
+                  ₹{currentPrice.toLocaleString()}
                 </span>
-                {product.mrp > product.sellingPrice && (
+                {currentMrp > currentPrice && (
                   <span className="text-sm text-gray-400 line-through">
-                    ₹{product.mrp}
+                    ₹{currentMrp.toLocaleString()}
                   </span>
                 )}
               </div>
@@ -132,8 +177,73 @@ export default function CartDrawer({ isOpen, onClose, product }: CartDrawerProps
                   {discountPercent}% OFF
                 </span>
               )}
+              {selectedVariant && (
+                <p className="text-sm text-gray-500 mt-1">
+                  Variant: {selectedVariant.name}
+                </p>
+              )}
             </div>
           </div>
+
+          {/* Variant Selection */}
+          {hasVariants && (
+            <div className="bg-gray-50 rounded-xl p-4 mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-3">
+                Select Variant
+              </label>
+              <div className="grid grid-cols-1 gap-2">
+                {variants.map((variant: any) => (
+                  <button
+                    key={variant.id}
+                    onClick={() => setSelectedVariantId(variant.id)}
+                    className={`flex items-center justify-between p-3 rounded-lg border transition-all ${
+                      selectedVariantId === variant.id
+                        ? "border-primary-500 bg-primary-50"
+                        : "border-gray-200 hover:border-gray-300"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                          selectedVariantId === variant.id
+                            ? "border-primary-500"
+                            : "border-gray-300"
+                        }`}
+                      >
+                        {selectedVariantId === variant.id && (
+                          <div className="w-2.5 h-2.5 rounded-full bg-primary-500" />
+                        )}
+                      </div>
+                      <div className="text-left">
+                        <p className="text-sm font-medium text-gray-900">
+                          {variant.name}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {[
+                            variant.color && `Color: ${variant.color}`,
+                            variant.size && `Size: ${variant.size}`,
+                            variant.flavor && `Flavor: ${variant.flavor}`,
+                          ]
+                            .filter(Boolean)
+                            .join(" • ")}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-bold text-gray-900">
+                        ₹{variant.sellingPrice.toLocaleString()}
+                      </p>
+                      {variant.mrp > variant.sellingPrice && (
+                        <p className="text-xs text-gray-400 line-through">
+                          ₹{variant.mrp.toLocaleString()}
+                        </p>
+                      )}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Quantity Selector */}
           <div className="bg-gray-50 rounded-xl p-4 mb-4">
@@ -162,7 +272,7 @@ export default function CartDrawer({ isOpen, onClose, product }: CartDrawerProps
               <div className="text-right">
                 <p className="text-xs text-gray-500">Subtotal</p>
                 <p className="text-lg font-bold text-gray-900">
-                  ₹{(product.sellingPrice * quantity).toLocaleString()}
+                  ₹{(currentPrice * quantity).toLocaleString()}
                 </p>
               </div>
             </div>
@@ -175,6 +285,7 @@ export default function CartDrawer({ isOpen, onClose, product }: CartDrawerProps
                 <Check className="h-4 w-4" />
                 <span className="text-sm font-medium">
                   Already in cart ({currentQuantity} items)
+                  {selectedVariant && ` - ${selectedVariant.name}`}
                 </span>
               </div>
             </div>

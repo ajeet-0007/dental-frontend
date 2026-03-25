@@ -99,6 +99,7 @@ export default function Products() {
         ? prev.categories.filter((c) => c !== slug)
         : [...prev.categories, slug],
     }));
+    setPage(1);
   };
 
   const hasActiveFilters = 
@@ -331,8 +332,12 @@ export default function Products() {
                   minPrice: min.toString(),
                   maxPrice: max.toString(),
                 }));
+                setPage(1);
               }}
-              onInStockChange={(checked) => setFilters((prev) => ({ ...prev, inStock: checked }))}
+              onInStockChange={(checked) => {
+                setFilters((prev) => ({ ...prev, inStock: checked }));
+                setPage(1);
+              }}
             />
           </div>
         </aside>
@@ -361,8 +366,12 @@ export default function Products() {
                     minPrice: min.toString(),
                     maxPrice: max.toString(),
                   }));
+                  setPage(1);
                 }}
-                onInStockChange={(checked) => setFilters((prev) => ({ ...prev, inStock: checked }))}
+                onInStockChange={(checked) => {
+                  setFilters((prev) => ({ ...prev, inStock: checked }));
+                  setPage(1);
+                }}
               />
               <button
                 onClick={() => setShowFilters(false)}
@@ -483,6 +492,26 @@ export default function Products() {
                 {products.map((product: any) => {
                   const inCart = isInCart(product.id.toString());
                   const inWishlist = isInWishlist(product.id.toString());
+                  const variants = product.variants || [];
+                  const activeVariants = variants.filter((v: any) => v.isActive);
+                  const hasVariants = activeVariants.length > 0;
+                  
+                  // Get price range from variants
+                  let minPrice = product.sellingPrice;
+                  let maxPrice = product.sellingPrice;
+                  let showPriceRange = false;
+                  
+                  if (hasVariants) {
+                    const prices = activeVariants.map((v: any) => v.sellingPrice);
+                    minPrice = Math.min(...prices);
+                    maxPrice = Math.max(...prices);
+                    showPriceRange = minPrice !== maxPrice;
+                  }
+                  
+                  // Get unique colors and sizes
+                  const colors = [...new Set(activeVariants.filter((v: any) => v.color).map((v: any) => v.color as string))] as string[];
+                  const sizes = [...new Set(activeVariants.filter((v: any) => v.size).map((v: any) => v.size as string))] as string[];
+                  
                   return (
                     <div
                       key={product.id}
@@ -492,7 +521,7 @@ export default function Products() {
                         to={`/products/${product.slug}`}
                         className="block"
                       >
-                        <div className="aspect-square bg-gray-50 overflow-hidden">
+                        <div className="aspect-square bg-gray-50 overflow-hidden relative">
                           {product.images?.[0] ? (
                             <img
                               src={product.images[0]}
@@ -506,18 +535,53 @@ export default function Products() {
                               className="w-full h-full object-cover"
                             />
                           )}
+                          {/* Color swatches on image */}
+                          {colors.length > 0 && (
+                            <div className="absolute bottom-2 left-2 flex -space-x-1">
+                              {colors.slice(0, 4).map((color: string, i: number) => (
+                                <div
+                                  key={i}
+                                  className="w-5 h-5 rounded-full border-2 border-white shadow-sm flex items-center justify-center text-[7px] font-bold text-gray-500 bg-gray-100"
+                                  title={color}
+                                >
+                                  {color.charAt(0).toUpperCase()}
+                                </div>
+                              ))}
+                              {colors.length > 4 && (
+                                <span className="w-5 h-5 rounded-full border-2 border-white shadow-sm bg-gray-200 text-[7px] font-bold flex items-center justify-center">
+                                  +{colors.length - 4}
+                                </span>
+                              )}
+                            </div>
+                          )}
                         </div>
                         <div className="p-3">
                           <h3 className="text-sm font-medium text-gray-900 mb-1 line-clamp-2 min-h-[2.5rem]">
                             {product.name}
                           </h3>
+                          
+                          {/* Variant info - subtle text */}
+                          {hasVariants && (
+                            <p className="text-xs text-gray-500 mb-1">
+                              {colors.length > 0 && sizes.length > 0 && `${colors.length} colors, ${sizes.length} sizes`}
+                              {colors.length > 0 && sizes.length === 0 && `${colors.length} colors`}
+                              {colors.length === 0 && sizes.length > 0 && `${sizes.length} sizes`}
+                            </p>
+                          )}
+                          
                           <div className="flex items-center gap-2">
-                            <span className="text-base font-bold text-primary-600">
-                              ₹{product.sellingPrice}
-                            </span>
-                            {product.mrp > product.sellingPrice && (
+                            {showPriceRange ? (
+                              <span className="text-sm font-bold text-primary-600">
+                                ₹{minPrice.toLocaleString()} - ₹{maxPrice.toLocaleString()}
+                              </span>
+                            ) : (
+                              <span className="text-base font-bold text-primary-600">
+                                ₹{minPrice.toLocaleString()}
+                              </span>
+                            )}
+                            {product.mrp > minPrice && (
                               <span className="text-xs text-gray-400 line-through">
-                                ₹{product.mrp}
+                                ₹{product.mrp.toLocaleString()}
                               </span>
                             )}
                           </div>

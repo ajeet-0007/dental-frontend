@@ -1,6 +1,22 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+interface CartItemVariant {
+  id: string;
+  name?: string;
+  sku?: string;
+  color?: string;
+  size?: string;
+  flavor?: string;
+  packQuantity: number;
+  price: number;
+  sellingPrice: number;
+  mrp: number;
+  image?: string;
+  weight?: number;
+  weightUnit?: string;
+}
+
 interface CartItem {
   id: string;
   quantity: number;
@@ -14,12 +30,7 @@ interface CartItem {
     mrp: number;
     unit: string;
   };
-  variant: {
-    id: string;
-    name: string;
-    price: number;
-    image: string;
-  } | null;
+  variant: CartItemVariant | null;
 }
 
 interface CartState {

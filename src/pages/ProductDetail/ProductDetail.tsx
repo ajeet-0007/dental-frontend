@@ -13,6 +13,7 @@ import {
   ChevronRight,
   ZoomIn,
 } from "lucide-react";
+import { VariantSelector, ProductVariant } from "@/components/common/VariantSelector";
 
 const DEFAULT_IMAGE =
   "https://images.unsplash.com/photo-1629909613654-28e377c37b09";
@@ -26,6 +27,7 @@ export default function ProductDetail() {
   const [productError, setProductError] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showLightbox, setShowLightbox] = useState(false);
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ["product", slug],
@@ -50,7 +52,16 @@ export default function ProductDetail() {
   });
 
   const product = data;
-  const images = product?.images?.length > 0 ? product.images : [DEFAULT_IMAGE];
+  const variants: ProductVariant[] = product?.variants || [];
+  const activeVariants = variants.filter(v => v.isActive);
+  
+  const hasVariants = activeVariants.length > 0;
+  const selectedPrice = selectedVariant?.sellingPrice || product?.sellingPrice;
+  const selectedMRP = selectedVariant?.mrp || product?.mrp;
+  
+  const images = selectedVariant?.images?.[0] 
+    ? [selectedVariant.images[0], ...(product?.images?.filter((_: any, i: number) => i > 0) || [])]
+    : (product?.images?.length > 0 ? product.images : [DEFAULT_IMAGE]);
   const hasMultipleImages = images.length > 1;
 
   const nextImage = () => {
@@ -77,10 +88,32 @@ export default function ProductDetail() {
       return;
     }
 
+    const cartItemId = selectedVariant 
+      ? `${product.id}-${selectedVariant.id}` 
+      : product.id;
+
+    const variantData = selectedVariant ? {
+      id: selectedVariant.id,
+      name: selectedVariant.name || '',
+      sku: selectedVariant.sku,
+      color: selectedVariant.color,
+      size: selectedVariant.size,
+      flavor: selectedVariant.flavor,
+      packQuantity: selectedVariant.packQuantity || 1,
+      price: selectedVariant.price,
+      sellingPrice: selectedVariant.sellingPrice,
+      mrp: selectedVariant.mrp,
+      image: selectedVariant.image,
+      weight: selectedVariant.weight,
+      weightUnit: selectedVariant.weightUnit,
+    } : null;
+
     try {
-      await addToCartMutation.mutateAsync(product.id);
+      if (selectedVariant) {
+        await addToCartMutation.mutateAsync(product.id);
+      }
       addItem({
-        id: product.id,
+        id: cartItemId,
         quantity,
         product: {
           id: product.id,
@@ -92,12 +125,17 @@ export default function ProductDetail() {
           mrp: product.mrp,
           unit: product.unit,
         },
-        variant: null,
+        variant: variantData,
       });
       toast.success("Added to cart!");
     } catch (error) {
       toast.error("Failed to add to cart");
     }
+  };
+
+  const handleVariantSelect = (variant: ProductVariant) => {
+    setSelectedVariant(variant);
+    setQuantity(1);
   };
 
   if (isLoading) {
@@ -214,15 +252,15 @@ export default function ProductDetail() {
 
           <div className="flex items-center gap-4 mb-4">
             <span className="text-3xl font-bold text-primary-600">
-              ₹{product.sellingPrice}
+              ₹{selectedPrice}
             </span>
-            {product.mrp > product.sellingPrice && (
+            {selectedMRP > selectedPrice && (
               <>
                 <span className="text-xl text-gray-500 line-through">
-                  ₹{product.mrp}
+                  ₹{selectedMRP}
                 </span>
                 <span className="text-green-600 font-medium">
-                  {Math.round((1 - product.sellingPrice / product.mrp) * 100)}%
+                  {Math.round((1 - selectedPrice / selectedMRP) * 100)}%
                   OFF
                 </span>
               </>
@@ -242,6 +280,16 @@ export default function ProductDetail() {
             </div>
             <span className="text-gray-500">(4 reviews)</span>
           </div>
+
+          {hasVariants && (
+            <div className="mb-6">
+              <VariantSelector
+                variants={activeVariants}
+                selectedVariant={selectedVariant}
+                onVariantSelect={handleVariantSelect}
+              />
+            </div>
+          )}
 
           <p className="text-gray-600 mb-6">{product.description}</p>
 
