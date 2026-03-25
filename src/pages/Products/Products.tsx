@@ -75,6 +75,7 @@ export default function Products() {
         params: {
           category: categorySlug || undefined,
           search: searchQuery || undefined,
+          categories: filters.categories.length > 0 ? filters.categories.join(',') : undefined,
           minPrice: filters.minPrice || undefined,
           maxPrice: filters.maxPrice || undefined,
           page,

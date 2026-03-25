@@ -43,12 +43,50 @@ export default function Layout() {
     <div className="min-h-screen flex flex-col">
       <header className="bg-white shadow-sm sticky top-0 z-50">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
+          <div className="flex items-center justify-between h-16 gap-4">
             <Link to="/" className="flex items-center space-x-2">
               <Package className="h-8 w-8 text-primary-600" />
               <span className="text-xl font-bold text-gray-900">Dentalkart</span>
             </Link>
 
+            {/* Mobile Search */}
+            <div className="flex-1 md:hidden">
+              <div className="relative">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value)
+                    if (e.target.value.length >= 2) {
+                      setIsSearchOpen(true)
+                    } else {
+                      setIsSearchOpen(false)
+                    }
+                  }}
+                  onFocus={() => {
+                    if (searchQuery.length >= 2) {
+                      setIsSearchOpen(true)
+                    }
+                  }}
+                  placeholder="Search..."
+                  className="w-full px-3 py-1.5 pl-8 pr-8 rounded-full bg-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                />
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                {searchQuery && (
+                  <button
+                    onClick={() => {
+                      setSearchQuery('')
+                      setIsSearchOpen(false)
+                    }}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 p-1 hover:bg-gray-200 rounded-full"
+                  >
+                    <X className="h-3 w-3 text-gray-500" />
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Desktop Search */}
             <div className="hidden md:flex items-center flex-1 max-w-lg mx-8">
               <div className="relative w-full" ref={searchRef}>
                 <div className="relative group">
@@ -274,32 +312,10 @@ export default function Layout() {
               className="md:hidden overflow-hidden bg-white"
             >
               <div className="p-4 space-y-3">
-                {/* Search */}
-                <motion.div
-                  initial={{ x: -20, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 0.1 }}
-                  className="relative"
-                >
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => {
-                      setSearchQuery(e.target.value)
-                      setIsSearchOpen(true)
-                    }}
-                    onFocus={() => setIsSearchOpen(true)}
-                    placeholder="Search products..."
-                    className="w-full px-4 py-2.5 pl-10 rounded-lg bg-gray-100 border border-gray-200 focus:border-primary-500 focus:outline-none text-sm"
-                  />
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                </motion.div>
-
                 {/* Cart */}
                 <motion.div
                   initial={{ x: -20, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 0.15 }}
                 >
                   <Link
                     to="/cart"
@@ -436,6 +452,80 @@ export default function Layout() {
           )}
         </AnimatePresence>
       </header>
+
+      {/* Mobile Search Dropdown */}
+      <AnimatePresence>
+        {isSearchOpen && searchQuery.length >= 2 && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/20 z-[99] md:hidden"
+              onClick={() => {
+                setIsSearchOpen(false)
+              }}
+            />
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="fixed top-16 left-0 right-0 md:hidden bg-white shadow-lg z-[100] max-h-[60vh] overflow-y-auto"
+            >
+              <div className="container mx-auto px-4 py-2">
+                {searchData.categories && searchData.categories.length > 0 && (
+                  <div className="mb-2">
+                    <p className="text-xs font-bold text-gray-500 uppercase mb-2">Categories</p>
+                    {searchData.categories.map((category: any) => (
+                      <Link
+                        key={category.id}
+                        to={`/products?category=${category.slug}`}
+                        onClick={() => {
+                          setIsSearchOpen(false)
+                          setSearchQuery('')
+                        }}
+                        className="flex items-center gap-3 py-2 hover:text-primary-600"
+                      >
+                        <Package className="h-5 w-5 text-primary-500" />
+                        <span>{category.name}</span>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+                {searchData.products && searchData.products.length > 0 && (
+                  <div>
+                    <p className="text-xs font-bold text-gray-500 uppercase mb-2">Products</p>
+                    {searchData.products.map((product: any) => (
+                      <Link
+                        key={product.id}
+                        to={`/products/${product.slug}`}
+                        onClick={() => {
+                          setIsSearchOpen(false)
+                          setSearchQuery('')
+                        }}
+                        className="flex items-center gap-3 py-2 hover:text-primary-600"
+                      >
+                        <div className="w-10 h-10 bg-gray-100 rounded overflow-hidden">
+                          {product.images?.[0] && (
+                            <img src={product.images[0]} alt="" className="w-full h-full object-cover" />
+                          )}
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium">{product.name}</p>
+                          <p className="text-sm text-primary-600 font-bold">₹{product.sellingPrice}</p>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+                {(!searchData.categories?.length && !searchData.products?.length) && (
+                  <p className="text-center py-4 text-gray-500">No results found</p>
+                )}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       <main className="flex-1">
         <Outlet />
