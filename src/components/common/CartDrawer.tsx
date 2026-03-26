@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
@@ -16,6 +16,8 @@ interface CartDrawerProps {
 export default function CartDrawer({ isOpen, onClose, product }: CartDrawerProps) {
   const [quantity, setQuantity] = useState(1);
   const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
+  const productRef = useRef<any>(null);
   const navigate = useNavigate();
   const { isAuthenticated } = useAuthStore();
   const { addItem, items } = useCartStore();
@@ -25,16 +27,25 @@ export default function CartDrawer({ isOpen, onClose, product }: CartDrawerProps
   const activeVariants = variants.filter((v: any) => v.isActive);
   const hasVariants = activeVariants.length > 0;
 
-  // Auto-select first variant when drawer opens with variants
+  // Reset selected variant when drawer opens with new product
   useEffect(() => {
-    if (isOpen && hasVariants && !selectedVariantId) {
-      const firstVariant = activeVariants[0];
-      if (firstVariant) {
-        setSelectedVariantId(firstVariant.id);
-      }
+    if (isOpen && product?.id !== productRef.current?.id) {
+      setSelectedVariantId(null);
+      productRef.current = product;
+      setIsInitialized(true);
+    } else if (isOpen && !isInitialized) {
+      setIsInitialized(true);
     }
-  }, [isOpen, hasVariants]);
-  const selectedVariant = selectedVariantId
+  }, [isOpen, product?.id]);
+
+  // Reset on close
+  useEffect(() => {
+    if (!isOpen) {
+      setIsInitialized(false);
+    }
+  }, [isOpen]);
+
+  const selectedVariant = selectedVariantId && isInitialized
     ? activeVariants.find((v: any) => v.id === selectedVariantId)
     : null;
 
@@ -189,10 +200,49 @@ export default function CartDrawer({ isOpen, onClose, product }: CartDrawerProps
           {hasVariants && (
             <div className="bg-gray-50 rounded-xl p-4 mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-3">
-                Select Variant
+                Select Option
               </label>
               <div className="grid grid-cols-1 gap-2">
-                {variants.map((variant: any) => (
+                {/* Product Name as First Option */}
+                <button
+                  onClick={() => setSelectedVariantId(null)}
+                  className={`flex items-center justify-between p-3 rounded-lg border transition-all ${
+                    selectedVariantId === null
+                      ? "border-primary-500 bg-primary-50"
+                      : "border-gray-200 hover:border-gray-300"
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                        selectedVariantId === null
+                          ? "border-primary-500"
+                          : "border-gray-300"
+                      }`}
+                    >
+                      {selectedVariantId === null && (
+                        <div className="w-2.5 h-2.5 rounded-full bg-primary-500" />
+                      )}
+                    </div>
+                    <div className="text-left">
+                      <p className="text-sm font-medium text-gray-900">
+                        {product.name}
+                      </p>
+                      <p className="text-xs text-gray-500">Standard</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-bold text-gray-900">
+                      ₹{product.sellingPrice.toLocaleString()}
+                    </p>
+                    {product.mrp > product.sellingPrice && (
+                      <p className="text-xs text-gray-400 line-through">
+                        ₹{product.mrp.toLocaleString()}
+                      </p>
+                    )}
+                  </div>
+                </button>
+                {activeVariants.map((variant: any) => (
                   <button
                     key={variant.id}
                     onClick={() => setSelectedVariantId(variant.id)}

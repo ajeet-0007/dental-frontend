@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { Plus, Trash2, Edit, X } from "lucide-react";
 import api from "@/api";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
 interface ProductVariant {
   id?: string;
+  productId?: string;
   name?: string;
   sku?: string;
   price: number;
@@ -24,14 +25,20 @@ interface ProductVariant {
 
 interface VariantManagerProps {
   productId: string;
-  variants: ProductVariant[];
   onClose: () => void;
+  onVariantsChange?: () => void;
 }
 
-export function VariantManager({ productId, variants, onClose }: VariantManagerProps) {
-  const queryClient = useQueryClient();
+export default function VariantManager({ productId, onClose, onVariantsChange }: VariantManagerProps) {
   const [showForm, setShowForm] = useState(false);
   const [editingVariant, setEditingVariant] = useState<ProductVariant | null>(null);
+
+  const { data: variantsData, refetch } = useQuery({
+    queryKey: ['product', productId, 'variants'],
+    queryFn: () => api.get(`/products/${productId}/variants`),
+  });
+
+  const variants: ProductVariant[] = variantsData?.data || [];
 
   const [formData, setFormData] = useState<Partial<ProductVariant>>({
     name: "",
@@ -52,8 +59,8 @@ export function VariantManager({ productId, variants, onClose }: VariantManagerP
     mutationFn: (data: any) => api.post("/products/variants", data),
     onSuccess: () => {
       toast.success("Variant created successfully");
-      queryClient.invalidateQueries({ queryKey: ["product"] });
-      queryClient.invalidateQueries({ queryKey: ["products"] });
+      refetch();
+      onVariantsChange?.();
       resetForm();
     },
     onError: () => toast.error("Failed to create variant"),
@@ -64,8 +71,8 @@ export function VariantManager({ productId, variants, onClose }: VariantManagerP
       api.put(`/products/variants/${id}`, data),
     onSuccess: () => {
       toast.success("Variant updated successfully");
-      queryClient.invalidateQueries({ queryKey: ["product"] });
-      queryClient.invalidateQueries({ queryKey: ["products"] });
+      refetch();
+      onVariantsChange?.();
       resetForm();
     },
     onError: () => toast.error("Failed to update variant"),
@@ -75,8 +82,8 @@ export function VariantManager({ productId, variants, onClose }: VariantManagerP
     mutationFn: (id: string) => api.delete(`/products/variants/${id}`),
     onSuccess: () => {
       toast.success("Variant deleted successfully");
-      queryClient.invalidateQueries({ queryKey: ["product"] });
-      queryClient.invalidateQueries({ queryKey: ["products"] });
+      refetch();
+      onVariantsChange?.();
     },
     onError: () => toast.error("Failed to delete variant"),
   });
@@ -433,5 +440,3 @@ export function VariantManager({ productId, variants, onClose }: VariantManagerP
     </div>
   );
 }
-
-export default VariantManager;

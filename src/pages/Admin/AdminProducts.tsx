@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/api";
 import { useAuthStore } from "@/stores/authStore";
 import toast from "react-hot-toast";
+import VariantManager from "@/components/admin/VariantManager";
 import {
   Search,
   Plus,
@@ -12,6 +13,7 @@ import {
   ChevronRight,
   X,
   Upload,
+  Layers,
 } from "lucide-react";
 
 const DEFAULT_IMAGE =
@@ -33,6 +35,8 @@ export default function AdminProducts() {
     show: boolean;
     product: any;
   }>({ show: false, product: null });
+  const [showVariantManager, setShowVariantManager] = useState(false);
+  const [savedProductId, setSavedProductId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState({
@@ -671,6 +675,24 @@ export default function AdminProducts() {
                 </label>
               </div>
 
+              {editingProduct?.id ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSavedProductId(String(editingProduct.id));
+                    setShowVariantManager(true);
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+                >
+                  <Layers className="h-4 w-4" />
+                  Manage Variants
+                </button>
+              ) : (
+                <p className="text-sm text-gray-500 bg-gray-50 p-3 rounded-lg">
+                  Save the product first to add variants.
+                </p>
+              )}
+
               <div className="flex gap-3 pt-4">
                 <button
                   type="button"
@@ -743,6 +765,19 @@ export default function AdminProducts() {
             </div>
           </div>
         </div>
+      )}
+
+      {showVariantManager && savedProductId && (
+        <VariantManager
+          productId={savedProductId}
+          onClose={() => {
+            setShowVariantManager(false);
+            setSavedProductId(null);
+          }}
+          onVariantsChange={() => {
+            queryClient.invalidateQueries({ queryKey: ["admin-products"] });
+          }}
+        />
       )}
     </div>
   );
