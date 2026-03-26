@@ -38,6 +38,7 @@ export default function AdminProducts() {
   const [showVariantManager, setShowVariantManager] = useState(false);
   const [savedProductId, setSavedProductId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [variantsCount, setVariantsCount] = useState(0);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -52,6 +53,8 @@ export default function AdminProducts() {
     categoryId: "",
     isActive: true,
     isFeatured: false,
+    expiresAt: "",
+    hasVariants: false,
   });
 
   useEffect(() => {
@@ -191,6 +194,7 @@ export default function AdminProducts() {
   const openModal = (product?: any) => {
     if (product) {
       setEditingProduct(product);
+      setVariantsCount(product.variantCount || 0);
       setFormData({
         name: product.name || "",
         slug: product.slug || "",
@@ -204,10 +208,13 @@ export default function AdminProducts() {
         categoryId: product.categoryId || "",
         isActive: product.isActive ?? true,
         isFeatured: product.isFeatured ?? false,
+        expiresAt: product.expiresAt ? product.expiresAt.split('T')[0] : "",
+        hasVariants: product.hasVariants || false,
       });
       setImages(product.images || []);
     } else {
       setEditingProduct(null);
+      setVariantsCount(0);
       setFormData({
         name: "",
         slug: "",
@@ -221,6 +228,8 @@ export default function AdminProducts() {
         categoryId: "",
         isActive: true,
         isFeatured: false,
+        expiresAt: "",
+        hasVariants: false,
       });
       setImages([]);
     }
@@ -230,11 +239,18 @@ export default function AdminProducts() {
   const closeModal = () => {
     setShowModal(false);
     setEditingProduct(null);
+    setVariantsCount(0);
     setImages([]);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (formData.hasVariants && variantsCount === 0) {
+      toast.error("Please add at least one variant before saving");
+      return;
+    }
+
     const productData = {
       ...formData,
       price: parseFloat(formData.price) || 0,
@@ -324,6 +340,28 @@ export default function AdminProducts() {
                   Featured
                 </div>
               )}
+              {product.expiresAt && (() => {
+                const expiryDate = new Date(product.expiresAt);
+                const today = new Date();
+                const daysUntilExpiry = Math.ceil((expiryDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+                const isExpired = daysUntilExpiry < 0;
+                const isExpiringSoon = daysUntilExpiry >= 0 && daysUntilExpiry <= 30;
+                
+                if (isExpired) {
+                  return (
+                    <div className="absolute bottom-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded">
+                      Expired
+                    </div>
+                  );
+                } else if (isExpiringSoon) {
+                  return (
+                    <div className="absolute bottom-2 left-2 bg-orange-500 text-white text-xs px-2 py-1 rounded">
+                      Expires in {daysUntilExpiry} days
+                    </div>
+                  );
+                }
+                return null;
+              })()}
             </div>
             <div className="p-4">
               <h3 className="font-semibold text-gray-900 truncate">
@@ -334,13 +372,28 @@ export default function AdminProducts() {
               </p>
               <div className="flex items-center justify-between mt-3">
                 <div>
-                  <p className="text-lg font-bold text-primary-600">
-                    ₹{product.sellingPrice}
-                  </p>
-                  {product.mrp > product.sellingPrice && (
-                    <p className="text-xs text-gray-400 line-through">
-                      ₹{product.mrp}
-                    </p>
+                  {product.hasVariants ? (
+                    <>
+                      <p className="text-sm text-gray-500">
+                        {product.variantCount} variant{product.variantCount !== 1 ? 's' : ''}
+                      </p>
+                      {product.variantPriceRange && (
+                        <p className="text-sm font-bold text-primary-600">
+                          {product.variantPriceRange}
+                        </p>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      <p className="text-lg font-bold text-primary-600">
+                        ₹{product.sellingPrice || 0}
+                      </p>
+                      {product.mrp > product.sellingPrice && (
+                        <p className="text-xs text-gray-400 line-through">
+                          ₹{product.mrp}
+                        </p>
+                      )}
+                    </>
                   )}
                 </div>
                 <div className="flex gap-2">
@@ -509,6 +562,36 @@ export default function AdminProducts() {
                 />
               </div>
 
+              <div className="border-t border-b border-gray-200 py-4 my-2">
+                <label className="flex items-center justify-between cursor-pointer">
+                  <div>
+                    <span className="font-medium text-gray-800">Product has variants</span>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      Enable if this product comes in different options (size, color, flavor, etc.)
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newHasVariants = !formData.hasVariants;
+                      setFormData({ ...formData, hasVariants: newHasVariants });
+                      if (!newHasVariants) {
+                        setVariantsCount(0);
+                      }
+                    }}
+                    className={`relative w-14 h-7 rounded-full transition-colors ${
+                      formData.hasVariants ? "bg-primary-600" : "bg-gray-300"
+                    }`}
+                  >
+                    <span
+                      className={`absolute top-1 left-1 w-5 h-5 bg-white rounded-full transition-transform ${
+                        formData.hasVariants ? "translate-x-7" : ""
+                      }`}
+                    />
+                  </button>
+                </label>
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Description
@@ -523,49 +606,132 @@ export default function AdminProducts() {
                 />
               </div>
 
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Price (₹)
-                  </label>
-                  <input
-                    type="number"
-                    value={formData.price}
-                    onChange={(e) =>
-                      setFormData({ ...formData, price: e.target.value })
-                    }
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500"
-                    required
-                  />
+              {formData.hasVariants ? (
+                <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <Layers className="w-5 h-5 text-purple-600" />
+                      <span className="font-medium text-purple-900">Product with Variants</span>
+                    </div>
+                    {variantsCount > 0 && (
+                      <span className="bg-purple-600 text-white text-xs px-2 py-1 rounded-full">
+                        {variantsCount} variant{variantsCount !== 1 ? 's' : ''}
+                      </span>
+                    )}
+                  </div>
+                  
+                  {variantsCount > 0 ? (
+                    <div className="bg-white rounded p-3 border border-purple-100">
+                      <p className="text-sm text-purple-700 mb-2">
+                        Pricing is managed at the variant level. Click "Manage Variants" to update prices.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (editingProduct) {
+                            setSavedProductId(String(editingProduct.id));
+                            setShowVariantManager(true);
+                          } else {
+                            toast.error("Please save the product first to manage variants");
+                          }
+                        }}
+                        className="text-sm text-purple-600 hover:text-purple-800 underline"
+                      >
+                        Manage Variants →
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <p className="text-sm text-purple-700 mb-3">
+                        No variants added yet. You must add at least one variant before saving this product.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          if (editingProduct) {
+                            setSavedProductId(String(editingProduct.id));
+                            setShowVariantManager(true);
+                          } else {
+                            if (!formData.name.trim()) {
+                              toast.error("Please enter a product name first");
+                              return;
+                            }
+                            const productData = {
+                              ...formData,
+                              price: parseFloat(formData.price) || 0,
+                              sellingPrice: parseFloat(formData.sellingPrice) || 0,
+                              mrp: parseFloat(formData.mrp) || 0,
+                              stock: parseInt(formData.stock) || 0,
+                              categoryId: formData.categoryId || null,
+                              images: images,
+                              hasVariants: true,
+                            };
+                            try {
+                              const response = await api.post("/admin/products", productData);
+                              const newProductId = response.data?.id || response.data?.data?.id;
+                              if (newProductId) {
+                                setSavedProductId(String(newProductId));
+                                setShowVariantManager(true);
+                              } else {
+                                toast.error("Failed to create product. Please try again.");
+                              }
+                            } catch (error: any) {
+                              toast.error(error?.response?.data?.message || "Failed to create product");
+                            }
+                          }
+                        }}
+                        className="w-full py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+                      >
+                        + Add Variants Now
+                      </button>
+                    </>
+                  )}
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Selling Price (₹)
-                  </label>
-                  <input
-                    type="number"
-                    value={formData.sellingPrice}
-                    onChange={(e) =>
-                      setFormData({ ...formData, sellingPrice: e.target.value })
-                    }
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500"
-                    required
-                  />
+              ) : (
+                <div className="grid grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Price (₹)
+                    </label>
+                    <input
+                      type="number"
+                      value={formData.price}
+                      onChange={(e) =>
+                        setFormData({ ...formData, price: e.target.value })
+                      }
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Selling Price (₹)
+                    </label>
+                    <input
+                      type="number"
+                      value={formData.sellingPrice}
+                      onChange={(e) =>
+                        setFormData({ ...formData, sellingPrice: e.target.value })
+                      }
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      MRP (₹)
+                    </label>
+                    <input
+                      type="number"
+                      value={formData.mrp}
+                      onChange={(e) =>
+                        setFormData({ ...formData, mrp: e.target.value })
+                      }
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500"
+                    />
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    MRP (₹)
-                  </label>
-                  <input
-                    type="number"
-                    value={formData.mrp}
-                    onChange={(e) =>
-                      setFormData({ ...formData, mrp: e.target.value })
-                    }
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500"
-                  />
-                </div>
-              </div>
+              )}
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -673,7 +839,23 @@ export default function AdminProducts() {
                   />
                   <span className="text-sm text-gray-700">Featured</span>
                 </label>
+
+              {/* Expiry Date */}
+              <div className="col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Expiry Date (Optional)
+                </label>
+                <input
+                  type="date"
+                  value={formData.expiresAt || ""}
+                  onChange={(e) =>
+                    setFormData({ ...formData, expiresAt: e.target.value })
+                  }
+                  className="w-full px-3 py-2 border rounded-lg"
+                  min={new Date().toISOString().split('T')[0]}
+                />
               </div>
+            </div>
 
               {editingProduct?.id ? (
                 <button

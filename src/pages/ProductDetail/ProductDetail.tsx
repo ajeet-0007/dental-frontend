@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
@@ -56,12 +56,32 @@ export default function ProductDetail() {
   const activeVariants = variants.filter(v => v.isActive);
   
   const hasVariants = activeVariants.length > 0;
-  const selectedPrice = selectedVariant?.sellingPrice || product?.sellingPrice;
-  const selectedMRP = selectedVariant?.mrp || product?.mrp;
+
+  const getVariantStock = (variantId: string | undefined) => {
+    if (!variantId || !product?.inventories) return -1;
+    const inv = product.inventories.find((i: any) => i.productVariantId === variantId);
+    return inv?.quantity ?? -1;
+  };
+
+  const selectedStock = getVariantStock(selectedVariant?.id);
+  const isOutOfStock = selectedStock === 0;
+
+  useEffect(() => {
+    if (hasVariants && !selectedVariant && activeVariants.length > 0) {
+      setSelectedVariant(activeVariants[0]);
+    }
+  }, [hasVariants, activeVariants, selectedVariant]);
+
+  const selectedPrice = (selectedVariant && selectedVariant.sellingPrice > 0 ? selectedVariant.sellingPrice : null) 
+    ?? (product?.sellingPrice && product.sellingPrice > 0 ? product.sellingPrice : product?.price ?? 0);
+  const selectedMRP = (selectedVariant && selectedVariant.mrp > 0 ? selectedVariant.mrp : null) 
+    ?? (product?.mrp && product.mrp > 0 ? product.mrp : product?.price ?? 0);
   
-  const images = selectedVariant?.images?.[0] 
-    ? [selectedVariant.images[0], ...(product?.images?.filter((_: any, i: number) => i > 0) || [])]
-    : (product?.images?.length > 0 ? product.images : [DEFAULT_IMAGE]);
+  const variantImages = selectedVariant?.images?.filter(Boolean) || [];
+  const productImages = Array.isArray(product?.images) ? product.images.filter(Boolean) : [];
+  const images = variantImages.length > 0 
+    ? [...variantImages, ...productImages]
+    : (productImages.length > 0 ? productImages : [DEFAULT_IMAGE]);
   const hasMultipleImages = images.length > 1;
 
   const nextImage = () => {
@@ -73,10 +93,14 @@ export default function ProductDetail() {
   };
 
   const addToCartMutation = useMutation({
-    mutationFn: (productId: string) =>
-      api.post("/cart/add", { productId, quantity }),
+    mutationFn: (payload: { productId: string; productVariantId?: string; quantity: number }) =>
+      api.post("/cart/add", payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart"] });
+      toast.success("Added to cart!");
+    },
+    onError: () => {
+      toast.error("Failed to add to cart");
     },
   });
 
@@ -88,9 +112,19 @@ export default function ProductDetail() {
       return;
     }
 
-    const cartItemId = selectedVariant 
-      ? `${product.id}-${selectedVariant.id}` 
-      : product.id;
+    if (selectedStock === 0) {
+      toast.error("This variant is out of stock");
+      return;
+    }
+
+    if (selectedStock > 0 && quantity > selectedStock) {
+      toast.error(`Only ${selectedStock} items available in stock`);
+      return;
+    }
+
+    const productId = String(product.id);
+    const variantId = selectedVariant?.id;
+    const cartItemId = variantId ? `${product.id}-${variantId}` : productId;
 
     const variantData = selectedVariant ? {
       id: selectedVariant.id,
@@ -106,12 +140,16 @@ export default function ProductDetail() {
       image: selectedVariant.image,
       weight: selectedVariant.weight,
       weightUnit: selectedVariant.weightUnit,
+      options: selectedVariant.options,
     } : null;
 
     try {
-      if (selectedVariant) {
-        await addToCartMutation.mutateAsync(product.id);
-      }
+      addToCartMutation.mutate({
+        productId,
+        productVariantId: variantId,
+        quantity,
+      });
+
       addItem({
         id: cartItemId,
         quantity,
@@ -119,15 +157,14 @@ export default function ProductDetail() {
           id: product.id,
           name: product.name,
           slug: product.slug,
-          images: product.images,
-          price: product.price,
-          sellingPrice: product.sellingPrice,
-          mrp: product.mrp,
-          unit: product.unit,
+          images: product.images || [],
+          price: product.price || 0,
+          sellingPrice: product.sellingPrice || product.price || 0,
+          mrp: product.mrp || product.price || 0,
+          unit: product.unit || 'unit',
         },
         variant: variantData,
       });
-      toast.success("Added to cart!");
     } catch (error) {
       toast.error("Failed to add to cart");
     }
@@ -136,6 +173,7 @@ export default function ProductDetail() {
   const handleVariantSelect = (variant: ProductVariant) => {
     setSelectedVariant(variant);
     setQuantity(1);
+    setCurrentImageIndex(0);
   };
 
   if (isLoading) {
@@ -254,7 +292,7 @@ export default function ProductDetail() {
             <span className="text-3xl font-bold text-primary-600">
               ₹{selectedPrice}
             </span>
-            {selectedMRP > selectedPrice && (
+            {selectedMRP > selectedPrice && selectedMRP > 0 && (
               <>
                 <span className="text-xl text-gray-500 line-through">
                   ₹{selectedMRP}
@@ -267,7 +305,7 @@ export default function ProductDetail() {
             )}
           </div>
 
-          <div className="flex items-center gap-2 mb-6">
+          <div className="flex items-center gap-2 mb-4">
             <div className="flex">
               {[...Array(5)].map((_, i) => (
                 <Star
@@ -285,8 +323,13 @@ export default function ProductDetail() {
             <div className="mb-6">
               <VariantSelector
                 variants={activeVariants}
+                options={product.options}
                 selectedVariant={selectedVariant}
                 onVariantSelect={handleVariantSelect}
+                inventories={product.inventories?.map((inv: any) => ({
+                  variantId: inv.productVariantId,
+                  quantity: inv.quantity,
+                })) || []}
               />
             </div>
           )}
@@ -314,11 +357,15 @@ export default function ProductDetail() {
 
           <button
             onClick={handleAddToCart}
-            disabled={addToCartMutation.isPending}
-            className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50"
+            disabled={addToCartMutation.isPending || isOutOfStock}
+            className={`w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg ${
+              isOutOfStock
+                ? 'bg-gray-400 text-white cursor-not-allowed'
+                : 'bg-primary-600 text-white hover:bg-primary-700'
+            } disabled:opacity-50`}
           >
             <ShoppingCart className="h-5 w-5" />
-            {addToCartMutation.isPending ? "Adding..." : "Add to Cart"}
+            {addToCartMutation.isPending ? "Adding..." : isOutOfStock ? "Out of Stock" : "Add to Cart"}
           </button>
         </div>
       </div>

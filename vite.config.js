@@ -5,12 +5,18 @@ export default defineConfig({
     plugins: [react()],
     resolve: {
         alias: {
-            '@': path.resolve(__dirname, './src'),
+            "@": path.resolve(__dirname, "./src"),
         },
     },
     server: {
-        host: '0.0.0.0',
-        port: parseInt(process.env.PORT || '5173'),
+        host: "0.0.0.0",
+        port: 5173,
         allowedHosts: ['dental-frontend-nl0r.onrender.com'],
+        proxy: {
+            "/api": {
+                target: process.env.API_URL || "http://localhost:3000",
+                changeOrigin: true,
+            },
+        },
     },
 });

@@ -30,10 +30,11 @@ export default function CartDrawer({ isOpen, onClose, product }: CartDrawerProps
   // Reset selected variant when drawer opens with new product
   useEffect(() => {
     if (isOpen && product?.id !== productRef.current?.id) {
-      setSelectedVariantId(null);
+      setSelectedVariantId(activeVariants[0]?.id || null);
       productRef.current = product;
       setIsInitialized(true);
-    } else if (isOpen && !isInitialized) {
+    } else if (isOpen && !isInitialized && activeVariants.length > 0) {
+      setSelectedVariantId(activeVariants[0].id);
       setIsInitialized(true);
     }
   }, [isOpen, product?.id]);
@@ -200,97 +201,65 @@ export default function CartDrawer({ isOpen, onClose, product }: CartDrawerProps
           {hasVariants && (
             <div className="bg-gray-50 rounded-xl p-4 mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-3">
-                Select Option
+                Select Variant
               </label>
               <div className="grid grid-cols-1 gap-2">
-                {/* Product Name as First Option */}
-                <button
-                  onClick={() => setSelectedVariantId(null)}
-                  className={`flex items-center justify-between p-3 rounded-lg border transition-all ${
-                    selectedVariantId === null
-                      ? "border-primary-500 bg-primary-50"
-                      : "border-gray-200 hover:border-gray-300"
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                        selectedVariantId === null
-                          ? "border-primary-500"
-                          : "border-gray-300"
+                {activeVariants.map((variant: any, index: number) => {
+                  const isStandard = index === 0;
+                  const variantLabel = variant.options && variant.options.length > 0
+                    ? variant.options.map((o: any) => o.optionValue).join(" - ")
+                    : [
+                        variant.color && `Color: ${variant.color}`,
+                        variant.size && `Size: ${variant.size}`,
+                        variant.flavor && `Flavor: ${variant.flavor}`,
+                      ]
+                        .filter(Boolean)
+                        .join(" • ");
+                  
+                  return (
+                    <button
+                      key={variant.id}
+                      onClick={() => setSelectedVariantId(variant.id)}
+                      className={`flex items-center justify-between p-3 rounded-lg border transition-all ${
+                        selectedVariantId === variant.id
+                          ? "border-primary-500 bg-primary-50"
+                          : "border-gray-200 hover:border-gray-300"
                       }`}
                     >
-                      {selectedVariantId === null && (
-                        <div className="w-2.5 h-2.5 rounded-full bg-primary-500" />
-                      )}
-                    </div>
-                    <div className="text-left">
-                      <p className="text-sm font-medium text-gray-900">
-                        {product.name}
-                      </p>
-                      <p className="text-xs text-gray-500">Standard</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm font-bold text-gray-900">
-                      ₹{product.sellingPrice.toLocaleString()}
-                    </p>
-                    {product.mrp > product.sellingPrice && (
-                      <p className="text-xs text-gray-400 line-through">
-                        ₹{product.mrp.toLocaleString()}
-                      </p>
-                    )}
-                  </div>
-                </button>
-                {activeVariants.map((variant: any) => (
-                  <button
-                    key={variant.id}
-                    onClick={() => setSelectedVariantId(variant.id)}
-                    className={`flex items-center justify-between p-3 rounded-lg border transition-all ${
-                      selectedVariantId === variant.id
-                        ? "border-primary-500 bg-primary-50"
-                        : "border-gray-200 hover:border-gray-300"
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div
-                        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                          selectedVariantId === variant.id
-                            ? "border-primary-500"
-                            : "border-gray-300"
-                        }`}
-                      >
-                        {selectedVariantId === variant.id && (
-                          <div className="w-2.5 h-2.5 rounded-full bg-primary-500" />
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                            selectedVariantId === variant.id
+                              ? "border-primary-500"
+                              : "border-gray-300"
+                          }`}
+                        >
+                          {selectedVariantId === variant.id && (
+                            <div className="w-2.5 h-2.5 rounded-full bg-primary-500" />
+                          )}
+                        </div>
+                        <div className="text-left">
+                          <p className="text-sm font-medium text-gray-900">
+                            {isStandard ? 'Standard' : variantLabel || variant.name}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {isStandard ? variantLabel || variant.name : variant.sku || 'No SKU'}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-bold text-gray-900">
+                          ₹{variant.sellingPrice.toLocaleString()}
+                        </p>
+                        {variant.mrp > variant.sellingPrice && (
+                          <p className="text-xs text-gray-400 line-through">
+                            ₹{variant.mrp.toLocaleString()}
+                          </p>
                         )}
                       </div>
-                      <div className="text-left">
-                        <p className="text-sm font-medium text-gray-900">
-                          {variant.name}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {[
-                            variant.color && `Color: ${variant.color}`,
-                            variant.size && `Size: ${variant.size}`,
-                            variant.flavor && `Flavor: ${variant.flavor}`,
-                          ]
-                            .filter(Boolean)
-                            .join(" • ")}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-bold text-gray-900">
-                        ₹{variant.sellingPrice.toLocaleString()}
-                      </p>
-                      {variant.mrp > variant.sellingPrice && (
-                        <p className="text-xs text-gray-400 line-through">
-                          ₹{variant.mrp.toLocaleString()}
-                        </p>
-                      )}
-                    </div>
-                  </button>
-                ))}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           )}

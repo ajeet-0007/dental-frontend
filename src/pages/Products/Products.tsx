@@ -496,16 +496,37 @@ export default function Products() {
                   const activeVariants = variants.filter((v: any) => v.isActive);
                   const hasVariants = activeVariants.length > 0;
                   
-                  // Get price range from base product and variants
+                  // Check stock availability from inventories
+                  const inventories = product.inventories || [];
+                  let totalStock = -1;
+                  let hasAnyStock = false;
+                  
+                  if (inventories.length > 0) {
+                    totalStock = inventories.reduce((sum: number, inv: any) => sum + (inv.quantity || 0), 0);
+                    hasAnyStock = inventories.some((inv: any) => (inv.quantity || 0) > 0);
+                  }
+                  
+                  // For variant products, check if at least one variant has stock
+                  // For non-variant products, check total stock
+                  const isOutOfStock = hasVariants 
+                    ? (inventories.length > 0 && !hasAnyStock)
+                    : totalStock === 0;
+                  
+                  // Get price range from variants only (ignore product-level price for variant products)
                   let minPrice = product.sellingPrice;
                   let maxPrice = product.sellingPrice;
                   let showPriceRange = false;
                   
                   if (hasVariants) {
-                    const allPrices = [product.sellingPrice, ...activeVariants.map((v: any) => v.sellingPrice)];
-                    minPrice = Math.min(...allPrices);
-                    maxPrice = Math.max(...allPrices);
-                    showPriceRange = minPrice !== maxPrice;
+                    const variantPrices = activeVariants.map((v: any) => v.sellingPrice).filter((p: number) => p > 0);
+                    if (variantPrices.length > 0) {
+                      minPrice = Math.min(...variantPrices);
+                      maxPrice = Math.max(...variantPrices);
+                      showPriceRange = minPrice !== maxPrice;
+                    } else {
+                      minPrice = product.sellingPrice;
+                      maxPrice = product.sellingPrice;
+                    }
                   }
                   
                   // Get unique colors and sizes
@@ -514,7 +535,9 @@ export default function Products() {
                   return (
                     <div
                       key={product.id}
-                      className="relative bg-white border rounded-lg overflow-hidden hover:shadow-lg transition-all duration-200"
+                      className={`relative bg-white border rounded-lg overflow-hidden transition-all duration-200 ${
+                        isOutOfStock ? 'opacity-60' : 'hover:shadow-lg'
+                      }`}
                     >
                       <Link
                         to={`/products/${product.slug}`}
@@ -595,21 +618,31 @@ export default function Products() {
                       </button>
                       
                       {/* Add to Cart Button - Fixed position */}
-                      <button
-                        onClick={(e) => handleOpenCartDrawer(e, product)}
-                        className={`absolute bottom-3 right-3 w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-110 ${
-                          inCart
-                            ? "bg-green-500 text-white hover:bg-green-600"
-                            : "bg-primary-600 text-white hover:bg-primary-700"
-                        }`}
-                        title={inCart ? "Update cart" : "Add to cart"}
-                      >
-                        {inCart ? (
-                          <Check className="h-5 w-5" />
-                        ) : (
-                          <ShoppingCart className="h-5 w-5" />
-                        )}
-                      </button>
+                      {isOutOfStock ? (
+                        <button
+                          disabled
+                          className="absolute bottom-3 right-3 w-10 h-10 rounded-full flex items-center justify-center shadow-lg bg-gray-400 text-white cursor-not-allowed"
+                          title="Out of Stock"
+                        >
+                          <X className="h-5 w-5" />
+                        </button>
+                      ) : (
+                        <button
+                          onClick={(e) => handleOpenCartDrawer(e, product)}
+                          className={`absolute bottom-3 right-3 w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-110 ${
+                            inCart
+                              ? "bg-green-500 text-white hover:bg-green-600"
+                              : "bg-primary-600 text-white hover:bg-primary-700"
+                          }`}
+                          title={inCart ? "Update cart" : "Add to cart"}
+                        >
+                          {inCart ? (
+                            <Check className="h-5 w-5" />
+                          ) : (
+                            <ShoppingCart className="h-5 w-5" />
+                          )}
+                        </button>
+                      )}
                     </div>
                   );
                 })}
