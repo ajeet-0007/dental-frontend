@@ -69,7 +69,7 @@ export default function HeroCarousel({ banners }: HeroCarouselProps) {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.5 }}
           className="relative w-full"
-          style={{ height: "380px" }}
+          style={{ height: "412px" }}
         >
           <Link
             to={currentBanner.link || "/products"}
@@ -85,27 +85,6 @@ export default function HeroCarousel({ banners }: HeroCarouselProps) {
                   "https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1200&h=500&fit=crop";
               }}
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/20 to-transparent" />
-            <div className="absolute inset-0 flex flex-col justify-center px-8 md:px-12 lg:px-16">
-              <motion.h2
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.2, duration: 0.5 }}
-                className="text-xl md:text-3xl lg:text-4xl font-bold text-white mb-2 max-w-lg"
-              >
-                {currentBanner.title}
-              </motion.h2>
-              {currentBanner.subtitle && (
-                <motion.p
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.3, duration: 0.5 }}
-                  className="text-sm md:text-lg text-white/90 max-w-md"
-                >
-                  {currentBanner.subtitle}
-                </motion.p>
-              )}
-            </div>
           </Link>
         </motion.div>
       </AnimatePresence>

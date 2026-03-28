@@ -41,7 +41,7 @@ export default function Home() {
 
   return (
     <div>
-      <section className="bg-gradient-to-r from-primary-600 to-primary-800 text-white py-20">
+      {/* <section className="bg-gradient-to-r from-primary-600 to-primary-800 text-white py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
@@ -59,7 +59,7 @@ export default function Home() {
             </Link>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {banners.length > 0 && (
         <section className="py-4">
