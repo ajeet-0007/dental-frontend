@@ -2,9 +2,7 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import api from "@/api";
 import { Package, Shield, Truck, CreditCard } from "lucide-react";
-
-const DEFAULT_IMAGE =
-  "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=400&h=400&fit=crop";
+import ProductCarousel from "@/components/common/ProductCarousel";
 
 export default function Home() {
   const { data: productsData } = useQuery({
@@ -110,62 +108,23 @@ export default function Home() {
 
       <section className="py-12 bg-gray-50">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold mb-8">Featured Products</h2>
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-2xl font-bold">Featured Products</h2>
+            <Link
+              to="/products"
+              className="text-primary-600 hover:text-primary-700 font-medium"
+            >
+              View All →
+            </Link>
+          </div>
           {products.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {products.map((product: any) => (
-                <Link
-                  key={product.id}
-                  to={`/products/${product.slug}`}
-                  className="bg-white border rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
-                >
-                  <div className="aspect-square bg-gray-100">
-                    {product.images?.[0] ? (
-                      <img
-                        src={product.images[0]}
-                        alt={product.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <img
-                        src={DEFAULT_IMAGE}
-                        alt={product.name}
-                        className="w-full h-full object-cover"
-                      />
-                    )}
-                  </div>
-                  <div className="p-4">
-                    <h3 className="font-medium text-gray-900 mb-1 line-clamp-2">
-                      {product.name}
-                    </h3>
-                    <div className="flex items-center gap-2">
-                      <span className="text-lg font-bold text-primary-600">
-                        ₹{product.sellingPrice}
-                      </span>
-                      {product.mrp > product.sellingPrice && (
-                        <span className="text-sm text-gray-500 line-through">
-                          ₹{product.mrp}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
+            <ProductCarousel products={products} />
           ) : (
             <div className="text-center py-12">
               <Package className="h-16 w-16 mx-auto text-gray-300 mb-4" />
               <p className="text-gray-500">No products available yet.</p>
             </div>
           )}
-          <div className="text-center mt-8">
-            <Link
-              to="/products"
-              className="inline-block px-6 py-3 border border-primary-600 text-primary-600 rounded-lg hover:bg-primary-50"
-            >
-              View All Products
-            </Link>
-          </div>
         </div>
       </section>
     </div>
