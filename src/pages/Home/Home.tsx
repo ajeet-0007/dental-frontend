@@ -5,6 +5,7 @@ import api from "@/api";
 import { Package, Shield, Truck, CreditCard } from "lucide-react";
 import ProductCarousel from "@/components/common/ProductCarousel";
 import CategoryCarousel from "@/components/common/CategoryCarousel";
+import HeroCarousel from "@/components/common/HeroCarousel";
 import CartDrawer from "@/components/common/CartDrawer";
 
 export default function Home() {
@@ -21,8 +22,17 @@ export default function Home() {
     queryFn: () => api.get("/categories"),
   });
 
+  const { data: bannersData } = useQuery({
+    queryKey: ["banners"],
+    queryFn: async () => {
+      const response = await api.get("/banners");
+      return response.data;
+    },
+  });
+
   const products = productsData?.data?.products || productsData?.data || [];
   const categories = categoriesData?.data || [];
+  const banners = Array.isArray(bannersData) ? bannersData : [];
 
   const handleOpenCartDrawer = (product: any) => {
     setCartDrawerProduct(product);
@@ -50,6 +60,14 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {banners.length > 0 && (
+        <section className="py-4">
+          <div className="container mx-auto px-4">
+            <HeroCarousel banners={banners} />
+          </div>
+        </section>
+      )}
 
       <section className="py-12 bg-gray-50">
         <div className="container mx-auto px-4">

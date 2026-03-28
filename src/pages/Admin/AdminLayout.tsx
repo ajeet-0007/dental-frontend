@@ -13,12 +13,14 @@ import {
   Boxes,
   ChevronRight,
   FolderTree,
+  Image,
 } from "lucide-react";
 
 const adminNavItems = [
   { label: "Dashboard", path: "/admin", icon: LayoutDashboard },
   { label: "Products", path: "/admin/products", icon: Package },
   { label: "Categories", path: "/admin/categories", icon: FolderTree },
+  { label: "Banners", path: "/admin/banners", icon: Image },
   { label: "Orders", path: "/admin/orders", icon: ShoppingCart },
   { label: "Payments", path: "/admin/payments", icon: DollarSign },
   { label: "Inventory", path: "/admin/inventory", icon: Boxes },
