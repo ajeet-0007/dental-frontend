@@ -67,7 +67,7 @@ export default function ProductCarousel({ products, onOpenCartDrawer }: ProductC
 
     intervalRef.current = setInterval(() => {
       nextSlide();
-    }, 5000);
+    }, 3000);
 
     return () => {
       if (intervalRef.current) {
