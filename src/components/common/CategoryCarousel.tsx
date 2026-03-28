@@ -1,0 +1,191 @@
+import { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+
+interface Category {
+  id: number;
+  name: string;
+  slug: string;
+  image?: string;
+  productCount?: number;
+}
+
+interface CategoryCarouselProps {
+  categories: Category[];
+  itemsPerPage?: number;
+}
+
+const CATEGORY_COLORS = [
+  "from-blue-500 to-blue-600",
+  "from-green-500 to-green-600",
+  "from-purple-500 to-purple-600",
+  "from-orange-500 to-orange-600",
+  "from-pink-500 to-pink-600",
+  "from-teal-500 to-teal-600",
+  "from-red-500 to-red-600",
+  "from-indigo-500 to-indigo-600",
+];
+
+const DENTAL_IMAGES = [
+  "https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=400&h=300&fit=crop",
+  "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=400&h=300&fit=crop",
+  "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=400&h=300&fit=crop",
+  "https://images.unsplash.com/photo-1598256989800-fe5f95da9787?w=400&h=300&fit=crop",
+  "https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=400&h=300&fit=crop",
+  "https://images.unsplash.com/photo-1571772996211-2f02c9727629?w=400&h=300&fit=crop",
+  "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=400&h=300&fit=crop",
+  "https://images.unsplash.com/photo-1551190822-a9333d879b1f?w=400&h=300&fit=crop",
+  "https://images.unsplash.com/photo-1583324113626-70df0f4dea8e?w=400&h=300&fit=crop",
+  "https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=400&h=300&fit=crop",
+];
+
+function getCategoryImage(category: Category): string {
+  if (category.image) return category.image;
+  const imageIndex = Math.abs(category.id) % DENTAL_IMAGES.length;
+  return DENTAL_IMAGES[imageIndex];
+}
+
+export default function CategoryCarousel({ categories, itemsPerPage = 6 }: CategoryCarouselProps) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [visibleCount, setVisibleCount] = useState(itemsPerPage);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const totalSlides = Math.ceil(categories.length / visibleCount);
+
+  useEffect(() => {
+    const updateVisibleCount = () => {
+      const width = window.innerWidth;
+      if (width < 640) setVisibleCount(2);
+      else if (width < 768) setVisibleCount(3);
+      else if (width < 1024) setVisibleCount(4);
+      else if (width < 1280) setVisibleCount(5);
+      else setVisibleCount(itemsPerPage);
+    };
+
+    updateVisibleCount();
+    window.addEventListener("resize", updateVisibleCount);
+    return () => window.removeEventListener("resize", updateVisibleCount);
+  }, [itemsPerPage]);
+
+  const goToSlide = (index: number) => {
+    setCurrentIndex(Math.max(0, Math.min(index, totalSlides - 1)));
+  };
+
+  const nextSlide = () => {
+    if (currentIndex < totalSlides - 1) {
+      setCurrentIndex((prev) => prev + 1);
+    } else {
+      setCurrentIndex(0);
+    }
+  };
+
+  const prevSlide = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex((prev) => prev - 1);
+    } else {
+      setCurrentIndex(totalSlides - 1);
+    }
+  };
+
+  if (categories.length === 0) return null;
+
+  const displayedCategories = categories.slice(
+    currentIndex * visibleCount,
+    currentIndex * visibleCount + visibleCount
+  );
+
+  return (
+    <div className="relative group">
+      <div ref={containerRef} className="overflow-hidden px-2">
+        <motion.div
+          className="flex gap-4"
+          initial={false}
+          animate={{ x: 0 }}
+          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        >
+          {displayedCategories.map((category, index) => {
+            const colorIndex = Math.abs(category.id) % CATEGORY_COLORS.length;
+            const colorClass = CATEGORY_COLORS[colorIndex];
+            const imageUrl = getCategoryImage(category);
+
+            return (
+              <motion.div
+                key={category.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1, duration: 0.3 }}
+                className="flex-shrink-0 w-[calc((100%-80px)/6)] min-w-[160px]"
+              >
+                <Link
+                  to={`/products?category=${category.slug}&categoryName=${encodeURIComponent(category.name)}`}
+                  className="group/card block"
+                >
+                  <div className={`relative aspect-[4/3] rounded-xl overflow-hidden shadow-md group-hover/card:shadow-xl transition-all duration-300 group-hover/card:-translate-y-1 bg-gradient-to-br ${colorClass}`}>
+                    <img
+                      src={imageUrl}
+                      alt={category.name}
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover/card:scale-105"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = "none";
+                      }}
+                    />
+
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+
+                    <div className="absolute inset-0 flex flex-col justify-end p-4">
+                      <h3 className="text-white font-semibold text-sm leading-tight line-clamp-2 drop-shadow-md">
+                        {category.name}
+                      </h3>
+                      {category.productCount !== undefined && (
+                        <p className="text-white/80 text-xs mt-1">
+                          {category.productCount} Products
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
+            );
+          })}
+        </motion.div>
+      </div>
+
+      {totalSlides > 1 && (
+        <>
+          <button
+            onClick={prevSlide}
+            className="absolute left-2 top-[40%] -translate-y-1/2 bg-white border rounded-full p-2 shadow-md hover:bg-gray-50 opacity-0 group-hover:opacity-100 transition-all z-10 disabled:opacity-50"
+            disabled={totalSlides <= 1}
+          >
+            <ChevronLeft className="w-5 h-5 text-gray-600" />
+          </button>
+          <button
+            onClick={nextSlide}
+            className="absolute right-2 top-[40%] -translate-y-1/2 bg-white border rounded-full p-2 shadow-md hover:bg-gray-50 opacity-0 group-hover:opacity-100 transition-all z-10 disabled:opacity-50"
+            disabled={totalSlides <= 1}
+          >
+            <ChevronRight className="w-5 h-5 text-gray-600" />
+          </button>
+        </>
+      )}
+
+      {totalSlides > 1 && (
+        <div className="flex justify-center gap-2 mt-6">
+          {Array.from({ length: totalSlides }).map((_, index) => (
+            <button
+              key={index}
+              onClick={() => goToSlide(index)}
+              className={`w-2 h-2 rounded-full transition-all ${
+                index === currentIndex
+                  ? "bg-primary-600 w-6"
+                  : "bg-gray-300 hover:bg-gray-400"
+              }`}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}

@@ -226,14 +226,14 @@ export default function ProductCarousel({ products, onOpenCartDrawer }: ProductC
         <>
           <button
             onClick={prevSlide}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 bg-white border rounded-full p-2 shadow-md hover:bg-gray-50 opacity-0 group-hover:opacity-100 transition-all z-10 disabled:opacity-50"
+            className="absolute left-0 top-[40%] -translate-y-1/2 -translate-x-2 bg-white border rounded-full p-2 shadow-md hover:bg-gray-50 opacity-0 group-hover:opacity-100 transition-all z-10 disabled:opacity-50"
             disabled={totalSlides <= 1}
           >
             <ChevronLeft className="w-5 h-5 text-gray-600" />
           </button>
           <button
             onClick={nextSlide}
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 bg-white border rounded-full p-2 shadow-md hover:bg-gray-50 opacity-0 group-hover:opacity-100 transition-all z-10 disabled:opacity-50"
+            className="absolute right-0 top-[40%] -translate-y-1/2 translate-x-2 bg-white border rounded-full p-2 shadow-md hover:bg-gray-50 opacity-0 group-hover:opacity-100 transition-all z-10 disabled:opacity-50"
             disabled={totalSlides <= 1}
           >
             <ChevronRight className="w-5 h-5 text-gray-600" />
