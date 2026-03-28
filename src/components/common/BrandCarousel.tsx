@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Award } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface Brand {
   id: number;
