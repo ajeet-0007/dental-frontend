@@ -5,6 +5,8 @@ import api from "@/api";
 import { Package, Shield, Truck, CreditCard } from "lucide-react";
 import ProductCarousel from "@/components/common/ProductCarousel";
 import CategoryCarousel from "@/components/common/CategoryCarousel";
+import DepartmentCarousel from "@/components/common/DepartmentCarousel";
+import BrandCarousel from "@/components/common/BrandCarousel";
 import HeroCarousel from "@/components/common/HeroCarousel";
 import CartDrawer from "@/components/common/CartDrawer";
 
@@ -22,6 +24,22 @@ export default function Home() {
     queryFn: () => api.get("/categories"),
   });
 
+  const { data: departmentsData } = useQuery({
+    queryKey: ["departments"],
+    queryFn: async () => {
+      const response = await api.get("/departments");
+      return response.data;
+    },
+  });
+
+  const { data: brandsData } = useQuery({
+    queryKey: ["brands"],
+    queryFn: async () => {
+      const response = await api.get("/brands");
+      return response.data;
+    },
+  });
+
   const { data: bannersData } = useQuery({
     queryKey: ["banners"],
     queryFn: async () => {
@@ -32,6 +50,8 @@ export default function Home() {
 
   const products = productsData?.data?.products || productsData?.data || [];
   const categories = categoriesData?.data || [];
+  const departments = Array.isArray(departmentsData) ? departmentsData : departmentsData?.data || [];
+  const brands = Array.isArray(brandsData) ? brandsData : brandsData?.data || [];
   const banners = Array.isArray(bannersData) ? bannersData : [];
 
   const handleOpenCartDrawer = (product: any) => {
@@ -123,7 +143,41 @@ export default function Home() {
         </section>
       )}
 
-      <section className="py-12 bg-gray-50">
+      {brands.length > 0 && (
+        <section className="py-12 bg-gray-50">
+          <div className="container mx-auto px-4">
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-2xl font-bold">Popular Brands</h2>
+              <Link
+                to="/brands"
+                className="text-primary-600 hover:text-primary-700 font-medium"
+              >
+                View All →
+              </Link>
+            </div>
+            <BrandCarousel brands={brands} itemsPerPage={6} />
+          </div>
+        </section>
+      )}
+
+      {departments.length > 0 && (
+        <section className="py-12">
+          <div className="container mx-auto px-4">
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-2xl font-bold">Shop by Department</h2>
+              <Link
+                to="/departments"
+                className="text-primary-600 hover:text-primary-700 font-medium"
+              >
+                View All →
+              </Link>
+            </div>
+            <DepartmentCarousel departments={departments} itemsPerPage={6} />
+          </div>
+        </section>
+      )}
+
+      <section className="py-12">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl font-bold">Featured Products</h2>

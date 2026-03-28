@@ -27,7 +27,7 @@ export default function Layout() {
     enabled: searchQuery.length >= 2,
   })
 
-  const searchData = searchResults?.data || { products: [], categories: [] }
+  const searchData = searchResults?.data || { products: [], categories: [], brands: [] }
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -144,10 +144,48 @@ export default function Layout() {
                                 }}
                                 className="flex items-center gap-4 px-5 py-4 hover:bg-primary-50 transition-colors border-b border-gray-50 last:border-b-0"
                               >
-                                <div className="w-10 h-10 rounded-xl bg-primary-100 flex items-center justify-center">
-                                  <Package className="h-5 w-5 text-primary-600" />
+                                <div className="w-10 h-10 rounded-xl bg-primary-100 flex items-center justify-center overflow-hidden">
+                                  {category.image ? (
+                                    <img src={category.image} alt="" className="w-full h-full object-cover" />
+                                  ) : (
+                                    <Package className="h-5 w-5 text-primary-600" />
+                                  )}
                                 </div>
                                 <span className="text-gray-800 font-medium">{category.name}</span>
+                              </Link>
+                            </motion.div>
+                          ))}
+                        </div>
+                      )}
+
+                      {searchData.brands && searchData.brands.length > 0 && (
+                        <div>
+                          <div className="px-5 py-3 bg-gray-50 border-b border-gray-100">
+                            <span className="text-xs font-bold text-gray-500 uppercase tracking-wide">Brands</span>
+                          </div>
+                          {searchData.brands.map((brand: any, index: number) => (
+                            <motion.div
+                              key={brand.id}
+                              initial={{ opacity: 0, x: -10 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: index * 0.05 }}
+                            >
+                              <Link
+                                to={`/products?brandId=${brand.id}`}
+                                onClick={() => {
+                                  setIsSearchOpen(false)
+                                  setSearchQuery('')
+                                }}
+                                className="flex items-center gap-4 px-5 py-4 hover:bg-primary-50 transition-colors border-b border-gray-50 last:border-b-0"
+                              >
+                                <div className="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center overflow-hidden">
+                                  {brand.logo ? (
+                                    <img src={brand.logo} alt="" className="w-full h-full object-contain" />
+                                  ) : (
+                                    <Package className="h-5 w-5 text-orange-600" />
+                                  )}
+                                </div>
+                                <span className="text-gray-800 font-medium">{brand.name}</span>
                               </Link>
                             </motion.div>
                           ))}
@@ -190,7 +228,8 @@ export default function Layout() {
                       )}
 
                       {(!searchData.categories || searchData.categories.length === 0) && 
-                       (!searchData.products || searchData.products.length === 0) && (
+                       (!searchData.products || searchData.products.length === 0) &&
+                       (!searchData.brands || searchData.brands.length === 0) && (
                         <div className="px-5 py-10 text-center">
                           <Search className="h-10 w-10 text-gray-300 mx-auto mb-3" />
                           <p className="text-gray-500 font-medium">No results found</p>
@@ -437,6 +476,26 @@ export default function Layout() {
                     Products
                   </Link>
                   <Link
+                    to="/departments"
+                    className="flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:text-primary-600 rounded-lg hover:bg-gray-50 transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                    </svg>
+                    Departments
+                  </Link>
+                  <Link
+                    to="/brands"
+                    className="flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:text-primary-600 rounded-lg hover:bg-gray-50 transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                    </svg>
+                    Brands
+                  </Link>
+                  <Link
                     to="/orders"
                     className="flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:text-primary-600 rounded-lg hover:bg-gray-50 transition-colors"
                     onClick={() => setIsMenuOpen(false)}
@@ -486,8 +545,39 @@ export default function Layout() {
                         }}
                         className="flex items-center gap-3 py-2 hover:text-primary-600"
                       >
-                        <Package className="h-5 w-5 text-primary-500" />
+                        <div className="w-8 h-8 bg-gray-100 rounded overflow-hidden flex-shrink-0">
+                          {category.image ? (
+                            <img src={category.image} alt="" className="w-full h-full object-cover" />
+                          ) : (
+                            <Package className="h-5 w-5 text-primary-500 p-1" />
+                          )}
+                        </div>
                         <span>{category.name}</span>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+                {searchData.brands && searchData.brands.length > 0 && (
+                  <div className="mb-2">
+                    <p className="text-xs font-bold text-gray-500 uppercase mb-2">Brands</p>
+                    {searchData.brands.map((brand: any) => (
+                      <Link
+                        key={brand.id}
+                        to={`/products?brandId=${brand.id}`}
+                        onClick={() => {
+                          setIsSearchOpen(false)
+                          setSearchQuery('')
+                        }}
+                        className="flex items-center gap-3 py-2 hover:text-primary-600"
+                      >
+                        <div className="w-8 h-8 bg-orange-100 rounded overflow-hidden">
+                          {brand.logo ? (
+                            <img src={brand.logo} alt="" className="w-full h-full object-contain" />
+                          ) : (
+                            <Package className="h-5 w-5 text-orange-500 p-1" />
+                          )}
+                        </div>
+                        <span>{brand.name}</span>
                       </Link>
                     ))}
                   </div>
@@ -518,7 +608,7 @@ export default function Layout() {
                     ))}
                   </div>
                 )}
-                {(!searchData.categories?.length && !searchData.products?.length) && (
+                {(!searchData.categories?.length && !searchData.products?.length && !searchData.brands?.length) && (
                   <p className="text-center py-4 text-gray-500">No results found</p>
                 )}
               </div>
@@ -544,6 +634,8 @@ export default function Layout() {
               <h4 className="font-semibold mb-4">Quick Links</h4>
               <ul className="space-y-2 text-gray-400">
                 <li><Link to="/products" className="hover:text-white">Products</Link></li>
+                <li><Link to="/departments" className="hover:text-white">Departments</Link></li>
+                <li><Link to="/brands" className="hover:text-white">Brands</Link></li>
                 <li><Link to="/cart" className="hover:text-white">Cart</Link></li>
                 <li><Link to="/orders" className="hover:text-white">Orders</Link></li>
               </ul>

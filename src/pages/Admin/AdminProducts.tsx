@@ -51,6 +51,8 @@ export default function AdminProducts() {
     sku: "",
     stock: "",
     categoryId: "",
+    brandId: "",
+    departmentIds: [] as number[],
     isActive: true,
     isFeatured: false,
     expiresAt: "",
@@ -85,7 +87,21 @@ export default function AdminProducts() {
     enabled: user?.role === "admin",
   });
 
+  const { data: brandsData } = useQuery({
+    queryKey: ["admin-brands"],
+    queryFn: () => api.get("/brands/admin/all"),
+    enabled: user?.role === "admin",
+  });
+
+  const { data: departmentsData } = useQuery({
+    queryKey: ["admin-departments"],
+    queryFn: () => api.get("/departments?active=false"),
+    enabled: user?.role === "admin",
+  });
+
   const categories = (categoriesData?.data as any)?.categories || [];
+  const brands = Array.isArray(brandsData?.data) ? brandsData.data : [];
+  const departments = Array.isArray(departmentsData?.data) ? departmentsData.data : [];
 
   const createCategoryMutation = useMutation({
     mutationFn: (data: { name: string; description?: string }) =>
@@ -206,6 +222,8 @@ export default function AdminProducts() {
         sku: product.sku || "",
         stock: product.stock || "",
         categoryId: product.categoryId || "",
+        brandId: product.brandId?.toString() || "",
+        departmentIds: product.departments?.map((d: any) => d.id) || [],
         isActive: product.isActive ?? true,
         isFeatured: product.isFeatured ?? false,
         expiresAt: product.expiresAt ? product.expiresAt.split('T')[0] : "",
@@ -226,6 +244,8 @@ export default function AdminProducts() {
         sku: "",
         stock: "",
         categoryId: "",
+        brandId: "",
+        departmentIds: [],
         isActive: true,
         isFeatured: false,
         expiresAt: "",
@@ -252,13 +272,23 @@ export default function AdminProducts() {
     }
 
     const productData = {
-      ...formData,
+      name: formData.name,
+      slug: formData.slug,
+      description: formData.description,
+      shortDescription: formData.shortDescription,
       price: parseFloat(formData.price) || 0,
       sellingPrice: parseFloat(formData.sellingPrice) || 0,
       mrp: parseFloat(formData.mrp) || 0,
+      sku: formData.sku,
       stock: parseInt(formData.stock) || 0,
       categoryId: formData.categoryId || null,
+      brandId: formData.brandId ? parseInt(formData.brandId) : null,
+      departmentIds: formData.departmentIds,
       images: images,
+      isActive: formData.isActive,
+      isFeatured: formData.isFeatured,
+      expiresAt: formData.expiresAt || null,
+      hasVariants: formData.hasVariants,
     };
 
     if (editingProduct) {
@@ -813,6 +843,68 @@ export default function AdminProducts() {
                       </select>
                     </div>
                   )}
+                </div>
+
+                {/* Brand */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Brand
+                  </label>
+                  <select
+                    value={formData.brandId}
+                    onChange={(e) =>
+                      setFormData({ ...formData, brandId: e.target.value })
+                    }
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 bg-white"
+                  >
+                    <option value="">Select Brand</option>
+                    {brands.map((brand: any) => (
+                      <option key={brand.id} value={brand.id}>
+                        {brand.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Departments */}
+              <div className="col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Departments
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {departments.map((dept: any) => (
+                    <label
+                      key={dept.id}
+                      className={`flex items-center gap-2 px-3 py-2 border rounded-lg cursor-pointer transition-colors ${
+                        formData.departmentIds.includes(dept.id)
+                          ? "bg-primary-50 border-primary-500"
+                          : "hover:bg-gray-50"
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={formData.departmentIds.includes(dept.id)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setFormData({
+                              ...formData,
+                              departmentIds: [...formData.departmentIds, dept.id],
+                            });
+                          } else {
+                            setFormData({
+                              ...formData,
+                              departmentIds: formData.departmentIds.filter(
+                                (id) => id !== dept.id,
+                              ),
+                            });
+                          }
+                        }}
+                        className="w-4 h-4 text-primary-600 rounded"
+                      />
+                      <span className="text-sm">{dept.name}</span>
+                    </label>
+                  ))}
                 </div>
               </div>
 

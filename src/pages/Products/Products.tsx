@@ -14,6 +14,8 @@ const DEFAULT_IMAGE =
 
 interface Filters {
   categories: string[];
+  departments: string[];
+  brands: string[];
   minPrice: string;
   maxPrice: string;
   inStock: boolean;
@@ -21,6 +23,8 @@ interface Filters {
 
 interface ExpandedSections {
   categories: boolean;
+  departments: boolean;
+  brands: boolean;
   price: boolean;
   availability: boolean;
 }
@@ -31,6 +35,8 @@ export default function Products() {
   const [showFilters, setShowFilters] = useState(false);
   const [expandedSections, setExpandedSections] = useState<ExpandedSections>({
     categories: true,
+    departments: true,
+    brands: true,
     price: true,
     availability: true,
   });
@@ -39,6 +45,8 @@ export default function Products() {
 
   const [filters, setFilters] = useState<Filters>({
     categories: [],
+    departments: [],
+    brands: [],
     minPrice: "",
     maxPrice: "",
     inStock: false,
@@ -60,22 +68,46 @@ export default function Products() {
 
   const categorySlug = searchParams.get("category");
   const searchQuery = searchParams.get("search");
+  const departmentSlug = searchParams.get("department");
+  const brandId = searchParams.get("brandId");
 
   const { data: categoriesData } = useQuery({
     queryKey: ["categories"],
     queryFn: () => api.get("/categories"),
   });
 
+  const { data: departmentsData } = useQuery({
+    queryKey: ["departments"],
+    queryFn: async () => {
+      const response = await api.get("/departments");
+      return response.data;
+    },
+  });
+
+  const { data: brandsData } = useQuery({
+    queryKey: ["brands"],
+    queryFn: async () => {
+      const response = await api.get("/brands");
+      return response.data;
+    },
+  });
+
   const categories = categoriesData?.data || [];
+  const departments = Array.isArray(departmentsData) ? departmentsData : departmentsData?.data || [];
+  const brands = Array.isArray(brandsData) ? brandsData : brandsData?.data || [];
 
   const { data, isLoading } = useQuery({
-    queryKey: ["products", categorySlug, searchQuery, page, filters, sortBy],
+    queryKey: ["products", categorySlug, searchQuery, departmentSlug, brandId, page, filters, sortBy],
     queryFn: () =>
       api.get("/products", {
         params: {
           category: categorySlug || undefined,
           search: searchQuery || undefined,
+          department: departmentSlug || undefined,
+          brandId: brandId ? parseInt(brandId) : undefined,
           categories: filters.categories.length > 0 ? filters.categories.join(',') : undefined,
+          departments: filters.departments.length > 0 ? filters.departments.join(',') : undefined,
+          brand: filters.brands.length > 0 ? filters.brands.join(',') : undefined,
           minPrice: filters.minPrice || undefined,
           maxPrice: filters.maxPrice || undefined,
           page,
@@ -102,8 +134,30 @@ export default function Products() {
     setPage(1);
   };
 
+  const toggleDepartment = (slug: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      departments: prev.departments.includes(slug)
+        ? prev.departments.filter((d) => d !== slug)
+        : [...prev.departments, slug],
+    }));
+    setPage(1);
+  };
+
+  const toggleBrand = (slug: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      brands: prev.brands.includes(slug)
+        ? prev.brands.filter((b) => b !== slug)
+        : [...prev.brands, slug],
+    }));
+    setPage(1);
+  };
+
   const hasActiveFilters = 
     filters.categories.length > 0 || 
+    filters.departments.length > 0 ||
+    filters.brands.length > 0 ||
     !!filters.minPrice || 
     !!filters.maxPrice || 
     filters.inStock;
@@ -123,6 +177,8 @@ export default function Products() {
   const clearFilters = () => {
     setFilters({
       categories: [],
+      departments: [],
+      brands: [],
       minPrice: "",
       maxPrice: "",
       inStock: false,
@@ -174,9 +230,13 @@ export default function Products() {
   const FilterSidebar = memo(({
     filters,
     categories,
+    departments,
+    brands,
     expandedSections,
     hasActiveFilters,
     onToggleCategory,
+    onToggleDepartment,
+    onToggleBrand,
     onToggleSection,
     onClearFilters,
     onPriceChange,
@@ -184,9 +244,13 @@ export default function Products() {
   }: {
     filters: Filters;
     categories: any[];
+    departments: any[];
+    brands: any[];
     expandedSections: ExpandedSections;
     hasActiveFilters: boolean;
     onToggleCategory: (slug: string) => void;
+    onToggleDepartment: (slug: string) => void;
+    onToggleBrand: (slug: string) => void;
     onToggleSection: (section: keyof ExpandedSections) => void;
     onClearFilters: () => void;
     onPriceChange: (min: number, max: number) => void;
@@ -242,6 +306,80 @@ export default function Products() {
           </div>
         )}
       </div>
+
+      {/* Departments Section */}
+      {departments.length > 0 && (
+        <div className="pb-4 border-b border-gray-100">
+          <button
+            onClick={() => onToggleSection("departments" as keyof ExpandedSections)}
+            className="flex items-center justify-between w-full text-left py-2"
+          >
+            <span className="font-medium text-gray-800">Department</span>
+            {expandedSections.departments ? (
+              <ChevronUp className="h-4 w-4 text-gray-500" />
+            ) : (
+              <ChevronDown className="h-4 w-4 text-gray-500" />
+            )}
+          </button>
+          {expandedSections.departments && (
+            <div className="mt-2 space-y-1 max-h-72 overflow-y-auto pr-1">
+              {departments.map((department: any) => (
+                <label
+                  key={department.id}
+                  className="flex items-center gap-3 cursor-pointer py-2 px-2 rounded-md hover:bg-gray-50 transition-colors"
+                >
+                  <input
+                    type="checkbox"
+                    checked={filters.departments.includes(department.slug)}
+                    onChange={() => onToggleDepartment(department.slug)}
+                    className="w-4 h-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                  />
+                  <span className="text-sm text-gray-700">
+                    {department.name}
+                  </span>
+                </label>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Brands Section */}
+      {brands.length > 0 && (
+        <div className="pb-4 border-b border-gray-100">
+          <button
+            onClick={() => onToggleSection("brands" as keyof ExpandedSections)}
+            className="flex items-center justify-between w-full text-left py-2"
+          >
+            <span className="font-medium text-gray-800">Brand</span>
+            {expandedSections.brands ? (
+              <ChevronUp className="h-4 w-4 text-gray-500" />
+            ) : (
+              <ChevronDown className="h-4 w-4 text-gray-500" />
+            )}
+          </button>
+          {expandedSections.brands && (
+            <div className="mt-2 space-y-1 max-h-72 overflow-y-auto pr-1">
+              {brands.map((brand: any) => (
+                <label
+                  key={brand.id}
+                  className="flex items-center gap-3 cursor-pointer py-2 px-2 rounded-md hover:bg-gray-50 transition-colors"
+                >
+                  <input
+                    type="checkbox"
+                    checked={filters.brands.includes(brand.slug)}
+                    onChange={() => onToggleBrand(brand.slug)}
+                    className="w-4 h-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                  />
+                  <span className="text-sm text-gray-700">
+                    {brand.name}
+                  </span>
+                </label>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Price Range Section */}
       <div className="pb-4 border-b border-gray-100">
@@ -309,7 +447,7 @@ export default function Products() {
         Filters
         {hasActiveFilters && (
           <span className="w-5 h-5 bg-primary-600 text-white text-xs rounded-full flex items-center justify-center">
-            {filters.categories.length + (filters.inStock ? 1 : 0) + (filters.minPrice || filters.maxPrice ? 1 : 0)}
+            {filters.categories.length + filters.departments.length + filters.brands.length + (filters.inStock ? 1 : 0) + (filters.minPrice || filters.maxPrice ? 1 : 0)}
           </span>
         )}
       </button>
@@ -321,9 +459,13 @@ export default function Products() {
             <FilterSidebar 
               filters={filters}
               categories={categories}
+              departments={departments}
+              brands={brands}
               expandedSections={expandedSections}
               hasActiveFilters={hasActiveFilters}
               onToggleCategory={toggleCategory}
+              onToggleDepartment={toggleDepartment}
+              onToggleBrand={toggleBrand}
               onToggleSection={(section) => toggleSection(section as keyof ExpandedSections)}
               onClearFilters={clearFilters}
               onPriceChange={(min, max) => {
@@ -355,9 +497,13 @@ export default function Products() {
               <FilterSidebar 
                 filters={filters}
                 categories={categories}
+                departments={departments}
+                brands={brands}
                 expandedSections={expandedSections}
                 hasActiveFilters={hasActiveFilters}
                 onToggleCategory={toggleCategory}
+                onToggleDepartment={toggleDepartment}
+                onToggleBrand={toggleBrand}
                 onToggleSection={(section) => toggleSection(section as keyof ExpandedSections)}
                 onClearFilters={clearFilters}
                 onPriceChange={(min, max) => {
@@ -399,6 +545,40 @@ export default function Products() {
                     <button
                       onClick={() => toggleCategory(slug)}
                       className="hover:text-primary-900"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </span>
+                );
+              })}
+              {filters.departments.map((slug) => {
+                const dept = departments.find((d: any) => d.slug === slug);
+                return (
+                  <span
+                    key={slug}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-green-50 text-green-700 text-xs font-medium rounded-md"
+                  >
+                    {dept?.name}
+                    <button
+                      onClick={() => toggleDepartment(slug)}
+                      className="hover:text-green-900"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </span>
+                );
+              })}
+              {filters.brands.map((slug) => {
+                const brand = brands.find((b: any) => b.slug === slug);
+                return (
+                  <span
+                    key={slug}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-50 text-amber-700 text-xs font-medium rounded-md"
+                  >
+                    {brand?.name}
+                    <button
+                      onClick={() => toggleBrand(slug)}
+                      className="hover:text-amber-900"
                     >
                       <X className="h-3 w-3" />
                     </button>

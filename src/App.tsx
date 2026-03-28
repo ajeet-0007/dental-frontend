@@ -13,6 +13,8 @@ import OrderDetail from "./pages/Orders/OrderDetail";
 import UserProfile from "./pages/UserProfile/UserProfile";
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
+import Departments from "./pages/Departments/Departments";
+import Brands from "./pages/Brands/Brands";
 import { useAuthStore } from "./stores/authStore";
 import { useCartStore } from "./stores/cartStore";
 import api from "./api";
@@ -21,6 +23,8 @@ import AdminDashboard from "./pages/Admin/AdminDashboard";
 import AdminOrders from "./pages/Admin/AdminOrders";
 import AdminProducts from "./pages/Admin/AdminProducts";
 import AdminCategories from "./pages/Admin/AdminCategories";
+import AdminDepartments from "./pages/Admin/AdminDepartments";
+import AdminBrands from "./pages/Admin/AdminBrands";
 import AdminBanners from "./pages/Admin/AdminBanners";
 import AdminUsers from "./pages/Admin/AdminUsers";
 import AdminPayments from "./pages/Admin/AdminPayments";
@@ -62,6 +66,8 @@ function App() {
             <Route index element={<Home />} />
             <Route path="products" element={<Products />} />
             <Route path="products/:slug" element={<ProductDetail />} />
+            <Route path="departments" element={<Departments />} />
+            <Route path="brands" element={<Brands />} />
             <Route path="cart" element={<Cart />} />
             <Route path="checkout" element={<Checkout />} />
             <Route path="orders" element={<Orders />} />
@@ -75,6 +81,8 @@ function App() {
             <Route index element={<AdminDashboard />} />
             <Route path="products" element={<AdminProducts />} />
             <Route path="categories" element={<AdminCategories />} />
+            <Route path="departments" element={<AdminDepartments />} />
+            <Route path="brands" element={<AdminBrands />} />
             <Route path="banners" element={<AdminBanners />} />
             <Route path="orders" element={<AdminOrders />} />
             <Route path="orders/:id" element={<AdminOrderDetail />} />
