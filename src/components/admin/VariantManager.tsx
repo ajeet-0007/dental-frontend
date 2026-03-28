@@ -72,11 +72,13 @@ export default function VariantManager({ productId, onClose, onVariantsChange }:
   const { data: variantsData, refetch } = useQuery({
     queryKey: ['product', productId, 'variants'],
     queryFn: () => api.get(`/products/${productId}/variants`),
+    enabled: !!productId,
   });
 
   const { data: productData, refetch: refetchProduct } = useQuery({
     queryKey: ['product', productId],
     queryFn: () => api.get(`/products/${productId}`),
+    enabled: !!productId,
   });
 
   const variants: ProductVariant[] = Array.isArray(variantsData?.data) ? variantsData.data : [];
@@ -125,6 +127,14 @@ export default function VariantManager({ productId, onClose, onVariantsChange }:
     },
     onError: () => toast.error("Failed to update options"),
   });
+
+  useEffect(() => {
+    return () => {
+      setShowForm(false);
+      setEditingVariant(null);
+      setView('list');
+    };
+  }, []);
 
   const createMutation = useMutation({
     mutationFn: (data: any) => api.post("/products/variants", data),

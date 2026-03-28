@@ -266,6 +266,21 @@ export default function AdminProducts() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!formData.name.trim()) {
+      toast.error("Product name is required");
+      return;
+    }
+
+    if (!formData.categoryId) {
+      toast.error("Please select a category");
+      return;
+    }
+
+    if (!formData.brandId) {
+      toast.error("Please select a brand");
+      return;
+    }
+
     if (formData.hasVariants && variantsCount === 0) {
       toast.error("Please add at least one variant before saving");
       return;
@@ -686,6 +701,14 @@ export default function AdminProducts() {
                               toast.error("Please enter a product name first");
                               return;
                             }
+                            if (!formData.categoryId) {
+                              toast.error("Please select a category first");
+                              return;
+                            }
+                            if (!formData.brandId) {
+                              toast.error("Please select a brand first");
+                              return;
+                            }
                             const productData = {
                               ...formData,
                               price: parseFloat(formData.price) || 0,
@@ -779,7 +802,7 @@ export default function AdminProducts() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Category
+                    Category <span className="text-red-500">*</span>
                   </label>
                   {showNewCategoryInput ? (
                     <div className="flex gap-2">
@@ -832,6 +855,7 @@ export default function AdminProducts() {
                           }
                         }}
                         className="flex-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 bg-white"
+                        required
                       >
                         <option value="">Select Category</option>
                         {categories.map((cat: any) => (
@@ -848,7 +872,7 @@ export default function AdminProducts() {
                 {/* Brand */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Brand
+                    Brand <span className="text-red-500">*</span>
                   </label>
                   <select
                     value={formData.brandId}
@@ -856,6 +880,7 @@ export default function AdminProducts() {
                       setFormData({ ...formData, brandId: e.target.value })
                     }
                     className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 bg-white"
+                    required
                   >
                     <option value="">Select Brand</option>
                     {brands.map((brand: any) => (
