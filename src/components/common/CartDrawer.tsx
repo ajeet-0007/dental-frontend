@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import api from "@/api";
 import { useAuthStore } from "@/stores/authStore";
 import { useCartStore } from "@/stores/cartStore";
-import { X, Plus, Minus, ShoppingCart, Check } from "lucide-react";
+import { X, Plus, Minus, ShoppingCart, Check, Calendar } from "lucide-react";
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -190,9 +190,17 @@ export default function CartDrawer({ isOpen, onClose, product }: CartDrawerProps
                 </span>
               )}
               {selectedVariant && (
-                <p className="text-sm text-gray-500 mt-1">
-                  Variant: {selectedVariant.name}
-                </p>
+                <div className="flex items-center gap-2 mt-1">
+                  <p className="text-sm text-gray-500">
+                    Variant: {selectedVariant.name}
+                  </p>
+                  {selectedVariant.expiresAt && (
+                    <span className="inline-flex items-center gap-1 text-xs text-orange-600">
+                      <Calendar className="w-3 h-3" />
+                      Exp: {new Date(selectedVariant.expiresAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    </span>
+                  )}
+                </div>
               )}
             </div>
           </div>

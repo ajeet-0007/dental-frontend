@@ -1,4 +1,4 @@
-import { Package } from 'lucide-react';
+import { Package, Calendar } from 'lucide-react';
 
 export interface ProductVariantOption {
   optionId: number;
@@ -187,6 +187,12 @@ export function VariantSelector({
           <div className="flex flex-wrap gap-x-4 gap-y-1">
             {selectedVariant.sku && (
               <span className="text-xs text-gray-400">SKU: {selectedVariant.sku}</span>
+            )}
+            {selectedVariant.expiresAt && !isNaN(new Date(selectedVariant.expiresAt).getTime()) && (
+              <span className="inline-flex items-center gap-1 text-xs text-orange-600">
+                <Calendar className="w-3 h-3" />
+                Exp: {new Date(selectedVariant.expiresAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+              </span>
             )}
           </div>
         </div>
