@@ -1,10 +1,15 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import api from "@/api";
 import { Package, Shield, Truck, CreditCard } from "lucide-react";
 import ProductCarousel from "@/components/common/ProductCarousel";
+import CartDrawer from "@/components/common/CartDrawer";
 
 export default function Home() {
+  const [cartDrawerProduct, setCartDrawerProduct] = useState<any>(null);
+  const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false);
+
   const { data: productsData } = useQuery({
     queryKey: ["products", "featured"],
     queryFn: () => api.get("/products/featured?limit=8"),
@@ -17,6 +22,11 @@ export default function Home() {
 
   const products = productsData?.data?.products || productsData?.data || [];
   const categories = categoriesData?.data || [];
+
+  const handleOpenCartDrawer = (product: any) => {
+    setCartDrawerProduct(product);
+    setIsCartDrawerOpen(true);
+  };
 
   return (
     <div>
@@ -118,7 +128,7 @@ export default function Home() {
             </Link>
           </div>
           {products.length > 0 ? (
-            <ProductCarousel products={products} />
+            <ProductCarousel products={products} onOpenCartDrawer={handleOpenCartDrawer} />
           ) : (
             <div className="text-center py-12">
               <Package className="h-16 w-16 mx-auto text-gray-300 mb-4" />
@@ -127,6 +137,12 @@ export default function Home() {
           )}
         </div>
       </section>
+
+      <CartDrawer
+        isOpen={isCartDrawerOpen}
+        onClose={() => setIsCartDrawerOpen(false)}
+        product={cartDrawerProduct}
+      />
     </div>
   );
 }

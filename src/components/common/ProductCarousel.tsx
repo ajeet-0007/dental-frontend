@@ -11,16 +11,17 @@ const DEFAULT_IMAGE = "https://images.unsplash.com/photo-1606811841689-23dfddce3
 
 interface ProductCarouselProps {
   products: any[];
+  onOpenCartDrawer?: (product: any) => void;
 }
 
-export default function ProductCarousel({ products }: ProductCarouselProps) {
+export default function ProductCarousel({ products, onOpenCartDrawer }: ProductCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [visibleCount, setVisibleCount] = useState(5);
   const containerRef = useRef<HTMLDivElement>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const { addItem, items } = useCartStore();
+  const { items } = useCartStore();
   const { addItem: addToWishlist, removeItem: removeFromWishlist, items: wishlistItems } = useWishlistStore();
 
   const totalSlides = Math.ceil(products.length / visibleCount);
@@ -79,28 +80,9 @@ export default function ProductCarousel({ products }: ProductCarouselProps) {
     e.preventDefault();
     e.stopPropagation();
 
-    const cartItemId = product.id.toString();
-    if (items.some((item) => item.id === cartItemId)) {
-      toast.success("Already in cart");
-      return;
+    if (onOpenCartDrawer) {
+      onOpenCartDrawer(product);
     }
-
-    addItem({
-      id: cartItemId,
-      quantity: 1,
-      product: {
-        id: product.id.toString(),
-        name: product.name,
-        slug: product.slug,
-        images: product.images || [],
-        price: product.price || 0,
-        sellingPrice: product.sellingPrice || product.price || 0,
-        mrp: product.mrp || product.price || 0,
-        unit: product.unit || "unit",
-      },
-      variant: null,
-    });
-    toast.success("Added to cart!");
   };
 
   const handleToggleWishlist = (e: React.MouseEvent, product: any) => {
