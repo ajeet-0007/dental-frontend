@@ -140,11 +140,6 @@ export default function DepartmentCarousel({ departments, itemsPerPage = 6 }: De
                       <h3 className="text-white font-semibold text-sm leading-tight line-clamp-2 drop-shadow-md">
                         {department.name}
                       </h3>
-                      {department.productCount !== undefined && (
-                        <p className="text-white/80 text-xs mt-1">
-                          {department.productCount} Products
-                        </p>
-                      )}
                     </div>
                   </div>
                 </Link>

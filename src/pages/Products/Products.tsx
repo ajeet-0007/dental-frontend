@@ -30,7 +30,7 @@ interface ExpandedSections {
 }
 
 export default function Products() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [page, setPage] = useState(1);
   const [showFilters, setShowFilters] = useState(false);
   const [expandedSections, setExpandedSections] = useState<ExpandedSections>({
@@ -66,10 +66,7 @@ export default function Products() {
   const { items } = useCartStore();
   const { items: wishlistItems, addItem: addToWishlist, removeItem: removeFromWishlist } = useWishlistStore();
 
-  const categorySlug = searchParams.get("category");
   const searchQuery = searchParams.get("search");
-  const departmentSlug = searchParams.get("department");
-  const brandId = searchParams.get("brandId");
 
   const { data: categoriesData } = useQuery({
     queryKey: ["categories"],
@@ -96,20 +93,37 @@ export default function Products() {
   const departments = Array.isArray(departmentsData) ? departmentsData : departmentsData?.data || [];
   const brands = Array.isArray(brandsData) ? brandsData : brandsData?.data || [];
 
+  useEffect(() => {
+    const urlCategories = searchParams.get("category");
+    const urlDepartments = searchParams.get("department");
+    const urlBrands = searchParams.get("brand");
+    const urlMinPrice = searchParams.get("minPrice");
+    const urlMaxPrice = searchParams.get("maxPrice");
+    const urlInStock = searchParams.get("inStock");
+
+    setFilters(() => ({
+      categories: urlCategories ? urlCategories.split(",").filter(Boolean) : [],
+      departments: urlDepartments ? urlDepartments.split(",").filter(Boolean) : [],
+      brands: urlBrands ? urlBrands.split(",").filter(Boolean) : [],
+      minPrice: urlMinPrice || "",
+      maxPrice: urlMaxPrice || "",
+      inStock: urlInStock === "true",
+    }));
+    setPage(1);
+  }, [searchParams]);
+
   const { data, isLoading } = useQuery({
-    queryKey: ["products", categorySlug, searchQuery, departmentSlug, brandId, page, filters, sortBy],
+    queryKey: ["products", searchQuery, filters, page, sortBy],
     queryFn: () =>
       api.get("/products", {
         params: {
-          category: categorySlug || undefined,
           search: searchQuery || undefined,
-          department: departmentSlug || undefined,
-          brandId: brandId ? parseInt(brandId) : undefined,
           categories: filters.categories.length > 0 ? filters.categories.join(',') : undefined,
           departments: filters.departments.length > 0 ? filters.departments.join(',') : undefined,
           brand: filters.brands.length > 0 ? filters.brands.join(',') : undefined,
           minPrice: filters.minPrice || undefined,
           maxPrice: filters.maxPrice || undefined,
+          inStock: filters.inStock || undefined,
           page,
           limit: 12,
           sortBy,
@@ -120,37 +134,73 @@ export default function Products() {
   const products = data?.data?.products || [];
   const totalPages = data?.data?.totalPages || 0;
 
-  useEffect(() => {
-    setPage(1);
-  }, [categorySlug]);
+  const updateURLParams = (newFilters: Filters) => {
+    const params = new URLSearchParams();
+    
+    if (newFilters.categories.length > 0) {
+      params.set("category", newFilters.categories.join(","));
+    }
+    if (newFilters.departments.length > 0) {
+      params.set("department", newFilters.departments.join(","));
+    }
+    if (newFilters.brands.length > 0) {
+      params.set("brand", newFilters.brands.join(","));
+    }
+    if (newFilters.minPrice) {
+      params.set("minPrice", newFilters.minPrice);
+    }
+    if (newFilters.maxPrice) {
+      params.set("maxPrice", newFilters.maxPrice);
+    }
+    if (newFilters.inStock) {
+      params.set("inStock", "true");
+    }
+    if (searchQuery) {
+      params.set("search", searchQuery);
+    }
+    
+    setSearchParams(params, { replace: true });
+  };
 
   const toggleCategory = (slug: string) => {
-    setFilters((prev) => ({
-      ...prev,
-      categories: prev.categories.includes(slug)
-        ? prev.categories.filter((c) => c !== slug)
-        : [...prev.categories, slug],
-    }));
+    setFilters((prev) => {
+      const newFilters = {
+        ...prev,
+        categories: prev.categories.includes(slug)
+          ? prev.categories.filter((c) => c !== slug)
+          : [...prev.categories, slug],
+      };
+      updateURLParams(newFilters);
+      return newFilters;
+    });
     setPage(1);
   };
 
   const toggleDepartment = (slug: string) => {
-    setFilters((prev) => ({
-      ...prev,
-      departments: prev.departments.includes(slug)
-        ? prev.departments.filter((d) => d !== slug)
-        : [...prev.departments, slug],
-    }));
+    setFilters((prev) => {
+      const newFilters = {
+        ...prev,
+        departments: prev.departments.includes(slug)
+          ? prev.departments.filter((d) => d !== slug)
+          : [...prev.departments, slug],
+      };
+      updateURLParams(newFilters);
+      return newFilters;
+    });
     setPage(1);
   };
 
   const toggleBrand = (slug: string) => {
-    setFilters((prev) => ({
-      ...prev,
-      brands: prev.brands.includes(slug)
-        ? prev.brands.filter((b) => b !== slug)
-        : [...prev.brands, slug],
-    }));
+    setFilters((prev) => {
+      const newFilters = {
+        ...prev,
+        brands: prev.brands.includes(slug)
+          ? prev.brands.filter((b) => b !== slug)
+          : [...prev.brands, slug],
+      };
+      updateURLParams(newFilters);
+      return newFilters;
+    });
     setPage(1);
   };
 
@@ -175,14 +225,16 @@ export default function Products() {
   };
 
   const clearFilters = () => {
-    setFilters({
+    const emptyFilters: Filters = {
       categories: [],
       departments: [],
       brands: [],
       minPrice: "",
       maxPrice: "",
       inStock: false,
-    });
+    };
+    setFilters(emptyFilters);
+    updateURLParams(emptyFilters);
   };
 
   const isInCart = (productId: string) => {
@@ -469,15 +521,23 @@ export default function Products() {
               onToggleSection={(section) => toggleSection(section as keyof ExpandedSections)}
               onClearFilters={clearFilters}
               onPriceChange={(min, max) => {
-                setFilters((prev) => ({
-                  ...prev,
-                  minPrice: min.toString(),
-                  maxPrice: max.toString(),
-                }));
+                setFilters((prev) => {
+                  const newFilters = {
+                    ...prev,
+                    minPrice: min.toString(),
+                    maxPrice: max.toString(),
+                  };
+                  updateURLParams(newFilters);
+                  return newFilters;
+                });
                 setPage(1);
               }}
               onInStockChange={(checked) => {
-                setFilters((prev) => ({ ...prev, inStock: checked }));
+                setFilters((prev) => {
+                  const newFilters = { ...prev, inStock: checked };
+                  updateURLParams(newFilters);
+                  return newFilters;
+                });
                 setPage(1);
               }}
             />
@@ -507,15 +567,23 @@ export default function Products() {
                 onToggleSection={(section) => toggleSection(section as keyof ExpandedSections)}
                 onClearFilters={clearFilters}
                 onPriceChange={(min, max) => {
-                  setFilters((prev) => ({
-                    ...prev,
-                    minPrice: min.toString(),
-                    maxPrice: max.toString(),
-                  }));
+                  setFilters((prev) => {
+                    const newFilters = {
+                      ...prev,
+                      minPrice: min.toString(),
+                      maxPrice: max.toString(),
+                    };
+                    updateURLParams(newFilters);
+                    return newFilters;
+                  });
                   setPage(1);
                 }}
                 onInStockChange={(checked) => {
-                  setFilters((prev) => ({ ...prev, inStock: checked }));
+                  setFilters((prev) => {
+                    const newFilters = { ...prev, inStock: checked };
+                    updateURLParams(newFilters);
+                    return newFilters;
+                  });
                   setPage(1);
                 }}
               />
@@ -588,7 +656,13 @@ export default function Products() {
               {filters.minPrice && (
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-primary-50 text-primary-700 text-xs font-medium rounded-md">
                   Min: ₹{filters.minPrice}
-                  <button onClick={() => setFilters((p) => ({ ...p, minPrice: "" }))}>
+                  <button onClick={() => {
+                    setFilters((p) => {
+                      const newFilters = { ...p, minPrice: "" };
+                      updateURLParams(newFilters);
+                      return newFilters;
+                    });
+                  }}>
                     <X className="h-3 w-3" />
                   </button>
                 </span>
@@ -596,7 +670,13 @@ export default function Products() {
               {filters.maxPrice && (
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-primary-50 text-primary-700 text-xs font-medium rounded-md">
                   Max: ₹{filters.maxPrice}
-                  <button onClick={() => setFilters((p) => ({ ...p, maxPrice: "" }))}>
+                  <button onClick={() => {
+                    setFilters((p) => {
+                      const newFilters = { ...p, maxPrice: "" };
+                      updateURLParams(newFilters);
+                      return newFilters;
+                    });
+                  }}>
                     <X className="h-3 w-3" />
                   </button>
                 </span>
@@ -604,7 +684,13 @@ export default function Products() {
               {filters.inStock && (
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-primary-50 text-primary-700 text-xs font-medium rounded-md">
                   In Stock
-                  <button onClick={() => setFilters((p) => ({ ...p, inStock: false }))}>
+                  <button onClick={() => {
+                    setFilters((p) => {
+                      const newFilters = { ...p, inStock: false };
+                      updateURLParams(newFilters);
+                      return newFilters;
+                    });
+                  }}>
                     <X className="h-3 w-3" />
                   </button>
                 </span>

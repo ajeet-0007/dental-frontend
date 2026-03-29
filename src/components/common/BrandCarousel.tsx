@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 interface Brand {
   id: number;
   name: string;
+  slug: string;
   logo?: string;
   productCount?: number;
 }
@@ -105,36 +106,27 @@ export default function BrandCarousel({ brands, itemsPerPage = 6 }: BrandCarouse
                 className="flex-shrink-0 w-[calc((100%-80px)/6)] min-w-[160px]"
               >
                 <Link
-                  to={`/products?brandId=${brand.id}`}
+                  to={`/products?brand=${brand.slug}`}
                   className="group/card block"
                 >
                   <div className={`relative aspect-[4/3] rounded-xl overflow-hidden shadow-md group-hover/card:shadow-xl transition-all duration-300 group-hover/card:-translate-y-1 bg-gradient-to-br ${colorClass}`}>
-                    <div className="absolute inset-0 bg-white/10" />
-                    
-                    <div className="absolute inset-0 flex items-center justify-center p-3">
-                      {brand.logo ? (
-                        <img
-                          src={brand.logo}
-                          alt={brand.name}
-                          className="max-h-full max-w-full object-contain bg-white rounded-lg p-2 shadow-md"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = "none";
-                            const parent = target.parentElement;
-                            if (parent) {
-                              const initial = document.createElement("span");
-                              initial.className = "text-2xl font-bold text-white";
-                              initial.textContent = getBrandInitial(brand.name);
-                              parent.appendChild(initial);
-                            }
-                          }}
-                        />
-                      ) : (
-                        <span className="text-3xl font-bold text-white drop-shadow-md">
+                    {brand.logo ? (
+                      <img
+                        src={brand.logo}
+                        alt={brand.name}
+                        className="w-full h-full object-contain p-3 bg-white"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = "none";
+                        }}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-white">
+                        <span className="text-3xl font-bold text-gray-600">
                           {getBrandInitial(brand.name)}
                         </span>
-                      )}
-                    </div>
+                      </div>
+                    )}
 
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
