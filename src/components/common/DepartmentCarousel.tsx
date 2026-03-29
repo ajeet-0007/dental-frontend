@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useSwipe } from "@/hooks/useSwipe";
 
 interface Department {
   id: number;
@@ -90,16 +91,27 @@ export default function DepartmentCarousel({ departments, itemsPerPage = 6 }: De
     }
   };
 
-  if (departments.length === 0) return null;
-
   const displayedDepartments = departments.slice(
     currentIndex * visibleCount,
     currentIndex * visibleCount + visibleCount
   );
 
+  const { onTouchStart, onTouchMove, onTouchEnd } = useSwipe({
+    onSwipeLeft: nextSlide,
+    onSwipeRight: prevSlide,
+  });
+
+  if (departments.length === 0) return null;
+
   return (
-    <div className="relative group">
-      <div ref={containerRef} className="overflow-hidden px-2">
+    <div className="relative group touch-pan-y">
+      <div 
+        ref={containerRef} 
+        className="overflow-hidden px-2"
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+      >
         <motion.div
           className="flex gap-4"
           initial={false}

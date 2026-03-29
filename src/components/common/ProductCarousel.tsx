@@ -6,6 +6,7 @@ import { ShoppingCart, Heart } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import { useWishlistStore } from "@/stores/wishlistStore";
 import toast from "react-hot-toast";
+import { useSwipe } from "@/hooks/useSwipe";
 
 const DEFAULT_IMAGE = "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=400&h=400&fit=crop";
 
@@ -114,20 +115,28 @@ export default function ProductCarousel({ products, onOpenCartDrawer }: ProductC
     }
   };
 
-  if (products.length === 0) return null;
-
   const displayedProducts = products.slice(
     currentIndex * visibleCount,
     currentIndex * visibleCount + visibleCount
   );
 
+  const { onTouchStart, onTouchMove, onTouchEnd } = useSwipe({
+    onSwipeLeft: nextSlide,
+    onSwipeRight: prevSlide,
+  });
+
+  if (products.length === 0) return null;
+
   return (
-    <div className="relative group">
+    <div className="relative group touch-pan-y">
       <div
         ref={containerRef}
         className="overflow-hidden"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
       >
         <motion.div
           className="flex gap-4"
