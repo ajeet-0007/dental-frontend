@@ -171,7 +171,7 @@ export default function Layout() {
                               transition={{ delay: index * 0.05 }}
                             >
                               <Link
-                                to={`/products?brandId=${brand.id}`}
+                                to={`/products?brand=${brand.slug}`}
                                 onClick={() => {
                                   setIsSearchOpen(false)
                                   setSearchQuery('')
@@ -563,7 +563,7 @@ export default function Layout() {
                     {searchData.brands.map((brand: any) => (
                       <Link
                         key={brand.id}
-                        to={`/products?brandId=${brand.id}`}
+                        to={`/products?brand=${brand.slug}`}
                         onClick={() => {
                           setIsSearchOpen(false)
                           setSearchQuery('')

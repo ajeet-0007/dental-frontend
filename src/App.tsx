@@ -15,6 +15,7 @@ import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
 import Departments from "./pages/Departments/Departments";
 import Brands from "./pages/Brands/Brands";
+import Categories from "./pages/Categories/Categories";
 import { useAuthStore } from "./stores/authStore";
 import { useCartStore } from "./stores/cartStore";
 import api from "./api";
@@ -68,6 +69,7 @@ function App() {
             <Route path="products/:slug" element={<ProductDetail />} />
             <Route path="departments" element={<Departments />} />
             <Route path="brands" element={<Brands />} />
+            <Route path="categories" element={<Categories />} />
             <Route path="cart" element={<Cart />} />
             <Route path="checkout" element={<Checkout />} />
             <Route path="orders" element={<Orders />} />

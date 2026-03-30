@@ -68,7 +68,7 @@ export default function Brands() {
           {brands.map((brand: any) => (
             <Link
               key={brand.id}
-              to={`/products?brandId=${brand.id}`}
+              to={`/products?brand=${brand.slug}`}
               className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group"
             >
               <div className="p-6 flex flex-col items-center text-center">

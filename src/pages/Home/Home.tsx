@@ -132,7 +132,7 @@ export default function Home() {
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-2xl font-bold">Shop by Category</h2>
               <Link
-                to="/products"
+                to="/categories"
                 className="text-primary-600 hover:text-primary-700 font-medium"
               >
                 View All →
