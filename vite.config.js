@@ -11,7 +11,7 @@ export default defineConfig({
     server: {
         host: "0.0.0.0",
         port: 5173,
-        allowedHosts: ['dental-frontend-0osw.onrender.com'],
+        allowedHosts: ["dental-frontend-0osw.onrender.com"],
         proxy: {
             "/api": {
                 target: process.env.API_URL || "http://localhost:3000",
