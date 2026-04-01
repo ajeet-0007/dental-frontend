@@ -12,7 +12,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Heart,
-  Truck,
   ShieldCheck,
   RotateCw,
   CheckCircle2,
