@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
+    "@react-oauth/google": "^0.13.4",
     "@stripe/stripe-js": "^8.9.0",
     "@tanstack/react-query": "^5.17.9",
     "axios": "^1.6.5",
@@ -19,6 +20,7 @@
     "framer-motion": "^12.38.0",
     "imagekit-javascript": "^4.0.1",
     "imagekitio-react": "^4.3.0",
+    "jwt-decode": "^4.0.0",
     "lucide-react": "^0.309.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

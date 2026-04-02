@@ -13,6 +13,7 @@ import OrderDetail from "./pages/Orders/OrderDetail";
 import UserProfile from "./pages/UserProfile/UserProfile";
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
+import AuthCallback from "./pages/Auth/AuthCallback";
 import Departments from "./pages/Departments/Departments";
 import Brands from "./pages/Brands/Brands";
 import Categories from "./pages/Categories/Categories";
@@ -78,6 +79,7 @@ function App() {
           </Route>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDashboard />} />
