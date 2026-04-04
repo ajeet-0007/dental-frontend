@@ -8,6 +8,7 @@ import { useCartStore } from '@/stores/cartStore'
 import { useWishlistStore } from '@/stores/wishlistStore'
 import api from '@/api'
 import WishlistDrawer from '@/components/common/WishlistDrawer'
+import BottomNav from '@/components/common/BottomNav'
 
 export default function Layout() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -617,9 +618,11 @@ export default function Layout() {
         )}
       </AnimatePresence>
 
-      <main className="flex-1">
+      <main className="flex-1 pb-20 md:pb-0">
         <Outlet />
       </main>
+
+      <BottomNav />
 
       <footer className="bg-gray-900 text-white py-12">
         <div className="container mx-auto px-4">

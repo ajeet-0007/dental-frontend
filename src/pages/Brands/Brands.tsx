@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { motion } from "framer-motion";
 import api from "@/api";
 import { Award } from "lucide-react";
 
@@ -23,14 +24,14 @@ export default function Brands() {
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen">
-      <div className="bg-primary-600 text-white py-12">
+    <div className="bg-gray-50 min-h-screen pb-20 md:pb-0">
+      <div className="bg-primary-600 text-white py-6 md:py-12">
         <div className="container mx-auto px-4">
-          <div className="flex items-center gap-4">
-            <Award className="h-12 w-12" />
+          <div className="flex items-center gap-3 md:gap-4">
+            <Award className="h-8 w-8 md:h-12 md:w-12" />
             <div>
-              <h1 className="text-3xl font-bold">Our Brands</h1>
-              <p className="text-primary-100 mt-2">
+              <h1 className="text-2xl md:text-3xl font-bold">Our Brands</h1>
+              <p className="text-primary-100 mt-1 md:mt-2 text-sm md:text-base">
                 Explore products from trusted dental brands
               </p>
             </div>
@@ -38,41 +39,44 @@ export default function Brands() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-12">
-        <div className="mb-8">
-          <div className="flex items-center justify-center">
-            <div className="flex space-x-2">
-              {brands.slice(0, 8).map((brand: any) => (
-                <div
-                  key={brand.id}
-                  className="h-16 w-32 bg-white rounded-lg shadow-sm flex items-center justify-center p-2"
-                >
-                  {brand.logo ? (
-                    <img
-                      src={brand.logo}
-                      alt={brand.name}
-                      className="max-h-full max-w-full object-contain"
-                    />
-                  ) : (
-                    <span className="text-sm font-semibold text-gray-700 text-center">
-                      {brand.name}
-                    </span>
-                  )}
-                </div>
-              ))}
-            </div>
+      <div className="container mx-auto px-3 md:px-4 py-6 md:py-12">
+        <div className="mb-6 md:mb-8 overflow-x-auto scrollbar-hide">
+          <div className="flex space-x-2 min-w-max pb-2">
+            {brands.slice(0, 8).map((brand: any) => (
+              <div
+                key={brand.id}
+                className="h-12 md:h-16 w-24 md:w-32 bg-white rounded-lg shadow-sm flex items-center justify-center p-1.5 md:p-2"
+              >
+                {brand.logo ? (
+                  <img
+                    src={brand.logo}
+                    alt={brand.name}
+                    className="max-h-full max-w-full object-contain"
+                  />
+                ) : (
+                  <span className="text-xs md:text-sm font-semibold text-gray-700 text-center line-clamp-1">
+                    {brand.name}
+                  </span>
+                )}
+              </div>
+            ))}
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {brands.map((brand: any) => (
-            <Link
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
+          {brands.map((brand: any, index: number) => (
+            <motion.div
               key={brand.id}
-              to={`/products?brand=${brand.slug}`}
-              className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05, duration: 0.3 }}
+              className="flex"
             >
-              <div className="p-6 flex flex-col items-center text-center">
-                <div className="h-20 w-32 flex items-center justify-center mb-4">
+              <Link
+                to={`/products?brand=${brand.slug}`}
+                className="flex flex-col w-full bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group active:scale-[0.98]"
+              >
+                <div className="h-16 md:h-24 bg-gray-50 flex items-center justify-center p-2 md:p-4 flex-shrink-0">
                   {brand.logo ? (
                     <img
                       src={brand.logo}
@@ -80,39 +84,36 @@ export default function Brands() {
                       className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform"
                     />
                   ) : (
-                    <div className="h-16 w-16 bg-primary-100 rounded-full flex items-center justify-center">
-                      <span className="text-2xl font-bold text-primary-600">
+                    <div className="h-10 md:h-14 w-10 md:w-14 bg-primary-100 rounded-full flex items-center justify-center">
+                      <span className="text-sm md:text-xl font-bold text-primary-600">
                         {brand.name.charAt(0)}
                       </span>
                     </div>
                   )}
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 group-hover:text-primary-600 transition-colors">
-                  {brand.name}
-                </h3>
-                {brand.description && (
-                  <p className="text-sm text-gray-600 mt-2 line-clamp-2">
-                    {brand.description}
-                  </p>
-                )}
-                <div className="mt-4 flex items-center text-primary-600 font-medium">
-                  <span>View Products</span>
-                  <svg
-                    className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
+                <div className="p-2 md:p-4 flex-1 flex flex-col justify-between min-h-[60px] md:min-h-[80px]">
+                  <h3 className="text-xs md:text-sm font-semibold text-gray-900 group-hover:text-primary-600 transition-colors line-clamp-1 text-center">
+                    {brand.name}
+                  </h3>
+                  <div className="mt-1 flex items-center justify-center text-primary-600 font-medium text-[10px] md:text-xs">
+                    <span>View</span>
+                    <svg
+                      className="w-2.5 h-2.5 md:w-3 md:h-3 ml-0.5 group-hover:translate-x-1 transition-transform"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </div>
                 </div>
-              </div>
-            </Link>
+              </Link>
+            </motion.div>
           ))}
         </div>
 

@@ -37,10 +37,18 @@ export default function ProductCarousel({ products, onOpenCartDrawer }: ProductC
     else setVisibleCount(5);
   }, []);
 
+  const [isMobile, setIsMobile] = useState(false);
+
   useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
     updateVisibleCount();
     window.addEventListener("resize", updateVisibleCount);
-    return () => window.removeEventListener("resize", updateVisibleCount);
+    window.addEventListener("resize", checkMobile);
+    return () => {
+      window.removeEventListener("resize", updateVisibleCount);
+      window.removeEventListener("resize", checkMobile);
+    };
   }, [updateVisibleCount]);
 
   const goToSlide = (index: number) => {
@@ -127,11 +135,15 @@ export default function ProductCarousel({ products, onOpenCartDrawer }: ProductC
 
   if (products.length === 0) return null;
 
+  const cardWidth = isMobile 
+    ? "w-[calc(50%-8px)] min-w-[160px]" 
+    : "w-[calc((100%-64px)/5)] min-w-[200px]";
+
   return (
     <div className="relative group touch-pan-y">
       <div
         ref={containerRef}
-        className="overflow-hidden"
+        className="overflow-hidden -mx-4 px-4 md:mx-0 md:px-0"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
         onTouchStart={onTouchStart}
@@ -139,7 +151,7 @@ export default function ProductCarousel({ products, onOpenCartDrawer }: ProductC
         onTouchEnd={onTouchEnd}
       >
         <motion.div
-          className="flex gap-4"
+          className="flex gap-4 md:gap-4"
           initial={false}
           animate={{ x: 0 }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
@@ -155,11 +167,11 @@ export default function ProductCarousel({ products, onOpenCartDrawer }: ProductC
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1, duration: 0.3 }}
-                className="flex-shrink-0 w-[calc((100%-64px)/5)] min-w-[200px]"
+                className={`${cardWidth} flex-shrink-0`}
               >
                 <Link
                   to={`/products/${product.slug}`}
-                  className="block bg-white border rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group/card"
+                  className="block bg-white border rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group/card"
                 >
                   <div className="relative aspect-square bg-gray-100 overflow-hidden">
                     {product.images?.[0] ? (
@@ -176,11 +188,11 @@ export default function ProductCarousel({ products, onOpenCartDrawer }: ProductC
                       />
                     )}
                     
-                    {/* Quick action buttons */}
-                    <div className="absolute top-2 right-2 flex flex-col gap-2 opacity-0 group-hover/card:opacity-100 transition-opacity">
+                    {/* Quick action buttons - always visible on mobile */}
+                    <div className={`absolute top-2 right-2 flex flex-col gap-1.5 transition-opacity md:opacity-0 group-hover/card:opacity-100 ${isMobile ? 'opacity-100' : ''}`}>
                       <button
                         onClick={(e) => handleToggleWishlist(e, product)}
-                        className={`p-2 rounded-full shadow-md transition-colors ${
+                        className={`p-2.5 rounded-full shadow-md transition-colors touch-manipulation ${
                           isInWishlist
                             ? "bg-red-500 text-white"
                             : "bg-white text-gray-600 hover:bg-red-50 hover:text-red-500"
@@ -190,7 +202,7 @@ export default function ProductCarousel({ products, onOpenCartDrawer }: ProductC
                       </button>
                       <button
                         onClick={(e) => handleQuickAddToCart(e, product)}
-                        className={`p-2 rounded-full shadow-md transition-colors ${
+                        className={`p-2.5 rounded-full shadow-md transition-colors touch-manipulation ${
                           isInCart
                             ? "bg-green-500 text-white"
                             : "bg-primary-600 text-white hover:bg-primary-700"
@@ -202,13 +214,13 @@ export default function ProductCarousel({ products, onOpenCartDrawer }: ProductC
 
                     {/* Discount badge */}
                     {product.mrp > product.sellingPrice && (
-                      <div className="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded">
+                      <div className="absolute top-2 left-2 bg-red-500 text-white text-xs font-medium px-2 py-1 rounded">
                         {Math.round((1 - product.sellingPrice / product.mrp) * 100)}% OFF
                       </div>
                     )}
                   </div>
 
-                  <div className="p-3">
+                  <div className="p-3 md:p-3">
                     <h3 className="font-medium text-gray-900 text-sm mb-1 line-clamp-2 min-h-[40px]">
                       {product.name}
                     </h3>
@@ -235,14 +247,14 @@ export default function ProductCarousel({ products, onOpenCartDrawer }: ProductC
         <>
           <button
             onClick={prevSlide}
-            className="absolute left-0 top-[40%] -translate-y-1/2 -translate-x-2 bg-white border rounded-full p-2 shadow-md hover:bg-gray-50 opacity-0 group-hover:opacity-100 transition-all z-10 disabled:opacity-50"
+            className="absolute left-0 top-[40%] -translate-y-1/2 -translate-x-2 bg-white border rounded-full p-2 shadow-md hover:bg-gray-50 transition-all z-10 disabled:opacity-50 md:opacity-0 md:group-hover:opacity-100"
             disabled={totalSlides <= 1}
           >
             <ChevronLeft className="w-5 h-5 text-gray-600" />
           </button>
           <button
             onClick={nextSlide}
-            className="absolute right-0 top-[40%] -translate-y-1/2 translate-x-2 bg-white border rounded-full p-2 shadow-md hover:bg-gray-50 opacity-0 group-hover:opacity-100 transition-all z-10 disabled:opacity-50"
+            className="absolute right-0 top-[40%] -translate-y-1/2 translate-x-2 bg-white border rounded-full p-2 shadow-md hover:bg-gray-50 transition-all z-10 disabled:opacity-50 md:opacity-0 md:group-hover:opacity-100"
             disabled={totalSlides <= 1}
           >
             <ChevronRight className="w-5 h-5 text-gray-600" />
@@ -250,17 +262,17 @@ export default function ProductCarousel({ products, onOpenCartDrawer }: ProductC
         </>
       )}
 
-      {/* Dot Indicators */}
+      {/* Dot Indicators - larger on mobile */}
       {totalSlides > 1 && (
-        <div className="flex justify-center gap-2 mt-4">
+        <div className="flex justify-center gap-1.5 md:gap-2 mt-4">
           {Array.from({ length: totalSlides }).map((_, index) => (
             <button
               key={index}
               onClick={() => goToSlide(index)}
-              className={`w-2 h-2 rounded-full transition-all ${
+              className={`h-2 md:h-2 rounded-full transition-all touch-manipulation ${
                 index === currentIndex
-                  ? "bg-primary-600 w-6"
-                  : "bg-gray-300 hover:bg-gray-400"
+                  ? "bg-primary-600 w-6 md:w-6"
+                  : "bg-gray-300 hover:bg-gray-400 w-2"
               }`}
             />
           ))}

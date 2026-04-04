@@ -94,13 +94,13 @@ export default function BrandCarousel({ brands, itemsPerPage = 6 }: BrandCarouse
     <div className="relative group touch-pan-y">
       <div 
         ref={containerRef} 
-        className="overflow-hidden px-2"
+        className="overflow-hidden -mx-4 px-4 md:mx-0 md:px-0"
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
       >
         <motion.div
-          className="flex gap-4"
+          className="flex gap-3 md:gap-4"
           initial={false}
           animate={{ x: 0 }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
@@ -115,7 +115,7 @@ export default function BrandCarousel({ brands, itemsPerPage = 6 }: BrandCarouse
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1, duration: 0.3 }}
-                className="flex-shrink-0 w-[calc((100%-80px)/6)] min-w-[160px]"
+                className="flex-shrink-0 w-[calc(50%-6px)] md:w-[calc((100%-80px)/4)] lg:w-[calc((100%-80px)/6)]"
               >
                 <Link
                   to={`/products?brand=${brand.slug}`}
@@ -126,7 +126,7 @@ export default function BrandCarousel({ brands, itemsPerPage = 6 }: BrandCarouse
                       <img
                         src={brand.logo}
                         alt={brand.name}
-                        className="w-full h-full object-contain p-3 bg-white"
+                        className="w-full h-full object-contain p-2 md:p-3 bg-white"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
                           target.style.display = "none";
@@ -134,7 +134,7 @@ export default function BrandCarousel({ brands, itemsPerPage = 6 }: BrandCarouse
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-white">
-                        <span className="text-3xl font-bold text-gray-600">
+                        <span className="text-2xl md:text-3xl font-bold text-gray-600">
                           {getBrandInitial(brand.name)}
                         </span>
                       </div>
@@ -142,15 +142,10 @@ export default function BrandCarousel({ brands, itemsPerPage = 6 }: BrandCarouse
 
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
-                    <div className="absolute inset-0 flex flex-col justify-end p-4">
-                      <h3 className="text-white font-semibold text-sm leading-tight line-clamp-2 drop-shadow-md">
+                    <div className="absolute inset-0 flex flex-col justify-end p-3 md:p-4">
+                      <h3 className="text-white font-semibold text-xs md:text-sm leading-tight line-clamp-2 drop-shadow-md">
                         {brand.name}
                       </h3>
-                      {brand.productCount !== undefined && (
-                        <p className="text-white/80 text-xs mt-1">
-                          {brand.productCount} Products
-                        </p>
-                      )}
                     </div>
                   </div>
                 </Link>
@@ -164,14 +159,14 @@ export default function BrandCarousel({ brands, itemsPerPage = 6 }: BrandCarouse
         <>
           <button
             onClick={prevSlide}
-            className="absolute left-2 top-[40%] -translate-y-1/2 bg-white border rounded-full p-2 shadow-md hover:bg-gray-50 opacity-0 group-hover:opacity-100 transition-all z-10 disabled:opacity-50"
+            className="absolute left-2 top-[40%] -translate-y-1/2 bg-white border rounded-full p-2 shadow-md hover:bg-gray-50 transition-all z-10 disabled:opacity-50 md:opacity-0 md:group-hover:opacity-100"
             disabled={totalSlides <= 1}
           >
             <ChevronLeft className="w-5 h-5 text-gray-600" />
           </button>
           <button
             onClick={nextSlide}
-            className="absolute right-2 top-[40%] -translate-y-1/2 bg-white border rounded-full p-2 shadow-md hover:bg-gray-50 opacity-0 group-hover:opacity-100 transition-all z-10 disabled:opacity-50"
+            className="absolute right-2 top-[40%] -translate-y-1/2 bg-white border rounded-full p-2 shadow-md hover:bg-gray-50 transition-all z-10 disabled:opacity-50 md:opacity-0 md:group-hover:opacity-100"
             disabled={totalSlides <= 1}
           >
             <ChevronRight className="w-5 h-5 text-gray-600" />
@@ -180,15 +175,15 @@ export default function BrandCarousel({ brands, itemsPerPage = 6 }: BrandCarouse
       )}
 
       {totalSlides > 1 && (
-        <div className="flex justify-center gap-2 mt-6">
+        <div className="flex justify-center gap-2 mt-4 md:mt-6">
           {Array.from({ length: totalSlides }).map((_, index) => (
             <button
               key={index}
               onClick={() => goToSlide(index)}
-              className={`w-2 h-2 rounded-full transition-all ${
+              className={`h-2 rounded-full transition-all touch-manipulation ${
                 index === currentIndex
                   ? "bg-primary-600 w-6"
-                  : "bg-gray-300 hover:bg-gray-400"
+                  : "bg-gray-300 hover:bg-gray-400 w-2"
               }`}
             />
           ))}

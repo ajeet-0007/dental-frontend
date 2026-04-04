@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useSwipe } from "@/hooks/useSwipe";
 
 interface Banner {
   id: number;
@@ -51,15 +52,23 @@ export default function HeroCarousel({ banners }: HeroCarouselProps) {
     setCurrentIndex((prev) => (prev - 1 + totalSlides) % totalSlides);
   };
 
+  const { onTouchStart, onTouchMove, onTouchEnd } = useSwipe({
+    onSwipeLeft: nextSlide,
+    onSwipeRight: prevSlide,
+  });
+
   if (totalSlides === 0) return null;
 
   const currentBanner = activeBanners[currentIndex];
 
   return (
     <div
-      className="relative w-full overflow-hidden rounded-xl shadow-lg group"
+      className="relative w-full overflow-hidden rounded-xl shadow-lg group touch-pan-y"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
     >
       <AnimatePresence mode="wait">
         <motion.div
@@ -68,8 +77,7 @@ export default function HeroCarousel({ banners }: HeroCarouselProps) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.5 }}
-          className="relative w-full"
-          style={{ height: "412px" }}
+          className="relative w-full h-44 md:h-64 lg:h-80 xl:h-[350px]"
         >
           <Link
             to={currentBanner.link || "/products"}
@@ -93,29 +101,29 @@ export default function HeroCarousel({ banners }: HeroCarouselProps) {
         <>
           <button
             onClick={prevSlide}
-            className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white border rounded-full p-1.5 shadow-md opacity-0 group-hover:opacity-100 transition-all z-10"
+            className="absolute left-2 md:left-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white border rounded-full p-1.5 md:p-2 shadow-md transition-all z-10 md:opacity-0 md:group-hover:opacity-100"
           >
-            <ChevronLeft className="w-5 h-5 text-gray-800" />
+            <ChevronLeft className="w-4 h-4 md:w-5 md:h-5 text-gray-800" />
           </button>
           <button
             onClick={nextSlide}
-            className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white border rounded-full p-1.5 shadow-md opacity-0 group-hover:opacity-100 transition-all z-10"
+            className="absolute right-2 md:right-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white border rounded-full p-1.5 md:p-2 shadow-md transition-all z-10 md:opacity-0 md:group-hover:opacity-100"
           >
-            <ChevronRight className="w-5 h-5 text-gray-800" />
+            <ChevronRight className="w-4 h-4 md:w-5 md:h-5 text-gray-800" />
           </button>
         </>
       )}
 
       {totalSlides > 1 && (
-        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+        <div className="absolute bottom-2 md:bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 md:gap-2 z-10">
           {activeBanners.map((_, index) => (
             <button
               key={index}
               onClick={() => goToSlide(index)}
-              className={`w-2 h-2 rounded-full transition-all ${
+              className={`h-1.5 md:h-2 rounded-full transition-all touch-manipulation ${
                 index === currentIndex
-                  ? "bg-white w-6"
-                  : "bg-white/50 hover:bg-white/75"
+                  ? "bg-white w-4 md:w-6"
+                  : "bg-white/50 hover:bg-white/75 w-1.5 md:w-2"
               }`}
             />
           ))}

@@ -90,43 +90,55 @@ export default function Home() {
       )}
 
       {/* Trust Badges */}
-      <section className="py-8 bg-white border-y border-gray-100">
+      <section className="py-6 md:py-8 bg-white border-y border-gray-100">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="group flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-colors cursor-default">
-              <div className="w-14 h-14 bg-primary-50 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
-                <Shield className="h-7 w-7 text-primary-600" />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
+            <div className="flex items-center gap-3 p-3 md:p-4">
+              <div className="w-10 md:w-14 h-10 md:h-14 bg-primary-50 rounded-xl flex items-center justify-center flex-shrink-0">
+                <Shield className="h-5 w-5 md:h-7 md:w-7 text-primary-600" />
               </div>
-              <div>
-                <h3 className="font-semibold text-gray-900 tracking-tight">Genuine Products</h3>
-                <p className="text-sm text-gray-500 mt-0.5">100% authentic</p>
+              <div className="hidden md:block">
+                <h3 className="font-semibold text-gray-900 text-sm">Genuine Products</h3>
+                <p className="text-xs text-gray-500 mt-0.5">100% authentic</p>
               </div>
-            </div>
-            <div className="group flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-colors cursor-default">
-              <div className="w-14 h-14 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
-                <Truck className="h-7 w-7 text-blue-600" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-gray-900 tracking-tight">Fast Delivery</h3>
-                <p className="text-sm text-gray-500 mt-0.5">Across India</p>
+              <div className="md:hidden">
+                <p className="text-xs font-medium text-gray-900">Genuine</p>
               </div>
             </div>
-            <div className="group flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-colors cursor-default">
-              <div className="w-14 h-14 bg-green-50 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
-                <CreditCard className="h-7 w-7 text-green-600" />
+            <div className="flex items-center gap-3 p-3 md:p-4">
+              <div className="w-10 md:w-14 h-10 md:h-14 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0">
+                <Truck className="h-5 w-5 md:h-7 md:w-7 text-blue-600" />
               </div>
-              <div>
-                <h3 className="font-semibold text-gray-900 tracking-tight">Secure Payment</h3>
-                <p className="text-sm text-gray-500 mt-0.5">Multiple options</p>
+              <div className="hidden md:block">
+                <h3 className="font-semibold text-gray-900 text-sm">Fast Delivery</h3>
+                <p className="text-xs text-gray-500 mt-0.5">Across India</p>
+              </div>
+              <div className="md:hidden">
+                <p className="text-xs font-medium text-gray-900">Fast Delivery</p>
               </div>
             </div>
-            <div className="group flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-colors cursor-default">
-              <div className="w-14 h-14 bg-amber-50 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
-                <Package className="h-7 w-7 text-amber-600" />
+            <div className="flex items-center gap-3 p-3 md:p-4">
+              <div className="w-10 md:w-14 h-10 md:h-14 bg-green-50 rounded-xl flex items-center justify-center flex-shrink-0">
+                <CreditCard className="h-5 w-5 md:h-7 md:w-7 text-green-600" />
               </div>
-              <div>
-                <h3 className="font-semibold text-gray-900 tracking-tight">Easy Returns</h3>
-                <p className="text-sm text-gray-500 mt-0.5">Hassle-free</p>
+              <div className="hidden md:block">
+                <h3 className="font-semibold text-gray-900 text-sm">Secure Payment</h3>
+                <p className="text-xs text-gray-500 mt-0.5">Multiple options</p>
+              </div>
+              <div className="md:hidden">
+                <p className="text-xs font-medium text-gray-900">Secure</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 p-3 md:p-4">
+              <div className="w-10 md:w-14 h-10 md:h-14 bg-amber-50 rounded-xl flex items-center justify-center flex-shrink-0">
+                <Package className="h-5 w-5 md:h-7 md:w-7 text-amber-600" />
+              </div>
+              <div className="hidden md:block">
+                <h3 className="font-semibold text-gray-900 text-sm">Easy Returns</h3>
+                <p className="text-xs text-gray-500 mt-0.5">Hassle-free</p>
+              </div>
+              <div className="md:hidden">
+                <p className="text-xs font-medium text-gray-900">Easy Returns</p>
               </div>
             </div>
           </div>
@@ -134,12 +146,12 @@ export default function Home() {
       </section>
 
       {categories.length > 0 && (
-        <section className="py-8 lg:py-10">
+        <section className="py-6 md:py-8 lg:py-10">
           <div className="container mx-auto px-4">
-            <div className="flex items-end justify-between mb-6">
+            <div className="flex items-end justify-between mb-4 md:mb-6">
               <div>
                 <p className="text-xs font-semibold text-primary-600 uppercase tracking-widest mb-1">Explore</p>
-                <h2 className="text-xl lg:text-2xl font-bold text-gray-900 tracking-tight">Categories</h2>
+                <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-gray-900 tracking-tight">Categories</h2>
               </div>
               <Link
                 to="/categories"
@@ -152,7 +164,7 @@ export default function Home() {
               </Link>
             </div>
             <CategoryCarousel categories={categories} itemsPerPage={6} />
-            <Link to="/categories" className="sm:hidden flex justify-center mt-4 text-sm font-medium text-primary-600">
+            <Link to="/categories" className="sm:hidden flex justify-center mt-4 text-sm font-medium text-primary-600 py-2">
               View All Categories →
             </Link>
           </div>
@@ -160,12 +172,12 @@ export default function Home() {
       )}
 
       {brands.length > 0 && (
-        <section className="py-8 lg:py-10 bg-gray-50/50">
+        <section className="py-6 md:py-8 lg:py-10 bg-gray-50/50">
           <div className="container mx-auto px-4">
-            <div className="flex items-end justify-between mb-6">
+            <div className="flex items-end justify-between mb-4 md:mb-6">
               <div>
                 <p className="text-xs font-semibold text-primary-600 uppercase tracking-widest mb-1">Top Picks</p>
-                <h2 className="text-xl lg:text-2xl font-bold text-gray-900 tracking-tight">Brands</h2>
+                <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-gray-900 tracking-tight">Brands</h2>
               </div>
               <Link
                 to="/brands"
@@ -178,7 +190,7 @@ export default function Home() {
               </Link>
             </div>
             <BrandCarousel brands={brands} itemsPerPage={6} />
-            <Link to="/brands" className="sm:hidden flex justify-center mt-4 text-sm font-medium text-primary-600">
+            <Link to="/brands" className="sm:hidden flex justify-center mt-4 text-sm font-medium text-primary-600 py-2">
               View All Brands →
             </Link>
           </div>
@@ -186,12 +198,12 @@ export default function Home() {
       )}
 
       {departments.length > 0 && (
-        <section className="py-8 lg:py-10">
+        <section className="py-6 md:py-8 lg:py-10">
           <div className="container mx-auto px-4">
-            <div className="flex items-end justify-between mb-6">
+            <div className="flex items-end justify-between mb-4 md:mb-6">
               <div>
                 <p className="text-xs font-semibold text-primary-600 uppercase tracking-widest mb-1">Browse</p>
-                <h2 className="text-xl lg:text-2xl font-bold text-gray-900 tracking-tight">Departments</h2>
+                <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-gray-900 tracking-tight">Departments</h2>
               </div>
               <Link
                 to="/departments"
@@ -204,19 +216,19 @@ export default function Home() {
               </Link>
             </div>
             <DepartmentCarousel departments={departments} itemsPerPage={6} />
-            <Link to="/departments" className="sm:hidden flex justify-center mt-4 text-sm font-medium text-primary-600">
+            <Link to="/departments" className="sm:hidden flex justify-center mt-4 text-sm font-medium text-primary-600 py-2">
               View All Departments →
             </Link>
           </div>
         </section>
       )}
 
-      <section className="py-8 lg:py-10 bg-gray-50/50">
+      <section className="py-6 md:py-8 lg:py-10 bg-gray-50/50">
         <div className="container mx-auto px-4">
-          <div className="flex items-end justify-between mb-6">
+          <div className="flex items-end justify-between mb-4 md:mb-6">
             <div>
               <p className="text-xs font-semibold text-primary-600 uppercase tracking-widest mb-1">Don't Miss</p>
-              <h2 className="text-xl lg:text-2xl font-bold text-gray-900 tracking-tight">Featured Products</h2>
+              <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-gray-900 tracking-tight">Featured Products</h2>
             </div>
             <Link
               to="/products"
@@ -236,7 +248,7 @@ export default function Home() {
               <p className="text-gray-500">No products available yet.</p>
             </div>
           )}
-          <Link to="/products" className="sm:hidden flex justify-center mt-4 text-sm font-medium text-primary-600">
+          <Link to="/products" className="sm:hidden flex justify-center mt-4 text-sm font-medium text-primary-600 py-2">
             View All Products →
           </Link>
         </div>

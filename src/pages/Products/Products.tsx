@@ -1,6 +1,7 @@
 import { useState, useEffect, memo } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 import api from "@/api";
 import { useCartStore } from "@/stores/cartStore";
@@ -235,6 +236,7 @@ export default function Products() {
     };
     setFilters(emptyFilters);
     updateURLParams(emptyFilters);
+    setPage(1);
   };
 
   const isInCart = (productId: string) => {
@@ -489,11 +491,11 @@ export default function Products() {
   ));
 
   return (
-    <div className="container mx-auto px-4 py-6">
+    <div className="container mx-auto px-3 py-4 md:px-4 md:py-6">
       {/* Mobile Filter Toggle */}
       <button
         onClick={() => setShowFilters(!showFilters)}
-        className="lg:hidden flex items-center gap-2 px-4 py-2 mb-4 text-sm font-medium text-gray-700 bg-gray-50 border rounded-lg"
+        className="lg:hidden flex items-center gap-2 px-4 py-2.5 mb-4 text-sm font-medium text-gray-700 bg-gray-50 border rounded-lg active:bg-gray-100 transition-colors"
       >
         <SlidersHorizontal className="h-4 w-4" />
         Filters
@@ -545,16 +547,32 @@ export default function Products() {
         </aside>
 
         {/* Mobile Sidebar */}
-        {showFilters && (
-          <div className="lg:hidden fixed inset-0 z-50 bg-black/50" onClick={() => setShowFilters(false)}>
-            <div className="absolute right-0 top-0 bottom-0 w-72 bg-white p-5 overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="font-semibold text-lg text-gray-800">Filters</h3>
-                <button onClick={() => setShowFilters(false)} className="p-1 hover:bg-gray-100 rounded">
-                  <X className="h-5 w-5 text-gray-500" />
-                </button>
-              </div>
-              <FilterSidebar 
+        <AnimatePresence>
+          {showFilters && (
+            <>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="lg:hidden fixed inset-0 z-50 bg-black/50"
+                onClick={() => setShowFilters(false)}
+              />
+              <motion.div
+                initial={{ x: "100%" }}
+                animate={{ x: 0 }}
+                exit={{ x: "100%" }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                className="lg:hidden fixed right-0 top-0 bottom-0 w-[85%] max-w-[320px] bg-white z-50 overflow-y-auto"
+              >
+                <div className="flex items-center justify-between p-4 border-b">
+                  <h3 className="font-semibold text-lg text-gray-800">Filters</h3>
+                  <button onClick={() => setShowFilters(false)} className="p-2 hover:bg-gray-100 rounded-lg active:bg-gray-200 transition-colors">
+                    <X className="h-5 w-5 text-gray-500" />
+                  </button>
+                </div>
+                <div className="p-4">
+                <FilterSidebar 
                 filters={filters}
                 categories={categories}
                 departments={departments}
@@ -588,14 +606,19 @@ export default function Products() {
                 }}
               />
               <button
-                onClick={() => setShowFilters(false)}
-                className="w-full mt-6 py-2.5 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700"
+                onClick={() => {
+                  setPage(1);
+                  setShowFilters(false);
+                }}
+                className="w-full mt-6 py-3 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 active:bg-primary-800 transition-colors"
               >
                 Show Results
               </button>
-            </div>
-          </div>
-        )}
+                </div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
 
         {/* Products Grid */}
         <div className="flex-1">
@@ -699,14 +722,14 @@ export default function Products() {
           )}
 
           {/* Sort and Results Count */}
-          <div className="flex items-center justify-between mb-4">
-            <p className="text-sm text-gray-600">
+          <div className="flex items-center justify-between mb-4 gap-2">
+            <p className="text-sm text-gray-600 truncate">
               {data?.data?.total || 0} products
             </p>
             <div className="relative">
               <button
                 onClick={() => setShowSortMenu(!showSortMenu)}
-                className="flex items-center gap-2 px-3 py-2 text-sm border rounded-lg hover:bg-gray-50"
+                className="flex items-center gap-2 px-4 py-2.5 text-sm border rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-colors"
               >
                 <ArrowUpDown className="h-4 w-4" />
                 <span className="hidden sm:inline">
@@ -714,37 +737,45 @@ export default function Products() {
                 </span>
                 <ChevronDown className="h-4 w-4" />
               </button>
-              {showSortMenu && (
-                <div className="absolute right-0 mt-1 w-48 bg-white border rounded-lg shadow-lg z-20 py-1">
-                  {sortOptions.map((option) => (
-                    <button
-                      key={option.value}
-                      onClick={() => {
-                        setSortBy(option.value);
-                        setShowSortMenu(false);
-                        setPage(1);
-                      }}
-                      className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 ${
-                        sortBy === option.value ? "text-primary-600 font-medium" : "text-gray-700"
-                      }`}
-                    >
-                      {option.label}
-                    </button>
-                  ))}
-                </div>
-              )}
+              <AnimatePresence>
+                {showSortMenu && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute right-0 mt-1 w-48 bg-white border rounded-lg shadow-lg z-20 py-1"
+                  >
+                    {sortOptions.map((option) => (
+                      <button
+                        key={option.value}
+                        onClick={() => {
+                          setSortBy(option.value);
+                          setShowSortMenu(false);
+                          setPage(1);
+                        }}
+                        className={`w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 active:bg-gray-100 transition-colors ${
+                          sortBy === option.value ? "text-primary-600 font-medium" : "text-gray-700"
+                        }`}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
 
           {isLoading ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
               {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
                 <div
                   key={i}
-                  className="bg-white border rounded-lg overflow-hidden animate-pulse"
+                  className="bg-white border rounded-xl overflow-hidden animate-pulse"
                 >
                   <div className="aspect-square bg-gray-100"></div>
-                  <div className="p-3 space-y-2">
+                  <div className="p-3 md:p-4 space-y-2">
                     <div className="h-4 bg-gray-100 rounded w-3/4"></div>
                     <div className="h-3 bg-gray-100 rounded w-1/2"></div>
                     <div className="h-5 bg-gray-100 rounded w-1/3 mt-3"></div>
@@ -754,7 +785,7 @@ export default function Products() {
             </div>
           ) : products.length > 0 ? (
             <>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
                 {products.map((product: any) => {
                   const inCart = isInCart(product.id.toString());
                   const inWishlist = isInWishlist(product.id.toString());
@@ -762,7 +793,6 @@ export default function Products() {
                   const activeVariants = variants.filter((v: any) => v.isActive);
                   const hasVariants = activeVariants.length > 0;
                   
-                  // Check stock availability from inventories
                   const inventories = product.inventories || [];
                   let totalStock = -1;
                   let hasAnyStock = false;
@@ -772,13 +802,10 @@ export default function Products() {
                     hasAnyStock = inventories.some((inv: any) => (inv.quantity || 0) > 0);
                   }
                   
-                  // For variant products, check if at least one variant has stock
-                  // For non-variant products, check total stock
                   const isOutOfStock = hasVariants 
                     ? (inventories.length > 0 && !hasAnyStock)
                     : totalStock === 0;
                   
-                  // Get price range from variants only (ignore product-level price for variant products)
                   let minPrice = product.sellingPrice;
                   let maxPrice = product.sellingPrice;
                   let showPriceRange = false;
@@ -795,13 +822,12 @@ export default function Products() {
                     }
                   }
                   
-                  // Get unique colors and sizes
                   const colors = [...new Set(activeVariants.filter((v: any) => v.color).map((v: any) => v.color as string))] as string[];
                   
                   return (
                     <div
                       key={product.id}
-                      className={`relative bg-white border rounded-lg overflow-hidden transition-all duration-200 ${
+                      className={`relative bg-white border rounded-xl overflow-hidden transition-all duration-200 active:scale-[0.98] ${
                         isOutOfStock ? 'opacity-60' : 'hover:shadow-lg'
                       }`}
                     >
@@ -823,7 +849,6 @@ export default function Products() {
                               className="w-full h-full object-cover"
                             />
                           )}
-                          {/* Color swatches on image */}
                           {colors.length > 0 && (
                             <div className="absolute bottom-2 left-2 flex -space-x-1">
                               {colors.slice(0, 4).map((color: string, i: number) => (
@@ -843,16 +868,15 @@ export default function Products() {
                             </div>
                           )}
                         </div>
-                        <div className="p-3">
+                        <div className="p-3 md:p-4">
                           <div className="flex items-start justify-between gap-2 mb-1">
                             <h3 className="text-sm font-medium text-gray-900 line-clamp-2 flex-1">
                               {product.name}
                             </h3>
-                            {/* Variant count badge */}
                             {hasVariants && (
                               <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-full whitespace-nowrap">
                                 <Package className="w-3 h-3" />
-                                {activeVariants.length} variant{activeVariants.length > 1 ? 's' : ''}
+                                {activeVariants.length}
                               </span>
                             )}
                           </div>
@@ -870,10 +894,9 @@ export default function Products() {
                         </div>
                       </Link>
                       
-                      {/* Wishlist Button */}
                       <button
                         onClick={(e) => handleToggleWishlist(e, product)}
-                        className={`absolute top-3 left-3 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 ${
+                        className={`absolute top-3 left-3 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 active:scale-90 ${
                           inWishlist
                             ? "bg-red-500 text-white hover:bg-red-600"
                             : "bg-white/90 text-gray-600 hover:text-red-500 shadow-md"
@@ -883,7 +906,6 @@ export default function Products() {
                         <Heart className={`h-4 w-4 ${inWishlist ? "fill-white" : ""}`} />
                       </button>
                       
-                      {/* Add to Cart Button - Fixed position */}
                       {isOutOfStock ? (
                         <button
                           disabled
@@ -895,7 +917,7 @@ export default function Products() {
                       ) : (
                         <button
                           onClick={(e) => handleOpenCartDrawer(e, product)}
-                          className={`absolute bottom-3 right-3 w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-110 ${
+                          className={`absolute bottom-3 right-3 w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-all duration-200 active:scale-90 ${
                             inCart
                               ? "bg-green-500 text-white hover:bg-green-600"
                               : "bg-primary-600 text-white hover:bg-primary-700"
@@ -915,11 +937,11 @@ export default function Products() {
               </div>
 
               {totalPages > 1 && (
-                <div className="flex justify-center gap-2 mt-8">
+                <div className="flex justify-center items-center gap-2 mt-8">
                   <button
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
                     disabled={page === 1}
-                    className="px-4 py-2 text-sm border rounded-md disabled:opacity-50 hover:bg-gray-50"
+                    className="px-4 py-2.5 text-sm border rounded-lg disabled:opacity-50 hover:bg-gray-50 active:bg-gray-100 transition-colors"
                   >
                     Previous
                   </button>
@@ -929,7 +951,7 @@ export default function Products() {
                   <button
                     onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                     disabled={page === totalPages}
-                    className="px-4 py-2 text-sm border rounded-md disabled:opacity-50 hover:bg-gray-50"
+                    className="px-4 py-2.5 text-sm border rounded-lg disabled:opacity-50 hover:bg-gray-50 active:bg-gray-100 transition-colors"
                   >
                     Next
                   </button>
