@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
@@ -35,6 +35,34 @@ export default function ProductDetail() {
   const [showLightbox, setShowLightbox] = useState(false);
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
   const [activeTab, setActiveTab] = useState("description");
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const imageContainerRef = useRef<HTMLDivElement>(null);
+
+  const minSwipeDistance = 50;
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+    
+    if (isLeftSwipe && hasMultipleImages) {
+      nextImage();
+    }
+    if (isRightSwipe && hasMultipleImages) {
+      prevImage();
+    }
+  };
 
   const tabs = [
     { id: "features", label: "Features" },
@@ -219,15 +247,15 @@ export default function ProductDetail() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-3 py-4 md:px-4 md:py-6">
           <div className="animate-pulse">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <div className="aspect-square bg-gray-200 rounded-2xl"></div>
-              <div className="space-y-6">
-                <div className="h-8 bg-gray-200 rounded w-3/4"></div>
-                <div className="h-4 bg-gray-200 rounded w-1/4"></div>
-                <div className="h-12 bg-gray-200 rounded w-1/3"></div>
-                <div className="h-24 bg-gray-200 rounded"></div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8">
+              <div className="aspect-square bg-gray-200 rounded-xl md:rounded-2xl"></div>
+              <div className="space-y-4 md:space-y-6">
+                <div className="h-5 md:h-8 bg-gray-200 rounded w-3/4"></div>
+                <div className="h-3 md:h-4 bg-gray-200 rounded w-1/4"></div>
+                <div className="h-6 md:h-12 bg-gray-200 rounded w-1/3"></div>
+                <div className="h-16 md:h-24 bg-gray-200 rounded"></div>
               </div>
             </div>
           </div>
@@ -262,27 +290,31 @@ export default function ProductDetail() {
 
   return (
     <div className="bg-gray-50 min-h-screen">
-      <div className="container mx-auto px-4 py-8 lg:py-12">
-        <div className="bg-white rounded-3xl shadow-sm overflow-hidden">
+      <div className="container mx-auto px-3 py-4 md:px-4 md:py-6 lg:px-4 lg:py-12">
+        <div className="bg-white rounded-2xl md:rounded-3xl shadow-sm overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-0">
             {/* Images - Left Side */}
-            <div className="lg:col-span-2 p-8 lg:p-10">
-              <div className="sticky top-8">
+            <div className="lg:col-span-2 p-3 md:p-6 lg:p-10">
+              <div className="lg:sticky lg:top-8">
                 {/* Main Image */}
                 <div
-                  className="relative aspect-square bg-gray-50 rounded-2xl overflow-hidden cursor-pointer group"
+                  ref={imageContainerRef}
+                  className="relative aspect-square bg-gray-50 rounded-xl md:rounded-2xl overflow-hidden cursor-pointer group"
                   onClick={() => setShowLightbox(true)}
+                  onTouchStart={onTouchStart}
+                  onTouchMove={onTouchMove}
+                  onTouchEnd={onTouchEnd}
                 >
                   <img
                     src={images[currentImageIndex]}
                     alt={product.name}
-                    className="w-full h-full object-contain p-4"
+                    className="w-full h-full object-contain p-2 md:p-4"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = DEFAULT_IMAGE;
                     }}
                   />
 
-                  {/* Navigation Arrows */}
+                  {/* Navigation Arrows - Always visible on mobile */}
                   {hasMultipleImages && (
                     <>
                       <button
@@ -290,25 +322,25 @@ export default function ProductDetail() {
                           e.stopPropagation();
                           prevImage();
                         }}
-                        className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white shadow-lg rounded-full p-2.5 opacity-0 group-hover:opacity-100 transition-all"
+                        className="absolute left-2 md:left-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white shadow-lg rounded-full p-1.5 md:p-2.5 transition-all"
                       >
-                        <ChevronLeft className="w-5 h-5" />
+                        <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
                       </button>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           nextImage();
                         }}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white shadow-lg rounded-full p-2.5 opacity-0 group-hover:opacity-100 transition-all"
+                        className="absolute right-2 md:right-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white shadow-lg rounded-full p-1.5 md:p-2.5 transition-all"
                       >
-                        <ChevronRight className="w-5 h-5" />
+                        <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
                       </button>
                     </>
                   )}
 
                   {/* Image Counter */}
                   {hasMultipleImages && (
-                    <div className="absolute bottom-3 right-3 bg-black/60 text-white text-xs px-2.5 py-1 rounded-full">
+                    <div className="absolute bottom-2 right-2 md:bottom-3 md:right-3 bg-black/60 text-white text-[10px] md:text-xs px-2 py-0.5 md:px-2.5 md:py-1 rounded-full">
                       {currentImageIndex + 1} / {images.length}
                     </div>
                   )}
@@ -316,12 +348,12 @@ export default function ProductDetail() {
 
                 {/* Thumbnails */}
                 {hasMultipleImages && (
-                  <div className="flex gap-2 mt-4 overflow-x-auto pb-2">
+                  <div className="flex gap-1.5 md:gap-2 mt-3 md:mt-4 overflow-x-auto pb-2">
                     {images.map((img: string, index: number) => (
                       <button
                         key={index}
                         onClick={() => setCurrentImageIndex(index)}
-                        className={`w-16 h-16 rounded-xl overflow-hidden border-2 transition-all flex-shrink-0 ${
+                        className={`w-12 h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 rounded-lg md:rounded-xl overflow-hidden border-2 transition-all flex-shrink-0 ${
                           currentImageIndex === index
                             ? "border-primary-600 ring-2 ring-primary-100"
                             : "border-gray-100 hover:border-gray-300"
@@ -343,20 +375,20 @@ export default function ProductDetail() {
             </div>
 
             {/* Product Info - Right Side */}
-            <div className="lg:col-span-3 p-8 lg:p-10 border-l border-gray-100">
+            <div className="lg:col-span-3 p-4 md:p-6 lg:p-10 lg:border-l lg:border-gray-100">
               {/* Header */}
-              <div className="mb-8">
-                <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4 leading-tight">
+              <div className="mb-4 md:mb-6 lg:mb-8">
+                <h1 className="text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-gray-900 mb-2 md:mb-4 leading-tight">
                   {product.name}
                 </h1>
 
                 {/* Rating */}
-                <div className="flex items-center gap-3 mb-4">
+                <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
                   <div className="flex items-center">
                     {[...Array(5)].map((_, i) => (
                       <Star
                         key={i}
-                        className={`h-4 w-4 ${
+                        className={`h-3.5 w-3.5 md:h-4 md:w-4 ${
                           i < 4
                             ? "text-yellow-400 fill-yellow-400"
                             : "text-gray-300"
@@ -364,20 +396,20 @@ export default function ProductDetail() {
                       />
                     ))}
                   </div>
-                  <span className="text-sm text-gray-500">(4 reviews)</span>
+                  <span className="text-xs md:text-sm text-gray-500">(4 reviews)</span>
                 </div>
 
                 {/* Price */}
-                <div className="flex items-baseline gap-3">
-                  <span className="text-3xl font-bold text-gray-900">
+                <div className="flex flex-wrap items-baseline gap-1.5 md:gap-3">
+                  <span className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900">
                     ₹{selectedPrice.toLocaleString()}
                   </span>
                   {selectedMRP > selectedPrice && selectedMRP > 0 && (
                     <>
-                      <span className="text-lg text-gray-400 line-through">
+                      <span className="text-sm md:text-lg text-gray-400 line-through">
                         ₹{selectedMRP.toLocaleString()}
                       </span>
-                      <span className="bg-green-100 text-green-700 text-sm font-bold px-3 py-1 rounded-full">
+                      <span className="bg-green-100 text-green-700 text-[10px] md:text-sm font-bold px-2 md:px-3 py-0.5 md:py-1 rounded-full">
                         {Math.round((1 - selectedPrice / selectedMRP) * 100)}% OFF
                       </span>
                     </>
@@ -387,7 +419,7 @@ export default function ProductDetail() {
 
               {/* Variants */}
               {hasVariants && (
-                <div className="mb-6">
+                <div className="mb-4 md:mb-6">
                   <VariantSelector
                     variants={activeVariants}
                     options={product.options}
@@ -404,51 +436,51 @@ export default function ProductDetail() {
               )}
 
               {/* Trust Badges */}
-              <div className="grid grid-cols-3 gap-3 mb-6">
-                <div className="flex items-center gap-2 text-xs text-gray-600 bg-gray-50 rounded-lg px-3 py-2">
-                  <ShieldCheck className="h-4 w-4 text-green-500" />
-                  Quality Assured
+              <div className="flex items-center justify-center gap-1.5 md:gap-2 mb-4 md:mb-6">
+                <div className="flex items-center gap-1 text-[10px] md:text-xs text-gray-600 bg-gray-50 rounded-lg px-1.5 md:px-3 py-1.5 md:py-2">
+                  <ShieldCheck className="h-3 w-3 md:h-4 md:w-4 text-green-500" />
+                  <span>Quality Assured</span>
                 </div>
-                <div className="flex items-center gap-2 text-xs text-gray-600 bg-gray-50 rounded-lg px-3 py-2">
-                  <ShieldCheck className="h-4 w-4 text-blue-500" />
-                  Genuine Product
+                <div className="flex items-center gap-1 text-[10px] md:text-xs text-gray-600 bg-gray-50 rounded-lg px-1.5 md:px-3 py-1.5 md:py-2">
+                  <ShieldCheck className="h-3 w-3 md:h-4 md:w-4 text-blue-500" />
+                  <span>Genuine Product</span>
                 </div>
-                <div className="flex items-center gap-2 text-xs text-gray-600 bg-gray-50 rounded-lg px-3 py-2">
-                  <RotateCw className="h-4 w-4 text-amber-500" />
-                  Easy Returns
+                <div className="flex items-center gap-1 text-[10px] md:text-xs text-gray-600 bg-gray-50 rounded-lg px-1.5 md:px-3 py-1.5 md:py-2">
+                  <RotateCw className="h-3 w-3 md:h-4 md:w-4 text-amber-500" />
+                  <span>Easy Returns</span>
                 </div>
               </div>
 
               {/* Quantity & Add to Cart */}
-              <div className="flex items-center gap-3 mb-6">
-                <div className="flex items-center bg-gray-100 rounded-xl">
+              <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
+                <div className="flex items-center bg-gray-100 rounded-lg md:rounded-xl">
                   <button
                     onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                    className="p-3 hover:bg-gray-200 rounded-l-xl transition-colors"
+                    className="p-2 md:p-3 hover:bg-gray-200 rounded-l-lg md:rounded-l-xl transition-colors"
                   >
-                    <Minus className="h-4 w-4" />
+                    <Minus className="h-3.5 w-3.5 md:h-4 md:w-4" />
                   </button>
-                  <span className="px-4 font-semibold min-w-[48px] text-center">
+                  <span className="px-2 md:px-4 font-semibold text-sm md:text-base min-w-[36px] md:min-w-[48px] text-center">
                     {quantity}
                   </span>
                   <button
                     onClick={() => setQuantity((q) => q + 1)}
-                    className="p-3 hover:bg-gray-200 rounded-r-xl transition-colors"
+                    className="p-2 md:p-3 hover:bg-gray-200 rounded-r-lg md:rounded-r-xl transition-colors"
                   >
-                    <Plus className="h-4 w-4" />
+                    <Plus className="h-3.5 w-3.5 md:h-4 md:w-4" />
                   </button>
                 </div>
 
                 <button
                   onClick={handleAddToCart}
                   disabled={addToCartMutation.isPending || isOutOfStock}
-                  className={`flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl font-semibold text-sm transition-all ${
+                  className={`flex-1 flex items-center justify-center gap-1.5 md:gap-2 py-2.5 md:py-3.5 rounded-lg md:rounded-xl font-semibold text-xs md:text-sm transition-all ${
                     isOutOfStock
                       ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                       : "bg-primary-600 text-white hover:bg-primary-700 active:scale-[0.98]"
                   }`}
                 >
-                  <ShoppingCart className="h-5 w-5" />
+                  <ShoppingCart className="h-4 w-4 md:h-5 md:w-5" />
                   {addToCartMutation.isPending
                     ? "Adding..."
                     : isOutOfStock
@@ -456,30 +488,30 @@ export default function ProductDetail() {
                       : "Add to Cart"}
                 </button>
 
-                <button className="p-3 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">
-                  <Heart className="h-5 w-5 text-gray-600" />
+                <button className="p-2 md:p-3 bg-gray-100 hover:bg-gray-200 rounded-lg md:rounded-xl transition-colors">
+                  <Heart className="h-4 w-4 md:h-5 md:w-5 text-gray-600" />
                 </button>
               </div>
 
               {/* Short Description */}
               {product.shortDescription && (
-                <div className="border-t border-gray-100 pt-5 mt-5">
-                  <p className="text-sm text-gray-600 leading-relaxed">
+                <div className="border-t border-gray-100 pt-4 md:pt-5 mt-4 md:mt-5">
+                  <p className="text-xs md:text-sm text-gray-600 leading-relaxed">
                     {product.shortDescription}
                   </p>
                 </div>
               )}
 
               {/* Tabs */}
-              <div className="border-t border-gray-100 pt-6 mt-6">
-                {/* Tab Headers */}
-                <div className="overflow-x-auto scrollbar-hide -mx-2 px-2">
-                  <div className="flex gap-2 min-w-max">
+              <div className="border-t border-gray-100 pt-4 md:pt-6 mt-4 md:mt-6">
+                {/* Tab Headers - Horizontal Scroll */}
+                <div className="overflow-x-auto scrollbar-hide -mx-3 px-3">
+                  <div className="flex gap-1.5 md:gap-2 min-w-max">
                     {tabs.map((tab) => (
                       <button
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id)}
-                        className={`px-4 py-2 text-sm font-medium whitespace-nowrap rounded-lg transition-all ${
+                        className={`px-2.5 md:px-4 py-1.5 md:py-2 text-[11px] md:text-sm font-medium whitespace-nowrap rounded-lg transition-all ${
                           activeTab === tab.id
                             ? "bg-primary-600 text-white shadow-sm"
                             : "bg-gray-100 text-gray-600 hover:bg-gray-200"
@@ -492,36 +524,36 @@ export default function ProductDetail() {
                 </div>
 
                 {/* Tab Content */}
-                <div className="py-6 min-h-[200px]">
+                <div className="py-4 md:py-6 min-h-[150px] md:min-h-[200px]">
                   {/* Features */}
                   {activeTab === "features" && (
-                    <div>
+                    <div className="text-sm md:text-base">
                       {product.features ? (
                         <HtmlRenderer content={product.features} />
                       ) : (
-                        <p className="text-sm text-gray-400">No features available</p>
+                        <p className="text-xs md:text-sm text-gray-400">No features available</p>
                       )}
                     </div>
                   )}
 
                   {/* Description */}
                   {activeTab === "description" && (
-                    <div>
+                    <div className="text-sm md:text-base">
                       {product.description ? (
                         <HtmlRenderer content={product.description} />
                       ) : (
-                        <p className="text-sm text-gray-400">No description available</p>
+                        <p className="text-xs md:text-sm text-gray-400">No description available</p>
                       )}
                     </div>
                   )}
 
                   {/* Specifications */}
                   {activeTab === "specifications" && (
-                    <div>
+                    <div className="text-sm md:text-base">
                       {product.keySpecifications ? (
                         <HtmlRenderer content={product.keySpecifications} />
                       ) : (
-                        <p className="text-sm text-gray-400">
+                        <p className="text-xs md:text-sm text-gray-400">
                           No specifications available
                         </p>
                       )}
@@ -530,11 +562,11 @@ export default function ProductDetail() {
 
                   {/* Packaging */}
                   {activeTab === "packaging" && (
-                    <div>
+                    <div className="text-sm md:text-base">
                       {product.packaging ? (
                         <HtmlRenderer content={product.packaging} />
                       ) : (
-                        <p className="text-sm text-gray-400">
+                        <p className="text-xs md:text-sm text-gray-400">
                           No packaging info available
                         </p>
                       )}
@@ -543,11 +575,11 @@ export default function ProductDetail() {
 
                   {/* Directions */}
                   {activeTab === "directions" && (
-                    <div>
+                    <div className="text-sm md:text-base">
                       {product.directionToUse ? (
                         <HtmlRenderer content={product.directionToUse} />
                       ) : (
-                        <p className="text-sm text-gray-400">
+                        <p className="text-xs md:text-sm text-gray-400">
                           No directions available
                         </p>
                       )}
@@ -556,11 +588,11 @@ export default function ProductDetail() {
 
                   {/* Additional */}
                   {activeTab === "additional" && (
-                    <div>
+                    <div className="text-sm md:text-base">
                       {product.additionalInfo ? (
                         <HtmlRenderer content={product.additionalInfo} />
                       ) : (
-                        <p className="text-sm text-gray-400">
+                        <p className="text-xs md:text-sm text-gray-400">
                           No additional info available
                         </p>
                       )}
@@ -569,11 +601,11 @@ export default function ProductDetail() {
 
                   {/* Warranty */}
                   {activeTab === "warranty" && (
-                    <div>
+                    <div className="text-sm md:text-base">
                       {product.warranty ? (
                         <HtmlRenderer content={product.warranty} />
                       ) : (
-                        <p className="text-sm text-gray-400">
+                        <p className="text-xs md:text-sm text-gray-400">
                           No warranty information
                         </p>
                       )}
@@ -589,14 +621,17 @@ export default function ProductDetail() {
       {/* Lightbox */}
       {showLightbox && (
         <div
-          className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center"
+          className="fixed inset-0 bg-black/95 z-[100] flex items-center justify-center"
           onClick={() => setShowLightbox(false)}
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
         >
           <button
             onClick={() => setShowLightbox(false)}
-            className="absolute top-6 right-6 text-white/70 hover:text-white p-2"
+            className="absolute top-4 right-4 md:top-6 md:right-6 text-white/70 hover:text-white p-2"
           >
-            <X className="w-8 h-8" />
+            <X className="w-6 h-6 md:w-8 md:h-8" />
           </button>
 
           <button
@@ -604,15 +639,15 @@ export default function ProductDetail() {
               e.stopPropagation();
               prevImage();
             }}
-            className="absolute left-6 top-1/2 -translate-y-1/2 text-white/70 hover:text-white p-3 bg-white/10 rounded-full"
+            className="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 text-white/70 hover:text-white p-2 md:p-3 bg-white/10 rounded-full"
           >
-            <ChevronLeft className="w-8 h-8" />
+            <ChevronLeft className="w-6 h-6 md:w-8 md:h-8" />
           </button>
 
           <img
             src={images[currentImageIndex]}
             alt={product.name}
-            className="max-w-[85vw] max-h-[85vh] object-contain"
+            className="max-w-[90vw] max-h-[70vh] md:max-w-[85vw] md:max-h-[85vh] object-contain"
             onClick={(e) => e.stopPropagation()}
           />
 
@@ -621,12 +656,12 @@ export default function ProductDetail() {
               e.stopPropagation();
               nextImage();
             }}
-            className="absolute right-6 top-1/2 -translate-y-1/2 text-white/70 hover:text-white p-3 bg-white/10 rounded-full"
+            className="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 text-white/70 hover:text-white p-2 md:p-3 bg-white/10 rounded-full"
           >
-            <ChevronRight className="w-8 h-8" />
+            <ChevronRight className="w-6 h-6 md:w-8 md:h-8" />
           </button>
 
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3">
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 md:gap-3 max-w-[90vw] overflow-x-auto px-4">
             {images.map((img: string, index: number) => (
               <button
                 key={index}
@@ -634,7 +669,7 @@ export default function ProductDetail() {
                   e.stopPropagation();
                   setCurrentImageIndex(index);
                 }}
-                className={`w-16 h-16 rounded-lg overflow-hidden border-2 transition-all ${
+                className={`w-10 h-10 md:w-14 md:h-14 rounded-lg overflow-hidden border-2 transition-all flex-shrink-0 ${
                   currentImageIndex === index
                     ? "border-white"
                     : "border-white/30 hover:border-white/60"
