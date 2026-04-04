@@ -87,7 +87,7 @@ export default function RichTextEditor({
             </div>
           )}
           <CKEditor
-            editor={DecoupledEditor}
+            editor={DecoupledEditor as any}
             data={value || ''}
             onReady={handleReady}
             onChange={handleChange}
