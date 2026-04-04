@@ -318,11 +318,10 @@ export default function CartDrawer({ isOpen, onClose, product }: CartDrawerProps
             </div>
           )}
 
-          {/* Product Details */}
-          {product.description && (
+          {/* Short Description */}
+          {product.shortDescription && (
             <div className="mb-4">
-              <h4 className="text-sm font-medium text-gray-700 mb-2">Description</h4>
-              <p className="text-sm text-gray-500 line-clamp-3">{product.description}</p>
+              <p className="text-sm text-gray-500 line-clamp-3">{product.shortDescription}</p>
             </div>
           )}
 

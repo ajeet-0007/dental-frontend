@@ -14,12 +14,12 @@ import {
   Heart,
   ShieldCheck,
   RotateCw,
-  CheckCircle2,
   Minus,
   Plus,
   X,
 } from "lucide-react";
 import { VariantSelector, ProductVariant } from "@/components/common/VariantSelector";
+import HtmlRenderer from "@/components/common/HtmlRenderer";
 
 const DEFAULT_IMAGE =
   "https://images.unsplash.com/photo-1629909613654-28e377c37b09";
@@ -37,12 +37,12 @@ export default function ProductDetail() {
   const [activeTab, setActiveTab] = useState("description");
 
   const tabs = [
-    { id: "description", label: "Description" },
     { id: "features", label: "Features" },
-    { id: "specifications", label: "Specifications" },
+    { id: "description", label: "Description" },
+    { id: "specifications", label: "Key Specifications" },
     { id: "packaging", label: "Packaging" },
-    { id: "directions", label: "Directions" },
-    { id: "additional", label: "More Info" },
+    { id: "directions", label: "Direction to Use" },
+    { id: "additional", label: "Additional Info" },
     { id: "warranty", label: "Warranty" },
   ];
 
@@ -462,14 +462,10 @@ export default function ProductDetail() {
               </div>
 
               {/* Short Description */}
-              {product.description && (
+              {product.shortDescription && (
                 <div className="border-t border-gray-100 pt-5 mt-5">
                   <p className="text-sm text-gray-600 leading-relaxed">
-                    {typeof product.description === 'string' 
-                      ? product.description 
-                      : Array.isArray(product.description) 
-                        ? product.description.join(' ')
-                        : ''}
+                    {product.shortDescription}
                   </p>
                 </div>
               )}
@@ -477,94 +473,55 @@ export default function ProductDetail() {
               {/* Tabs */}
               <div className="border-t border-gray-100 pt-6 mt-6">
                 {/* Tab Headers */}
-                <div className="flex gap-2 overflow-x-auto pb-3 mb-5 scrollbar-hide">
-                  {tabs.map((tab) => (
-                    <button
-                      key={tab.id}
-                      onClick={() => setActiveTab(tab.id)}
-                      className={`px-5 py-2.5 text-sm font-medium rounded-lg whitespace-nowrap transition-all ${
-                        activeTab === tab.id
-                          ? "bg-primary-600 text-white shadow-md"
-                          : "text-gray-600 hover:bg-gray-100"
-                      }`}
-                    >
-                      {tab.label}
-                    </button>
-                  ))}
+                <div className="overflow-x-auto scrollbar-hide -mx-2 px-2">
+                  <div className="flex gap-2 min-w-max">
+                    {tabs.map((tab) => (
+                      <button
+                        key={tab.id}
+                        onClick={() => setActiveTab(tab.id)}
+                        className={`px-4 py-2 text-sm font-medium whitespace-nowrap rounded-lg transition-all ${
+                          activeTab === tab.id
+                            ? "bg-primary-600 text-white shadow-sm"
+                            : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                        }`}
+                      >
+                        {tab.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
                 {/* Tab Content */}
-                <div className="bg-gray-50 rounded-2xl p-6 min-h-[160px]">
-                  {/* Description */}
-                  {activeTab === "description" && (
-                    <div className="space-y-3">
-                      {(product.description
-                        ? Array.isArray(product.description)
-                          ? product.description
-                          : product.description
-                              .split("\n")
-                              .filter(Boolean)
-                        : []
-                      ).length > 0 ? (
-                        (product.description
-                          ? Array.isArray(product.description)
-                            ? product.description
-                            : product.description.split("\n").filter(Boolean)
-                          : []
-                        ).map((item: string, index: number) => (
-                          <div key={index} className="flex items-start gap-3">
-                            <CheckCircle2 className="h-5 w-5 text-primary-500 mt-0.5 flex-shrink-0" />
-                            <span className="text-sm text-gray-700 leading-relaxed">{item}</span>
-                          </div>
-                        ))
+                <div className="py-6 min-h-[200px]">
+                  {/* Features */}
+                  {activeTab === "features" && (
+                    <div>
+                      {product.features ? (
+                        <HtmlRenderer content={product.features} />
                       ) : (
-                        <p className="text-sm text-gray-400">
-                          No description available
-                        </p>
+                        <p className="text-sm text-gray-400">No features available</p>
                       )}
                     </div>
                   )}
 
-                  {/* Features */}
-                  {activeTab === "features" && (
-                    <div className="space-y-3">
-                      {product.features && product.features.length > 0 ? (
-                        product.features.map(
-                          (feature: string, index: number) => (
-                            <div key={index} className="flex items-start gap-3">
-                              <CheckCircle2 className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                              <span className="text-sm text-gray-700 leading-relaxed">{feature}</span>
-                            </div>
-                          )
-                        )
+                  {/* Description */}
+                  {activeTab === "description" && (
+                    <div>
+                      {product.description ? (
+                        <HtmlRenderer content={product.description} />
                       ) : (
-                        <p className="text-sm text-gray-400">
-                          No features available
-                        </p>
+                        <p className="text-sm text-gray-400">No description available</p>
                       )}
                     </div>
                   )}
 
                   {/* Specifications */}
                   {activeTab === "specifications" && (
-                    <div className="grid grid-cols-2 gap-3">
-                      {product.keySpecifications &&
-                      Object.keys(product.keySpecifications).length > 0 ? (
-                        Object.entries(product.keySpecifications).map(
-                          ([key, value], index) => (
-                            <div
-                              key={index}
-                              className="flex justify-between bg-gray-50 rounded-lg px-4 py-3"
-                            >
-                              <span className="text-sm text-gray-500">{key}</span>
-                              <span className="text-sm font-medium text-gray-900">
-                                {value as string}
-                              </span>
-                            </div>
-                          )
-                        )
+                    <div>
+                      {product.keySpecifications ? (
+                        <HtmlRenderer content={product.keySpecifications} />
                       ) : (
-                        <p className="col-span-2 text-sm text-gray-400">
+                        <p className="text-sm text-gray-400">
                           No specifications available
                         </p>
                       )}
@@ -573,17 +530,9 @@ export default function ProductDetail() {
 
                   {/* Packaging */}
                   {activeTab === "packaging" && (
-                    <div className="space-y-3">
+                    <div>
                       {product.packaging ? (
-                        (Array.isArray(product.packaging)
-                          ? product.packaging
-                          : product.packaging.split("\n").filter(Boolean)
-                        ).map((item: string, index: number) => (
-                          <div key={index} className="flex items-start gap-3">
-                            <CheckCircle2 className="h-5 w-5 text-amber-500 mt-0.5 flex-shrink-0" />
-                            <span className="text-sm text-gray-700 leading-relaxed">{item}</span>
-                          </div>
-                        ))
+                        <HtmlRenderer content={product.packaging} />
                       ) : (
                         <p className="text-sm text-gray-400">
                           No packaging info available
@@ -594,19 +543,9 @@ export default function ProductDetail() {
 
                   {/* Directions */}
                   {activeTab === "directions" && (
-                    <div className="space-y-3">
+                    <div>
                       {product.directionToUse ? (
-                        (Array.isArray(product.directionToUse)
-                          ? product.directionToUse
-                          : product.directionToUse
-                              .split("\n")
-                              .filter(Boolean)
-                        ).map((item: string, index: number) => (
-                          <div key={index} className="flex items-start gap-3">
-                            <CheckCircle2 className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
-                            <span className="text-sm text-gray-700 leading-relaxed">{item}</span>
-                          </div>
-                        ))
+                        <HtmlRenderer content={product.directionToUse} />
                       ) : (
                         <p className="text-sm text-gray-400">
                           No directions available
@@ -617,19 +556,9 @@ export default function ProductDetail() {
 
                   {/* Additional */}
                   {activeTab === "additional" && (
-                    <div className="space-y-3">
+                    <div>
                       {product.additionalInfo ? (
-                        (Array.isArray(product.additionalInfo)
-                          ? product.additionalInfo
-                          : product.additionalInfo
-                              .split("\n")
-                              .filter(Boolean)
-                        ).map((item: string, index: number) => (
-                          <div key={index} className="flex items-start gap-3">
-                            <CheckCircle2 className="h-5 w-5 text-purple-500 mt-0.5 flex-shrink-0" />
-                            <span className="text-sm text-gray-700 leading-relaxed">{item}</span>
-                          </div>
-                        ))
+                        <HtmlRenderer content={product.additionalInfo} />
                       ) : (
                         <p className="text-sm text-gray-400">
                           No additional info available
@@ -640,17 +569,9 @@ export default function ProductDetail() {
 
                   {/* Warranty */}
                   {activeTab === "warranty" && (
-                    <div className="space-y-3">
+                    <div>
                       {product.warranty ? (
-                        (Array.isArray(product.warranty)
-                          ? product.warranty
-                          : product.warranty.split("\n").filter(Boolean)
-                        ).map((item: string, index: number) => (
-                          <div key={index} className="flex items-start gap-3">
-                            <ShieldCheck className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                            <span className="text-sm text-gray-700 leading-relaxed">{item}</span>
-                          </div>
-                        ))
+                        <HtmlRenderer content={product.warranty} />
                       ) : (
                         <p className="text-sm text-gray-400">
                           No warranty information

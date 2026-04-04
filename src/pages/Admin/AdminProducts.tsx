@@ -4,6 +4,7 @@ import api from "@/api";
 import { useAuthStore } from "@/stores/authStore";
 import toast from "react-hot-toast";
 import VariantManager from "@/components/admin/VariantManager";
+import RichTextEditor from "@/components/admin/RichTextEditor";
 import {
   Search,
   Plus,
@@ -54,8 +55,8 @@ export default function AdminProducts() {
     isFeatured: false,
     expiresAt: "",
     hasVariants: false,
-    features: [] as string[],
-    keySpecifications: {} as Record<string, string>,
+    features: "",
+    keySpecifications: "",
     packaging: "",
     directionToUse: "",
     additionalInfo: "",
@@ -208,8 +209,8 @@ export default function AdminProducts() {
         isFeatured: product.isFeatured ?? false,
         expiresAt: product.expiresAt ? product.expiresAt.split('T')[0] : "",
         hasVariants: product.hasVariants || false,
-        features: product.features || [],
-        keySpecifications: product.keySpecifications || {},
+        features: product.features || "",
+        keySpecifications: product.keySpecifications || "",
         packaging: product.packaging || "",
         directionToUse: product.directionToUse || "",
         additionalInfo: product.additionalInfo || "",
@@ -236,8 +237,8 @@ export default function AdminProducts() {
         isFeatured: false,
         expiresAt: "",
         hasVariants: false,
-        features: [],
-        keySpecifications: {},
+        features: "",
+        keySpecifications: "",
         packaging: "",
         directionToUse: "",
         additionalInfo: "",
@@ -575,9 +576,13 @@ export default function AdminProducts() {
                   </div>
 
                   <div className="mt-4">
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Description</label>
-                    <textarea value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} className="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-primary-500" rows={3} placeholder="Enter description (one per line for bullet points)" />
-                    <p className="text-[10px] text-gray-500 mt-1">Each line will be displayed as a bullet point</p>
+                    <RichTextEditor
+                      label="Description"
+                      value={formData.description}
+                      onChange={(data) => setFormData({ ...formData, description: data })}
+                      placeholder="Enter product description..."
+                      minHeight="120px"
+                    />
                   </div>
                 </div>
 
@@ -730,39 +735,24 @@ export default function AdminProducts() {
 
                   {/* Features */}
                   <div className="mb-4">
-                    <label className="block text-xs font-medium text-gray-700 mb-2">Features</label>
-                    <div className="space-y-2">
-                      {formData.features.map((feature, index) => (
-                        <div key={index} className="flex gap-2">
-                          <input type="text" value={feature} onChange={(e) => { const newFeatures = [...formData.features]; newFeatures[index] = e.target.value; setFormData({ ...formData, features: newFeatures }); }} className="flex-1 px-3 py-1.5 text-sm border rounded-lg focus:ring-2 focus:ring-primary-500" placeholder="Enter feature" />
-                          <button type="button" onClick={() => { const newFeatures = formData.features.filter((_, i) => i !== index); setFormData({ ...formData, features: newFeatures }); }} className="px-2 py-1.5 text-red-500 hover:bg-red-50 rounded-lg">
-                            <X className="w-4 h-4" />
-                          </button>
-                        </div>
-                      ))}
-                      <button type="button" onClick={() => setFormData({ ...formData, features: [...formData.features, ""] })} className="text-xs text-primary-600 hover:text-primary-700 flex items-center gap-1">
-                        <Plus className="w-3 h-3" /> Add Feature
-                      </button>
-                    </div>
+                    <RichTextEditor
+                      label="Features"
+                      value={formData.features}
+                      onChange={(data) => setFormData({ ...formData, features: data })}
+                      placeholder="Enter product features..."
+                      minHeight="150px"
+                    />
                   </div>
 
                   {/* Key Specifications */}
                   <div className="mb-4">
-                    <label className="block text-xs font-medium text-gray-700 mb-2">Key Specifications</label>
-                    <div className="space-y-2">
-                      {Object.entries(formData.keySpecifications).map(([key, value], index) => (
-                        <div key={index} className="flex gap-2">
-                          <input type="text" value={key} onChange={(e) => { const newSpecs = { ...formData.keySpecifications }; const specValue = newSpecs[key]; delete newSpecs[key]; newSpecs[e.target.value] = specValue; setFormData({ ...formData, keySpecifications: newSpecs }); }} className="flex-1 px-3 py-1.5 text-sm border rounded-lg focus:ring-2 focus:ring-primary-500" placeholder="Name" />
-                          <input type="text" value={value} onChange={(e) => { const newSpecs = { ...formData.keySpecifications }; newSpecs[key] = e.target.value; setFormData({ ...formData, keySpecifications: newSpecs }); }} className="flex-1 px-3 py-1.5 text-sm border rounded-lg focus:ring-2 focus:ring-primary-500" placeholder="Value" />
-                          <button type="button" onClick={() => { const newSpecs = { ...formData.keySpecifications }; delete newSpecs[key]; setFormData({ ...formData, keySpecifications: newSpecs }); }} className="px-2 py-1.5 text-red-500 hover:bg-red-50 rounded-lg">
-                            <X className="w-4 h-4" />
-                          </button>
-                        </div>
-                      ))}
-                      <button type="button" onClick={() => setFormData({ ...formData, keySpecifications: { ...formData.keySpecifications, "": "" } })} className="text-xs text-primary-600 hover:text-primary-700 flex items-center gap-1">
-                        <Plus className="w-3 h-3" /> Add Specification
-                      </button>
-                    </div>
+                    <RichTextEditor
+                      label="Key Specifications"
+                      value={formData.keySpecifications}
+                      onChange={(data) => setFormData({ ...formData, keySpecifications: data })}
+                      placeholder="Enter key specifications..."
+                      minHeight="120px"
+                    />
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
@@ -787,15 +777,23 @@ export default function AdminProducts() {
                   </h3>
 
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Directions to Use</label>
-                    <textarea value={formData.directionToUse} onChange={(e) => setFormData({ ...formData, directionToUse: e.target.value })} className="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-primary-500" rows={3} placeholder="Enter directions (one per line for bullet points)" />
-                    <p className="text-[10px] text-gray-500 mt-1">Each line will be displayed as a bullet point</p>
+                    <RichTextEditor
+                      label="Directions to Use"
+                      value={formData.directionToUse}
+                      onChange={(data) => setFormData({ ...formData, directionToUse: data })}
+                      placeholder="Enter directions for use..."
+                      minHeight="120px"
+                    />
                   </div>
 
                   <div className="mt-4">
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Additional Information</label>
-                    <textarea value={formData.additionalInfo} onChange={(e) => setFormData({ ...formData, additionalInfo: e.target.value })} className="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-primary-500" rows={3} placeholder="Enter additional info (one per line for bullet points)" />
-                    <p className="text-[10px] text-gray-500 mt-1">Each line will be displayed as a bullet point</p>
+                    <RichTextEditor
+                      label="Additional Information"
+                      value={formData.additionalInfo}
+                      onChange={(data) => setFormData({ ...formData, additionalInfo: data })}
+                      placeholder="Enter additional information..."
+                      minHeight="120px"
+                    />
                   </div>
                 </div>
 
