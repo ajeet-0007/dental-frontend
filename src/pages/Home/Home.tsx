@@ -89,37 +89,44 @@ export default function Home() {
         </section>
       )}
 
-      <section className="py-12 bg-gray-50">
+      {/* Trust Badges */}
+      <section className="py-8 bg-white border-y border-gray-100">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div className="flex items-center space-x-4">
-              <Shield className="h-10 w-10 text-primary-600" />
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="group flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-colors cursor-default">
+              <div className="w-14 h-14 bg-primary-50 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                <Shield className="h-7 w-7 text-primary-600" />
+              </div>
               <div>
-                <h3 className="font-semibold">Genuine Products</h3>
-                <p className="text-sm text-gray-600">100% authentic</p>
+                <h3 className="font-semibold text-gray-900 tracking-tight">Genuine Products</h3>
+                <p className="text-sm text-gray-500 mt-0.5">100% authentic</p>
               </div>
             </div>
-            <div className="flex items-center space-x-4">
-              <Truck className="h-10 w-10 text-primary-600" />
+            <div className="group flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-colors cursor-default">
+              <div className="w-14 h-14 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                <Truck className="h-7 w-7 text-blue-600" />
+              </div>
               <div>
-                <h3 className="font-semibold">Fast Delivery</h3>
-                <p className="text-sm text-gray-600">Across India</p>
+                <h3 className="font-semibold text-gray-900 tracking-tight">Fast Delivery</h3>
+                <p className="text-sm text-gray-500 mt-0.5">Across India</p>
               </div>
             </div>
-            <div className="flex items-center space-x-4">
-              <CreditCard className="h-10 w-10 text-primary-600" />
+            <div className="group flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-colors cursor-default">
+              <div className="w-14 h-14 bg-green-50 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                <CreditCard className="h-7 w-7 text-green-600" />
+              </div>
               <div>
-                <h3 className="font-semibold">Secure Payment</h3>
-                <p className="text-sm text-gray-600">
-                  Multiple payment options
-                </p>
+                <h3 className="font-semibold text-gray-900 tracking-tight">Secure Payment</h3>
+                <p className="text-sm text-gray-500 mt-0.5">Multiple options</p>
               </div>
             </div>
-            <div className="flex items-center space-x-4">
-              <Package className="h-10 w-10 text-primary-600" />
+            <div className="group flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-colors cursor-default">
+              <div className="w-14 h-14 bg-amber-50 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                <Package className="h-7 w-7 text-amber-600" />
+              </div>
               <div>
-                <h3 className="font-semibold">Easy Returns</h3>
-                <p className="text-sm text-gray-600">Hassle-free returns</p>
+                <h3 className="font-semibold text-gray-900 tracking-tight">Easy Returns</h3>
+                <p className="text-sm text-gray-500 mt-0.5">Hassle-free</p>
               </div>
             </div>
           </div>
@@ -127,75 +134,111 @@ export default function Home() {
       </section>
 
       {categories.length > 0 && (
-        <section className="py-12">
+        <section className="py-8 lg:py-10">
           <div className="container mx-auto px-4">
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="text-2xl font-bold">Categories</h2>
+            <div className="flex items-end justify-between mb-6">
+              <div>
+                <p className="text-xs font-semibold text-primary-600 uppercase tracking-widest mb-1">Explore</p>
+                <h2 className="text-xl lg:text-2xl font-bold text-gray-900 tracking-tight">Categories</h2>
+              </div>
               <Link
                 to="/categories"
-                className="text-primary-600 hover:text-primary-700 font-medium"
+                className="hidden sm:flex items-center gap-1 text-sm font-medium text-gray-500 hover:text-primary-600 transition-colors group"
               >
-                View All →
+                <span>View All</span>
+                <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
               </Link>
             </div>
             <CategoryCarousel categories={categories} itemsPerPage={6} />
+            <Link to="/categories" className="sm:hidden flex justify-center mt-4 text-sm font-medium text-primary-600">
+              View All Categories →
+            </Link>
           </div>
         </section>
       )}
 
       {brands.length > 0 && (
-        <section className="py-12 bg-gray-50">
+        <section className="py-8 lg:py-10 bg-gray-50/50">
           <div className="container mx-auto px-4">
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="text-2xl font-bold">Brands</h2>
+            <div className="flex items-end justify-between mb-6">
+              <div>
+                <p className="text-xs font-semibold text-primary-600 uppercase tracking-widest mb-1">Top Picks</p>
+                <h2 className="text-xl lg:text-2xl font-bold text-gray-900 tracking-tight">Brands</h2>
+              </div>
               <Link
                 to="/brands"
-                className="text-primary-600 hover:text-primary-700 font-medium"
+                className="hidden sm:flex items-center gap-1 text-sm font-medium text-gray-500 hover:text-primary-600 transition-colors group"
               >
-                View All →
+                <span>View All</span>
+                <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
               </Link>
             </div>
             <BrandCarousel brands={brands} itemsPerPage={6} />
+            <Link to="/brands" className="sm:hidden flex justify-center mt-4 text-sm font-medium text-primary-600">
+              View All Brands →
+            </Link>
           </div>
         </section>
       )}
 
       {departments.length > 0 && (
-        <section className="py-12">
+        <section className="py-8 lg:py-10">
           <div className="container mx-auto px-4">
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="text-2xl font-bold">Departments</h2>
+            <div className="flex items-end justify-between mb-6">
+              <div>
+                <p className="text-xs font-semibold text-primary-600 uppercase tracking-widest mb-1">Browse</p>
+                <h2 className="text-xl lg:text-2xl font-bold text-gray-900 tracking-tight">Departments</h2>
+              </div>
               <Link
                 to="/departments"
-                className="text-primary-600 hover:text-primary-700 font-medium"
+                className="hidden sm:flex items-center gap-1 text-sm font-medium text-gray-500 hover:text-primary-600 transition-colors group"
               >
-                View All →
+                <span>View All</span>
+                <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
               </Link>
             </div>
             <DepartmentCarousel departments={departments} itemsPerPage={6} />
+            <Link to="/departments" className="sm:hidden flex justify-center mt-4 text-sm font-medium text-primary-600">
+              View All Departments →
+            </Link>
           </div>
         </section>
       )}
 
-      <section className="py-12">
+      <section className="py-8 lg:py-10 bg-gray-50/50">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-bold">Featured Products</h2>
+          <div className="flex items-end justify-between mb-6">
+            <div>
+              <p className="text-xs font-semibold text-primary-600 uppercase tracking-widest mb-1">Don't Miss</p>
+              <h2 className="text-xl lg:text-2xl font-bold text-gray-900 tracking-tight">Featured Products</h2>
+            </div>
             <Link
               to="/products"
-              className="text-primary-600 hover:text-primary-700 font-medium"
+              className="hidden sm:flex items-center gap-1 text-sm font-medium text-gray-500 hover:text-primary-600 transition-colors group"
             >
-              View All →
+              <span>View All</span>
+              <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
             </Link>
           </div>
           {products.length > 0 ? (
             <ProductCarousel products={products} onOpenCartDrawer={handleOpenCartDrawer} />
           ) : (
-            <div className="text-center py-12">
-              <Package className="h-16 w-16 mx-auto text-gray-300 mb-4" />
+            <div className="text-center py-8">
+              <Package className="h-12 w-12 mx-auto text-gray-300 mb-3" />
               <p className="text-gray-500">No products available yet.</p>
             </div>
           )}
+          <Link to="/products" className="sm:hidden flex justify-center mt-4 text-sm font-medium text-primary-600">
+            View All Products →
+          </Link>
         </div>
       </section>
 
