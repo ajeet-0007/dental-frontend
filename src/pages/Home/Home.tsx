@@ -130,7 +130,7 @@ export default function Home() {
         <section className="py-12">
           <div className="container mx-auto px-4">
             <div className="flex items-center justify-between mb-8">
-              <h2 className="text-2xl font-bold">Shop by Category</h2>
+              <h2 className="text-2xl font-bold">Categories</h2>
               <Link
                 to="/categories"
                 className="text-primary-600 hover:text-primary-700 font-medium"
@@ -147,7 +147,7 @@ export default function Home() {
         <section className="py-12 bg-gray-50">
           <div className="container mx-auto px-4">
             <div className="flex items-center justify-between mb-8">
-              <h2 className="text-2xl font-bold">Popular Brands</h2>
+              <h2 className="text-2xl font-bold">Brands</h2>
               <Link
                 to="/brands"
                 className="text-primary-600 hover:text-primary-700 font-medium"
@@ -164,7 +164,7 @@ export default function Home() {
         <section className="py-12">
           <div className="container mx-auto px-4">
             <div className="flex items-center justify-between mb-8">
-              <h2 className="text-2xl font-bold">Shop by Department</h2>
+              <h2 className="text-2xl font-bold">Departments</h2>
               <Link
                 to="/departments"
                 className="text-primary-600 hover:text-primary-700 font-medium"
