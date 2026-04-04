@@ -1,10 +1,12 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/api";
-import { Trash2, Plus, Minus, ShoppingCart, ArrowRight, Package, Tag } from "lucide-react";
+import { Trash2, Plus, Minus, ShoppingCart, ArrowRight, Package, Tag, Star } from "lucide-react";
 import { useAuthStore } from "@/stores/authStore";
 import { useCartStore } from "@/stores/cartStore";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import ProductCarousel from "@/components/common/ProductCarousel";
+import CartDrawer from "@/components/common/CartDrawer";
 
 const DEFAULT_IMAGE =
   "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=400&h=400&fit=crop";
@@ -14,6 +16,8 @@ export default function Cart() {
   const queryClient = useQueryClient();
   const { isAuthenticated } = useAuthStore();
   const { items, removeItem, updateQuantity, setCart } = useCartStore();
+  const [cartDrawerProduct, setCartDrawerProduct] = useState<any>(null);
+  const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false);
 
   const { data, isLoading } = useQuery({
     queryKey: ["cart"],
@@ -56,6 +60,31 @@ export default function Cart() {
 
   const tax = Math.round(subtotal * 0.18);
   const total = subtotal + tax;
+
+  // Get unique categories from cart items
+  const cartCategories = [...new Set(
+    allItems
+      .map((item: any) => item.product.category?.slug)
+      .filter(Boolean)
+  )] as string[];
+
+  // Get product IDs to exclude
+  const excludeProductIds = allItems.map((item: any) => item.product.id);
+
+  // Fetch recommended products using existing endpoint
+  const { data: recommendedData } = useQuery({
+    queryKey: ["products", "recommended", cartCategories, excludeProductIds],
+    queryFn: async () => {
+      if (cartCategories.length === 0) return [];
+      const categories = cartCategories.join(',');
+      const exclude = excludeProductIds.join(',');
+      const response = await api.get(`/products/recommended?categories=${categories}&exclude=${exclude}&limit=8`);
+      return response.data || [];
+    },
+    enabled: cartCategories.length > 0 && allItems.length > 0,
+  });
+
+  const recommendedProductsArray = Array.isArray(recommendedData) ? recommendedData : [];
 
   const handleRemove = async (id: string) => {
     removeItem(id);
@@ -249,6 +278,42 @@ export default function Cart() {
           </div>
         </div>
       </div>
+
+      {/* Recommended Products Carousel */}
+      {recommendedProductsArray.length > 0 && (
+        <section className="mt-12">
+          <div className="mb-6">
+            <div className="flex items-center gap-2 mb-1">
+              <Star className="h-5 w-5 text-primary-600" />
+              <p className="text-xs font-semibold text-primary-600 uppercase tracking-widest">You May Also Like</p>
+            </div>
+            <h2 className="text-xl font-bold text-gray-900">Based on Your Cart</h2>
+          </div>
+          <ProductCarousel 
+            products={recommendedProductsArray} 
+            onOpenCartDrawer={(product) => {
+              setCartDrawerProduct(product);
+              setIsCartDrawerOpen(true);
+            }}
+          />
+          <div className="mt-6 text-center">
+            <Link
+              to="/products"
+              className="inline-flex items-center gap-2 text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors"
+            >
+              <span>Explore More Products</span>
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </section>
+      )}
+
+      {/* Cart Drawer for quick add */}
+      <CartDrawer 
+        isOpen={isCartDrawerOpen}
+        onClose={() => setIsCartDrawerOpen(false)}
+        product={cartDrawerProduct}
+      />
     </div>
   );
 }
