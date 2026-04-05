@@ -90,56 +90,32 @@ export default function Home() {
       )}
 
       {/* Trust Badges */}
-      <section className="py-6 md:py-8 bg-white border-y border-gray-100">
+      <section className="py-4 md:py-6 bg-white border-y border-gray-100">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
-            <div className="flex items-center gap-3 p-3 md:p-4">
-              <div className="w-10 md:w-14 h-10 md:h-14 bg-primary-50 rounded-xl flex items-center justify-center flex-shrink-0">
-                <Shield className="h-5 w-5 md:h-7 md:w-7 text-primary-600" />
+          <div className="grid grid-cols-4 gap-2 md:gap-4">
+            <div className="flex flex-col items-center gap-1 p-2 md:p-3">
+              <div className="w-8 h-8 md:w-14 md:h-14 bg-primary-50 rounded-lg md:rounded-xl flex items-center justify-center">
+                <Shield className="h-4 w-4 md:h-6 md:w-6 text-primary-600" />
               </div>
-              <div className="hidden md:block">
-                <h3 className="font-semibold text-gray-900 text-sm">Genuine Products</h3>
-                <p className="text-xs text-gray-500 mt-0.5">100% authentic</p>
-              </div>
-              <div className="md:hidden">
-                <p className="text-xs font-medium text-gray-900">Genuine</p>
-              </div>
+              <p className="text-[10px] md:text-xs font-medium text-gray-900 text-center">Genuine</p>
             </div>
-            <div className="flex items-center gap-3 p-3 md:p-4">
-              <div className="w-10 md:w-14 h-10 md:h-14 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0">
-                <Truck className="h-5 w-5 md:h-7 md:w-7 text-blue-600" />
+            <div className="flex flex-col items-center gap-1 p-2 md:p-3">
+              <div className="w-8 h-8 md:w-14 md:h-14 bg-blue-50 rounded-lg md:rounded-xl flex items-center justify-center">
+                <Truck className="h-4 w-4 md:h-6 md:w-6 text-blue-600" />
               </div>
-              <div className="hidden md:block">
-                <h3 className="font-semibold text-gray-900 text-sm">Fast Delivery</h3>
-                <p className="text-xs text-gray-500 mt-0.5">Across India</p>
-              </div>
-              <div className="md:hidden">
-                <p className="text-xs font-medium text-gray-900">Fast Delivery</p>
-              </div>
+              <p className="text-[10px] md:text-xs font-medium text-gray-900 text-center">Fast Delivery</p>
             </div>
-            <div className="flex items-center gap-3 p-3 md:p-4">
-              <div className="w-10 md:w-14 h-10 md:h-14 bg-green-50 rounded-xl flex items-center justify-center flex-shrink-0">
-                <CreditCard className="h-5 w-5 md:h-7 md:w-7 text-green-600" />
+            <div className="flex flex-col items-center gap-1 p-2 md:p-3">
+              <div className="w-8 h-8 md:w-14 md:h-14 bg-green-50 rounded-lg md:rounded-xl flex items-center justify-center">
+                <CreditCard className="h-4 w-4 md:h-6 md:w-6 text-green-600" />
               </div>
-              <div className="hidden md:block">
-                <h3 className="font-semibold text-gray-900 text-sm">Secure Payment</h3>
-                <p className="text-xs text-gray-500 mt-0.5">Multiple options</p>
-              </div>
-              <div className="md:hidden">
-                <p className="text-xs font-medium text-gray-900">Secure</p>
-              </div>
+              <p className="text-[10px] md:text-xs font-medium text-gray-900 text-center">Secure</p>
             </div>
-            <div className="flex items-center gap-3 p-3 md:p-4">
-              <div className="w-10 md:w-14 h-10 md:h-14 bg-amber-50 rounded-xl flex items-center justify-center flex-shrink-0">
-                <Package className="h-5 w-5 md:h-7 md:w-7 text-amber-600" />
+            <div className="flex flex-col items-center gap-1 p-2 md:p-3">
+              <div className="w-8 h-8 md:w-14 md:h-14 bg-amber-50 rounded-lg md:rounded-xl flex items-center justify-center">
+                <Package className="h-4 w-4 md:h-6 md:w-6 text-amber-600" />
               </div>
-              <div className="hidden md:block">
-                <h3 className="font-semibold text-gray-900 text-sm">Easy Returns</h3>
-                <p className="text-xs text-gray-500 mt-0.5">Hassle-free</p>
-              </div>
-              <div className="md:hidden">
-                <p className="text-xs font-medium text-gray-900">Easy Returns</p>
-              </div>
+              <p className="text-[10px] md:text-xs font-medium text-gray-900 text-center">Easy Returns</p>
             </div>
           </div>
         </div>

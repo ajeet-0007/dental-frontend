@@ -18,13 +18,39 @@ interface HeroCarouselProps {
   banners: Banner[];
 }
 
+const getImageAspectRatio = (src: string): Promise<number> => {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      const ratio = img.naturalWidth / img.naturalHeight;
+      resolve(ratio);
+    };
+    img.onerror = () => {
+      resolve(16 / 9);
+    };
+    img.src = src;
+  });
+};
+
 export default function HeroCarousel({ banners }: HeroCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [aspectRatios, setAspectRatios] = useState<Record<number, number>>({});
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const activeBanners = banners.filter((b) => b.isActive);
   const totalSlides = activeBanners.length;
+
+  useEffect(() => {
+    const loadAspectRatios = async () => {
+      const ratios: Record<number, number> = {};
+      for (const banner of activeBanners) {
+        ratios[banner.id] = await getImageAspectRatio(banner.image);
+      }
+      setAspectRatios(ratios);
+    };
+    loadAspectRatios();
+  }, [activeBanners]);
 
   useEffect(() => {
     if (isPaused || totalSlides <= 1) return;
@@ -77,7 +103,10 @@ export default function HeroCarousel({ banners }: HeroCarouselProps) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.5 }}
-          className="relative w-full h-44 md:h-64 lg:h-80 xl:h-[350px]"
+          className="relative w-full"
+          style={{
+            aspectRatio: aspectRatios[currentBanner.id] || "auto",
+          }}
         >
           <Link
             to={currentBanner.link || "/products"}
@@ -86,7 +115,7 @@ export default function HeroCarousel({ banners }: HeroCarouselProps) {
             <img
               src={currentBanner.image}
               alt={currentBanner.title}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
                 target.src =
