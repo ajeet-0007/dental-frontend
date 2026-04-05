@@ -11,6 +11,8 @@ import Checkout from "./pages/Checkout/Checkout";
 import Orders from "./pages/Orders/Orders";
 import OrderDetail from "./pages/Orders/OrderDetail";
 import UserProfile from "./pages/UserProfile/UserProfile";
+import Wishlist from "./pages/Wishlist/Wishlist";
+import HelpSupport from "./pages/HelpSupport/HelpSupport";
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
 import AuthCallback from "./pages/Auth/AuthCallback";
@@ -76,6 +78,8 @@ function App() {
             <Route path="orders" element={<Orders />} />
             <Route path="orders/:id" element={<OrderDetail />} />
             <Route path="profile" element={<UserProfile />} />
+            <Route path="wishlist" element={<Wishlist />} />
+            <Route path="help" element={<HelpSupport />} />
           </Route>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
