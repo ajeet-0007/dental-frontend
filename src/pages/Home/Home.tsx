@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import api from "@/api";
-import { Package, Shield, Truck, CreditCard } from "lucide-react";
+import { Package, Shield, Truck, CreditCard, ChevronRight } from "lucide-react";
 import ProductCarousel from "@/components/common/ProductCarousel";
 import CategoryCarousel from "@/components/common/CategoryCarousel";
 import DepartmentCarousel from "@/components/common/DepartmentCarousel";
@@ -157,12 +157,9 @@ export default function Home() {
               </div>
               <Link
                 to="/brands"
-                className="hidden sm:flex items-center gap-1 text-sm font-medium text-gray-500 hover:text-primary-600 transition-colors group"
+                className="hidden md:flex items-center gap-1 text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors"
               >
-                <span>View All</span>
-                <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
+                View All <ChevronRight className="h-4 w-4" />
               </Link>
             </div>
             <BrandCarousel brands={brands} itemsPerPage={6} />
