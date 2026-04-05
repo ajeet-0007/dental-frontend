@@ -46,10 +46,10 @@ export default function BrandCarousel({ brands, itemsPerPage = 6 }: BrandCarouse
   useEffect(() => {
     const updateVisibleCount = () => {
       const width = window.innerWidth;
-      if (width < 640) setVisibleCount(4);
-      else if (width < 768) setVisibleCount(4);
-      else if (width < 1024) setVisibleCount(4);
-      else if (width < 1280) setVisibleCount(5);
+      if (width < 640) setVisibleCount(3);
+      else if (width < 768) setVisibleCount(3);
+      else if (width < 1024) setVisibleCount(3);
+      else if (width < 1280) setVisibleCount(4);
       else setVisibleCount(itemsPerPage);
     };
 
@@ -115,7 +115,7 @@ export default function BrandCarousel({ brands, itemsPerPage = 6 }: BrandCarouse
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1, duration: 0.3 }}
-                className="flex-shrink-0 w-[calc(25%-9px)] md:w-[calc((100%-80px)/4)] lg:w-[calc((100%-80px)/6)]"
+                className="flex-shrink-0 w-[calc(33.33%-8px)] md:w-[calc((100%-48px)/3)] lg:w-[calc((100%-64px)/4)]"
               >
                 <Link
                   to={`/products?brand=${brand.slug}`}
