@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import api from "@/api";
 import { useAuthStore } from "@/stores/authStore";
 import { useCartStore } from "@/stores/cartStore";
+import { useWishlistStore } from "@/stores/wishlistStore";
 import {
   Package,
   ShoppingCart,
@@ -28,6 +29,7 @@ export default function ProductDetail() {
   const { slug } = useParams();
   const { isAuthenticated } = useAuthStore();
   const { addItem } = useCartStore();
+  const { items: wishlistItems, addItem: addToWishlist, removeItem: removeFromWishlist } = useWishlistStore();
   const queryClient = useQueryClient();
   const [quantity, setQuantity] = useState(1);
   const [productError, setProductError] = useState(false);
@@ -243,6 +245,41 @@ export default function ProductDetail() {
     setQuantity(1);
     setCurrentImageIndex(0);
   };
+
+  const handleToggleWishlist = () => {
+    if (!product) return;
+
+    if (!isAuthenticated) {
+      toast.error("Please login to add items to wishlist");
+      return;
+    }
+
+    const productId = product.id.toString();
+    const wishlistId = `wishlist-${productId}`;
+
+    if (wishlistItems.some((item) => item.id === wishlistId)) {
+      removeFromWishlist(wishlistId);
+      toast.success("Removed from wishlist");
+    } else {
+      addToWishlist({
+        id: wishlistId,
+        product: {
+          id: productId,
+          name: product.name,
+          slug: product.slug,
+          images: product.images || [],
+          price: product.price || 0,
+          sellingPrice: product.sellingPrice || product.price || 0,
+          mrp: product.mrp || product.price || 0,
+          unit: product.unit || "unit",
+        },
+        addedAt: Date.now(),
+      });
+      toast.success("Added to wishlist!");
+    }
+  };
+
+  const isInWishlist = wishlistItems.some((item) => item.id === `wishlist-${product?.id}`);
 
   if (isLoading) {
     return (
@@ -488,8 +525,19 @@ export default function ProductDetail() {
                       : "Add to Cart"}
                 </button>
 
-                <button className="p-2 md:p-3 bg-gray-100 hover:bg-gray-200 rounded-lg md:rounded-xl transition-colors">
-                  <Heart className="h-4 w-4 md:h-5 md:w-5 text-gray-600" />
+                <button
+                  onClick={handleToggleWishlist}
+                  className={`p-2 md:p-3 rounded-lg md:rounded-xl transition-colors ${
+                    isInWishlist
+                      ? "bg-red-50 hover:bg-red-100"
+                      : "bg-gray-100 hover:bg-gray-200"
+                  }`}
+                >
+                  <Heart
+                    className={`h-4 w-4 md:h-5 md:w-5 ${
+                      isInWishlist ? "text-red-500 fill-red-500" : "text-gray-600"
+                    }`}
+                  />
                 </button>
               </div>
 
