@@ -588,7 +588,7 @@ export default function ProductDetail() {
                 </div>
 
                 {/* Tab Content */}
-                <div className="py-4 md:py-6 min-h-[150px] md:min-h-[200px]">
+                <div className="py-4 md:py-6 h-[250px] md:h-[300px] overflow-y-auto">
                   {/* Features */}
                   {activeTab === "features" && (
                     <div className="text-sm md:text-base">
