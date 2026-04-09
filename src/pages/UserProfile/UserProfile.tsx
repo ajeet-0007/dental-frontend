@@ -3,15 +3,17 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import api from '@/api'
-import { User, MapPin, Plus, Trash2, Edit, ShoppingBag, Heart, ChevronDown, HelpCircle } from 'lucide-react'
+import { User, MapPin, Plus, Edit, ShoppingBag, Heart, ChevronDown, HelpCircle, Loader2 } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useWishlistStore } from '@/stores/wishlistStore'
+import { useGeolocation } from '@/hooks/useGeolocation'
 import {
   ProfileHeader,
   ProfileBottomSheet,
   QuickStats,
   ActionCards,
 } from '@/components/profile'
+import DeleteConfirmModal from '@/components/common/DeleteConfirmModal'
 
 export default function UserProfile() {
   const navigate = useNavigate()
@@ -30,7 +32,9 @@ export default function UserProfile() {
     phone: '',
   })
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
+  const [deleteAddressId, setDeleteAddressId] = useState<string | null>(null)
   const addressesRef = useRef<HTMLDivElement>(null)
+  const { getLocationWithAddress, loading: locationLoading } = useGeolocation()
 
   const [addressForm, setAddressForm] = useState({
     name: '',
@@ -154,6 +158,23 @@ export default function UserProfile() {
       isDefault: address.isDefault || false,
     })
     setShowAddressForm(true)
+  }
+
+  const handleUseMyLocation = async () => {
+    try {
+      const addressData = await getLocationWithAddress()
+      setAddressForm(prev => ({
+        ...prev,
+        addressLine1: addressData.addressLine1,
+        addressLine2: addressData.addressLine2,
+        city: addressData.city,
+        state: addressData.state,
+        pincode: addressData.pincode,
+      }))
+      toast.success('Location detected! Address filled.')
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to get location')
+    }
   }
 
   const handleSubmitAddress = (e: React.FormEvent) => {
@@ -474,7 +495,27 @@ export default function UserProfile() {
                         />
                       </div>
                       <div className="sm:col-span-2">
-                        <label className="block text-sm text-gray-600 mb-1">Address Line 1</label>
+                        <div className="flex items-center justify-between mb-1">
+                          <label className="block text-sm text-gray-600">Address Line 1</label>
+                          <button
+                            type="button"
+                            onClick={handleUseMyLocation}
+                            disabled={locationLoading}
+                            className="flex items-center gap-1 text-xs text-primary-600 hover:text-primary-700 font-medium disabled:opacity-50"
+                          >
+                            {locationLoading ? (
+                              <>
+                                <Loader2 className="h-3 w-3 animate-spin" />
+                                Detecting...
+                              </>
+                            ) : (
+                              <>
+                                <MapPin className="h-3 w-3" />
+                                Use My Location
+                              </>
+                            )}
+                          </button>
+                        </div>
                         <input
                           type="text"
                           required
@@ -606,14 +647,9 @@ export default function UserProfile() {
                                 Edit
                               </button>
                               <button
-                                onClick={() => {
-                                  if (confirm('Are you sure you want to delete this address?')) {
-                                    deleteAddressMutation.mutate(address.id)
-                                  }
-                                }}
+                                onClick={() => setDeleteAddressId(address.id)}
                                 className="text-sm text-red-600 hover:text-red-800 font-medium flex items-center gap-1"
                               >
-                                <Trash2 className="h-4 w-4" />
                                 Delete
                               </button>
                             </div>
@@ -626,6 +662,13 @@ export default function UserProfile() {
               </div>
             )}
           </div>
+
+          {/* Delete Confirmation Modal */}
+          <DeleteConfirmModal
+            isOpen={!!deleteAddressId}
+            onClose={() => setDeleteAddressId(null)}
+            onConfirm={() => deleteAddressId && deleteAddressMutation.mutate(deleteAddressId)}
+          />
         </div>
       </div>
     </div>

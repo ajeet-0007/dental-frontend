@@ -1,5 +1,5 @@
-import { Outlet, Link } from 'react-router-dom'
-import { ShoppingCart, User, Menu, X, Package, Search, Heart } from 'lucide-react'
+import { Outlet, Link, useNavigate } from 'react-router-dom'
+import { ShoppingCart, User, Menu, X, Package, Search, Heart, Mic, MicOff } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useQuery } from '@tanstack/react-query'
@@ -9,6 +9,7 @@ import { useWishlistStore } from '@/stores/wishlistStore'
 import api from '@/api'
 import WishlistDrawer from '@/components/common/WishlistDrawer'
 import BottomNav from '@/components/common/BottomNav'
+import { useVoiceSearch } from '@/hooks/useVoiceSearch'
 
 export default function Layout() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -19,6 +20,24 @@ export default function Layout() {
   const { isAuthenticated, logout } = useAuthStore()
   const { items } = useCartStore()
   const { items: wishlistItems } = useWishlistStore()
+  const navigate = useNavigate()
+
+  const { isListening, isSupported, startListening, stopListening } = useVoiceSearch({
+    lang: 'en-US',
+    onResult: (text) => {
+      if (text && text.trim()) {
+        const trimmedText = text.trim()
+        console.log('[Layout] Voice search result:', trimmedText)
+        setSearchQuery(trimmedText)
+        stopListening()
+        navigate(`/products?search=${encodeURIComponent(trimmedText)}`)
+      }
+    },
+    onError: (errorMsg) => {
+      console.error('[Layout] Voice search error:', errorMsg)
+      alert(errorMsg)
+    },
+  })
 
   const cartCount = items.reduce((sum, item) => sum + item.quantity, 0)
 
@@ -70,20 +89,44 @@ export default function Layout() {
                     }
                   }}
                   placeholder="Search..."
-                  className="w-full px-3 py-1.5 pl-8 pr-8 rounded-full bg-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-3 py-1.5 pl-8 pr-16 rounded-full bg-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                 />
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                {searchQuery && (
-                  <button
-                    onClick={() => {
-                      setSearchQuery('')
-                      setIsSearchOpen(false)
-                    }}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 p-1 hover:bg-gray-200 rounded-full"
-                  >
-                    <X className="h-3 w-3 text-gray-500" />
-                  </button>
-                )}
+                <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                  {isSupported && (
+                    <button
+                      onClick={() => {
+                        if (isListening) {
+                          stopListening()
+                        } else {
+                          startListening()
+                        }
+                      }}
+                      className={`p-1.5 rounded-full transition-all ${
+                        isListening 
+                          ? 'bg-red-500 text-white animate-pulse' 
+                          : 'hover:bg-gray-200 text-gray-500'
+                      }`}
+                    >
+                      {isListening ? (
+                        <Mic className="h-4 w-4" />
+                      ) : (
+                        <MicOff className="h-4 w-4" />
+                      )}
+                    </button>
+                  )}
+                  {searchQuery && (
+                    <button
+                      onClick={() => {
+                        setSearchQuery('')
+                        setIsSearchOpen(false)
+                      }}
+                      className="p-1 hover:bg-gray-200 rounded-full"
+                    >
+                      <X className="h-3 w-3 text-gray-500" />
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -99,21 +142,51 @@ export default function Layout() {
                       setIsSearchOpen(true)
                     }}
                     onFocus={() => setIsSearchOpen(true)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && searchQuery) {
+                        window.location.href = `/products?search=${encodeURIComponent(searchQuery)}`
+                      }
+                    }}
                     placeholder="Search products, brands, categories..."
-                    className="w-full px-5 py-3 pl-12 rounded-full bg-white border-2 border-gray-200 focus:border-primary-500 focus:outline-none focus:ring-4 focus:ring-primary-100 transition-all duration-200 text-sm placeholder-gray-400 shadow-sm"
+                    className="w-full px-5 py-3 pl-12 pr-24 rounded-full bg-white border-2 border-gray-200 focus:border-primary-500 focus:outline-none focus:ring-4 focus:ring-primary-100 transition-all duration-200 text-sm placeholder-gray-400 shadow-sm"
                   />
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-primary-500 transition-colors" />
-                  {searchQuery && (
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                  {isSupported && (
                     <button
                       onClick={() => {
-                        setSearchQuery('')
-                        setIsSearchOpen(false)
+                        if (isListening) {
+                          stopListening()
+                        } else {
+                          startListening()
+                        }
                       }}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-full hover:bg-gray-100 transition-colors"
+                      className={`p-2 rounded-full transition-all ${
+                        isListening 
+                          ? 'bg-red-500 text-white animate-voice-pulse' 
+                          : 'hover:bg-gray-100 text-gray-400'
+                      }`}
+                      title={isListening ? 'Stop listening' : 'Voice search'}
                     >
-                      <X className="h-4 w-4 text-gray-500" />
+                      {isListening ? (
+                        <Mic className="h-5 w-5" />
+                      ) : (
+                        <MicOff className="h-5 w-5" />
+                      )}
                     </button>
                   )}
+                    {searchQuery && (
+                      <button
+                        onClick={() => {
+                          setSearchQuery('')
+                          setIsSearchOpen(false)
+                        }}
+                        className="p-1.5 rounded-full hover:bg-gray-100 transition-colors"
+                      >
+                        <X className="h-4 w-4 text-gray-500" />
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 <AnimatePresence>

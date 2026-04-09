@@ -18,9 +18,11 @@ import {
   Minus,
   Plus,
   X,
+  ArrowRight,
 } from "lucide-react";
 import { VariantSelector, ProductVariant } from "@/components/common/VariantSelector";
 import HtmlRenderer from "@/components/common/HtmlRenderer";
+import ProductCarousel from "@/components/common/ProductCarousel";
 
 const DEFAULT_IMAGE =
   "https://images.unsplash.com/photo-1629909613654-28e377c37b09";
@@ -99,6 +101,20 @@ export default function ProductDetail() {
   });
 
   const product = data;
+
+  const { data: recommendedData } = useQuery({
+    queryKey: ["products", "recommended", product?.category?.slug],
+    queryFn: async () => {
+      if (!product?.category?.slug) return [];
+      const response = await api.get(
+        `/products/recommended?categories=${product.category.slug}&exclude=${product.id}&limit=8`
+      );
+      return response.data || [];
+    },
+    enabled: !!product?.category?.slug,
+  });
+
+  const recommendedProducts = recommendedData || [];
   const variants: ProductVariant[] = product?.variants || [];
   const activeVariants = variants.filter((v) => v.isActive);
   const hasVariants = activeVariants.length > 0;
@@ -664,6 +680,31 @@ export default function ProductDetail() {
             </div>
           </div>
         </div>
+
+        {/* Related Products */}
+        {recommendedProducts.length > 0 && (
+          <section className="mt-12">
+            <div className="mb-6">
+              <div className="flex items-center gap-2 mb-1">
+                <Star className="h-5 w-5 text-primary-600" />
+                <p className="text-xs font-semibold text-primary-600 uppercase tracking-widest">
+                  Related Products
+                </p>
+              </div>
+              <h2 className="text-xl font-bold text-gray-900">You May Also Like</h2>
+            </div>
+            <ProductCarousel products={recommendedProducts} />
+            <div className="mt-6 text-center">
+              <Link
+                to="/products"
+                className="inline-flex items-center gap-2 text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors"
+              >
+                <span>Explore More Products</span>
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </section>
+        )}
       </div>
 
       {/* Lightbox */}
