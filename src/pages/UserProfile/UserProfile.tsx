@@ -19,7 +19,6 @@ export default function UserProfile() {
 
   const [showAddressForm, setShowAddressForm] = useState(false)
   const [editingAddress, setEditingAddress] = useState<any>(null)
-  const [activeTab, setActiveTab] = useState<'personal' | 'addresses'>('personal')
   const [activeSection, setActiveSection] = useState('overview')
   const [isEditingProfile, setIsEditingProfile] = useState(false)
   const [profileForm, setProfileForm] = useState({
@@ -397,9 +396,6 @@ export default function UserProfile() {
                   <h2 className="text-2xl md:text-3xl font-bold mb-1">
                     Welcome back, {user?.firstName}!
                   </h2>
-                  <p className="text-white/80 text-sm">
-                    Member since {user?.createdAt ? new Date(user.createdAt).getFullYear() : '2024'}
-                  </p>
                 </div>
               </div>
             </motion.div>
