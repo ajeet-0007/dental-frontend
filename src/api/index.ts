@@ -62,3 +62,7 @@ export const reviewsApi = {
   
   markHelpful: (id: string) => api.post(`/reviews/${id}/helpful`),
 }
+
+export const cartApi = {
+  reorder: (orderId: string) => api.post('/cart/reorder', { orderId }),
+}
