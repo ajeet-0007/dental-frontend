@@ -227,18 +227,20 @@ export default function OrderCard({
                 <span className="hidden sm:inline">Track</span>
               </button>
             )}
-            <button 
-              onClick={() => onReorder(order.id)}
-              disabled={reorderingId !== null}
-              title="Reorder"
-              className="group flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 md:py-2.5 text-primary-600 text-xs md:text-sm font-medium rounded-full hover:bg-primary-50 transition-all duration-300 disabled:opacity-50 whitespace-nowrap"
-            >
-              {reorderingId === order.id ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <RotateCcw className="w-4 h-4 group-hover:rotate-180 transition-transform duration-500" />
-              )}
-            </button>
+            {order.status === 'delivered' && (
+              <button 
+                onClick={() => onReorder(order.id)}
+                disabled={reorderingId !== null}
+                title="Reorder"
+                className="group flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 md:py-2.5 text-primary-600 text-xs md:text-sm font-medium rounded-full hover:bg-primary-50 transition-all duration-300 disabled:opacity-50 whitespace-nowrap"
+              >
+                {reorderingId === order.id ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <RotateCcw className="w-4 h-4 group-hover:rotate-180 transition-transform duration-500" />
+                )}
+              </button>
+            )}
             <button 
               title="Invoice"
               className="group flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 md:py-2.5 text-gray-500 text-xs md:text-sm font-medium rounded-full hover:bg-gray-100 hover:text-gray-700 transition-all duration-300 whitespace-nowrap"
