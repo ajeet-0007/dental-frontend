@@ -8,6 +8,7 @@ import { useAuthStore } from '@/stores/authStore'
 import RatingBreakdown from './RatingBreakdown'
 import ReviewCard from './ReviewCard'
 import ReviewForm from './ReviewForm'
+import DeleteConfirmModal from '@/components/common/DeleteConfirmModal'
 
 interface ReviewsSectionProps {
   productId: string | number
@@ -27,6 +28,7 @@ export default function ReviewsSection({ productId }: ReviewsSectionProps) {
   const [showForm, setShowForm] = useState(false)
   const [editingReview, setEditingReview] = useState<any>(null)
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false)
+  const [deleteReviewId, setDeleteReviewId] = useState<string | null>(null)
 
   const { data: statsData, isLoading: statsLoading } = useQuery({
     queryKey: ['reviewStats', productId],
@@ -68,15 +70,17 @@ export default function ReviewsSection({ productId }: ReviewsSectionProps) {
     setShowForm(true)
   }
 
-  const handleDeleteReview = async (reviewId: string) => {
-    if (!confirm('Are you sure you want to delete your review?')) return
+  const handleDeleteReview = async () => {
+    if (!deleteReviewId) return
 
     try {
-      await reviewsApi.delete(reviewId)
+      await reviewsApi.delete(deleteReviewId)
       toast.success('Review deleted successfully')
       refetch()
+      setDeleteReviewId(null)
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Failed to delete review')
+      setDeleteReviewId(null)
     }
   }
 
@@ -221,7 +225,7 @@ export default function ReviewsSection({ productId }: ReviewsSectionProps) {
                   key={review.id}
                   review={review}
                   onEdit={review.user?.id === user?.id ? () => handleEditReview(review) : undefined}
-                  onDelete={review.user?.id === user?.id ? () => handleDeleteReview(review.id) : undefined}
+                  onDelete={review.user?.id === user?.id ? () => setDeleteReviewId(review.id) : undefined}
                 />
               ))}
             </div>
@@ -251,6 +255,14 @@ export default function ReviewsSection({ productId }: ReviewsSectionProps) {
           )}
         </div>
       </div>
+
+      <DeleteConfirmModal
+        isOpen={!!deleteReviewId}
+        onClose={() => setDeleteReviewId(null)}
+        onConfirm={handleDeleteReview}
+        title="Delete Review?"
+        message="Are you sure you want to delete this review? This action cannot be undone."
+      />
     </div>
   )
 }

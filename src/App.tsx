@@ -35,6 +35,7 @@ import AdminPayments from "./pages/Admin/AdminPayments";
 import AdminInventory from "./pages/Admin/AdminInventory";
 import AdminLogin from "./pages/Admin/AdminLogin";
 import AdminOrderDetail from "./pages/Admin/AdminOrderDetail";
+import ScrollToTop from "./components/ScrollToTop";
 
 const queryClient = new QueryClient();
 
@@ -65,6 +66,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <Toaster position="top-right" />
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />

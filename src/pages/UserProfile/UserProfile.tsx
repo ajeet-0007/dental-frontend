@@ -3,17 +3,13 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import api from '@/api'
-import { User, MapPin, Plus, Edit, ShoppingBag, Heart, ChevronDown, HelpCircle, Loader2 } from 'lucide-react'
+import { User, MapPin, Plus, Edit, ShoppingBag, Heart, ChevronRight, HelpCircle, Loader2, Package, Clock, CheckCircle } from 'lucide-react'
+import { motion } from 'framer-motion'
 import { useAuthStore } from '@/stores/authStore'
 import { useWishlistStore } from '@/stores/wishlistStore'
 import { useGeolocation } from '@/hooks/useGeolocation'
-import {
-  ProfileHeader,
-  ProfileBottomSheet,
-  QuickStats,
-  ActionCards,
-} from '@/components/profile'
 import DeleteConfirmModal from '@/components/common/DeleteConfirmModal'
+import LogoutModal from '@/components/common/LogoutModal'
 
 export default function UserProfile() {
   const navigate = useNavigate()
@@ -31,8 +27,8 @@ export default function UserProfile() {
     lastName: '',
     phone: '',
   })
-  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
   const [deleteAddressId, setDeleteAddressId] = useState<string | null>(null)
+  const [showLogoutModal, setShowLogoutModal] = useState(false)
   const addressesRef = useRef<HTMLDivElement>(null)
   const { getLocationWithAddress, loading: locationLoading } = useGeolocation()
 
@@ -55,12 +51,13 @@ export default function UserProfile() {
 
   const { data: ordersData } = useQuery({
     queryKey: ['orders'],
-    queryFn: () => api.get('/orders?limit=100'),
+    queryFn: () => api.get('/orders?limit=5'),
     enabled: isAuthenticated,
   })
 
   const addresses = addressesData?.data || []
   const orders = ordersData?.data?.orders || ordersData?.data || []
+  const recentOrders = orders.slice(0, 3)
 
   const addAddressMutation = useMutation({
     mutationFn: (data: any) => api.post('/addresses', data),
@@ -205,14 +202,18 @@ export default function UserProfile() {
     return (
       <div className="min-h-[60vh] flex items-center justify-center px-4">
         <div className="text-center max-w-md mx-auto">
-          <div className="w-20 h-20 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <User className="h-10 w-10 text-primary-600" />
-          </div>
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="w-20 h-20 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-primary-500/30"
+          >
+            <User className="h-10 w-10 text-white" />
+          </motion.div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome to Dentalkart</h2>
           <p className="text-gray-500 mb-6">Login to view your profile, track orders, and manage your account</p>
           <button
             onClick={() => navigate('/login')}
-            className="w-full md:w-auto px-8 py-3 bg-primary-600 text-white font-medium rounded-xl hover:bg-primary-700 transition-colors"
+            className="w-full md:w-auto px-8 py-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-medium rounded-xl hover:from-primary-700 hover:to-primary-800 transition-all shadow-lg shadow-primary-500/30"
           >
             Log In / Sign Up
           </button>
@@ -228,29 +229,60 @@ export default function UserProfile() {
     return user?.email?.charAt(0).toUpperCase() || 'U'
   }
 
+  const getOrderStatusConfig = (status: string) => {
+    switch (status) {
+      case 'delivered':
+        return { bg: 'bg-emerald-100 text-emerald-700', icon: CheckCircle }
+      case 'shipped':
+        return { bg: 'bg-blue-100 text-blue-700', icon: Package }
+      case 'processing':
+      case 'confirmed':
+        return { bg: 'bg-amber-100 text-amber-700', icon: Clock }
+      case 'cancelled':
+        return { bg: 'bg-red-100 text-red-700', icon: Clock }
+      default:
+        return { bg: 'bg-gray-100 text-gray-700', icon: Clock }
+    }
+  }
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-IN', {
+      day: 'numeric',
+      month: 'short',
+    })
+  }
+
+  const menuItems = [
+    { id: 'overview', icon: User, label: 'My Profile' },
+    { id: 'orders', icon: ShoppingBag, label: 'My Orders', badge: orders.length },
+    { id: 'addresses', icon: MapPin, label: 'My Addresses', badge: addresses.length },
+    { id: 'wishlist', icon: Heart, label: 'My Wishlist', badge: wishlistItems.length },
+    { id: 'help', icon: HelpCircle, label: 'Help & Support' },
+  ]
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Mobile Header with Profile Tap */}
-      <div className="bg-white border-b md:hidden">
-        <button
-          onClick={() => setIsBottomSheetOpen(true)}
-          className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors"
-        >
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      {/* Mobile Header */}
+      <div className="md:hidden bg-white border-b sticky top-0 z-20">
+        <div className="px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
-              <span className="text-sm font-bold text-primary-600">
-                {getInitials()}
-              </span>
+            <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center">
+              <span className="text-sm font-bold text-white">{getInitials()}</span>
             </div>
-            <div className="text-left">
+            <div>
               <p className="font-semibold text-gray-900 text-sm">
                 {user?.firstName} {user?.lastName}
               </p>
-              <p className="text-xs text-gray-500">Tap for menu</p>
+              <p className="text-xs text-gray-500">{user?.email}</p>
             </div>
           </div>
-          <ChevronDown className="h-5 w-5 text-gray-400" />
-        </button>
+          <button
+            onClick={() => navigate('/cart')}
+            className="relative p-2 bg-gray-100 rounded-xl"
+          >
+            <ShoppingBag className="h-5 w-5 text-gray-600" />
+          </button>
+        </div>
       </div>
 
       {/* Desktop Header */}
@@ -261,22 +293,28 @@ export default function UserProfile() {
       </div>
 
       <div className="container mx-auto px-4 py-6 md:py-8">
-        <div className="flex flex-col md:flex-row gap-6">
+        <div className="flex flex-col lg:flex-row gap-6">
           {/* Desktop Sidebar */}
-          <div className="hidden md:block w-64 flex-shrink-0">
-            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden sticky top-4">
-              <div className="p-4 border-b border-gray-100">
-                <ProfileHeader />
+          <div className="hidden lg:block w-72 flex-shrink-0">
+            <motion.div
+              initial={{ x: -20, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              className="bg-white rounded-2xl shadow-sm overflow-hidden sticky top-4"
+            >
+              {/* User Avatar */}
+              <div className="p-6 bg-gradient-to-br from-primary-500 to-primary-700 text-center">
+                <div className="w-20 h-20 bg-white/20 backdrop-blur rounded-full flex items-center justify-center mx-auto mb-3">
+                  <span className="text-2xl font-bold text-white">{getInitials()}</span>
+                </div>
+                <h3 className="font-semibold text-white">
+                  {user?.firstName} {user?.lastName}
+                </h3>
+                <p className="text-white/70 text-sm">{user?.email}</p>
               </div>
 
-              <nav className="p-2">
-                {[
-                  { id: 'overview', icon: User, label: 'My Profile' },
-                  { id: 'orders', icon: ShoppingBag, label: 'My Orders' },
-                  { id: 'addresses', icon: MapPin, label: 'My Addresses' },
-                  { id: 'wishlist', icon: Heart, label: 'My Wishlist' },
-                  { id: 'help', icon: HelpCircle, label: 'Help & Support' },
-                ].map((item) => {
+              {/* Navigation */}
+              <nav className="p-3">
+                {menuItems.map((item) => {
                   const Icon = item.icon
                   const isActive = activeSection === item.id
 
@@ -284,86 +322,180 @@ export default function UserProfile() {
                     <button
                       key={item.id}
                       onClick={() => handleSectionChange(item.id)}
-                      className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-left transition-colors ${
+                      className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-left transition-all ${
                         isActive
-                          ? 'bg-gray-100 text-gray-900'
+                          ? 'bg-primary-50 text-primary-700'
                           : 'text-gray-600 hover:bg-gray-50'
                       }`}
                     >
-                      <Icon className={`h-5 w-5 ${isActive ? 'text-gray-700' : 'text-gray-400'}`} />
-                      <span className={`font-medium text-sm ${isActive ? 'text-gray-900' : 'text-gray-600'}`}>
-                        {item.label}
-                      </span>
+                      <div className="flex items-center gap-3">
+                        <Icon className={`h-5 w-5 ${isActive ? 'text-primary-600' : 'text-gray-400'}`} />
+                        <span className="font-medium">{item.label}</span>
+                      </div>
+                      {item.badge !== undefined && item.badge > 0 && (
+                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                          isActive ? 'bg-primary-100 text-primary-700' : 'bg-gray-100 text-gray-600'
+                        }`}>
+                          {item.badge}
+                        </span>
+                      )}
                     </button>
                   )
                 })}
               </nav>
 
-              <div className="p-2 border-t border-gray-100">
+              {/* Logout */}
+              <div className="p-3 border-t border-gray-100">
                 <button
-                  onClick={logout}
-                  className="w-full flex items-center gap-3 px-4 py-2.5 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
+                  onClick={() => setShowLogoutModal(true)}
+                  className="w-full flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-red-50 hover:text-red-600 rounded-xl transition-colors"
                 >
-                  <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                   </svg>
-                  <span className="font-medium text-sm">Logout</span>
+                  <span className="font-medium">Logout</span>
                 </button>
               </div>
+            </motion.div>
+          </div>
+
+          {/* Mobile Navigation Tabs */}
+          <div className="md:hidden overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
+            <div className="flex gap-2 min-w-max">
+              {menuItems.map((item) => {
+                const Icon = item.icon
+                const isActive = activeSection === item.id
+
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => handleSectionChange(item.id)}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium text-sm whitespace-nowrap transition-all ${
+                      isActive
+                        ? 'bg-primary-600 text-white'
+                        : 'bg-white text-gray-600 shadow-sm'
+                    }`}
+                  >
+                    <Icon className="h-4 w-4" />
+                    {item.label}
+                  </button>
+                )
+              })}
             </div>
           </div>
 
-          {/* Mobile Bottom Sheet */}
-          <ProfileBottomSheet
-            isOpen={isBottomSheetOpen}
-            onClose={() => setIsBottomSheetOpen(false)}
-            activeSection={activeSection}
-            onSectionChange={handleSectionChange}
-          />
-
           {/* Main Content */}
-          <div className="flex-1">
-            {/* Quick Stats */}
-            <div className="mb-6">
-              <QuickStats
-                orderCount={orders.length}
-                wishlistCount={wishlistItems.length}
-                addressCount={addresses.length}
-                onOrdersClick={() => navigate('/orders')}
-                onWishlistClick={() => navigate('/wishlist')}
-                onAddressesClick={() => {
-                  setActiveSection('addresses')
-                  setActiveTab('addresses')
-                }}
-              />
-            </div>
+          <div className="flex-1 space-y-6">
+            {/* Hero Section */}
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-2xl p-6 md:p-8 text-white"
+            >
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h2 className="text-2xl md:text-3xl font-bold mb-1">
+                    Welcome back, {user?.firstName}!
+                  </h2>
+                  <p className="text-white/80 text-sm">
+                    Member since {user?.createdAt ? new Date(user.createdAt).getFullYear() : '2024'}
+                  </p>
+                </div>
+              </div>
+            </motion.div>
 
-            {/* Action Cards */}
-            <div className="mb-6">
-              <ActionCards
-                orderCount={orders.length}
-                wishlistCount={wishlistItems.length}
-                addressCount={addresses.length}
-                onOrdersClick={() => navigate('/orders')}
-                onWishlistClick={() => navigate('/wishlist')}
-                onAddressesClick={() => {
-                  setActiveSection('addresses')
-                  setActiveTab('addresses')
-                }}
-                onHelpClick={() => navigate('/help')}
-              />
-            </div>
+            {/* Quick Stats */}
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.1 }}
+              className="grid grid-cols-3 gap-3"
+            >
+              {[
+                { label: 'Orders', value: orders.length, icon: ShoppingBag, color: 'from-blue-500 to-blue-600' },
+                { label: 'Wishlist', value: wishlistItems.length, icon: Heart, color: 'from-pink-500 to-pink-600' },
+                { label: 'Addresses', value: addresses.length, icon: MapPin, color: 'from-emerald-500 to-emerald-600' },
+              ].map((stat) => (
+                <button
+                  key={stat.label}
+                  onClick={() => stat.label === 'Orders' ? navigate('/orders') : stat.label === 'Wishlist' ? navigate('/wishlist') : setActiveTab('addresses')}
+                  className="bg-white rounded-xl p-4 text-left shadow-sm hover:shadow-md transition-shadow"
+                >
+                  <div className={`w-10 h-10 bg-gradient-to-br ${stat.color} rounded-xl flex items-center justify-center mb-3`}>
+                    <stat.icon className="h-5 w-5 text-white" />
+                  </div>
+                  <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                  <p className="text-sm text-gray-500">{stat.label}</p>
+                </button>
+              ))}
+            </motion.div>
+
+            {/* Recent Orders */}
+            {recentOrders.length > 0 && (
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                className="bg-white rounded-2xl p-6 shadow-sm"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900">Recent Orders</h3>
+                  <button
+                    onClick={() => navigate('/orders')}
+                    className="text-primary-600 text-sm font-medium hover:text-primary-700 flex items-center gap-1"
+                  >
+                    View All <ChevronRight className="h-4 w-4" />
+                  </button>
+                </div>
+                <div className="space-y-3">
+                  {recentOrders.map((order: any) => {
+                    const statusConfig = getOrderStatusConfig(order.status)
+                    const StatusIcon = statusConfig.icon
+
+                    return (
+                      <div
+                        key={order.id}
+                        className="flex items-center justify-between p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer"
+                        onClick={() => navigate(`/orders/${order.id}`)}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className={`p-2 rounded-lg ${statusConfig.bg}`}>
+                            <StatusIcon className="h-4 w-4" />
+                          </div>
+                          <div>
+                            <p className="font-medium text-gray-900 text-sm">#{order.orderNumber}</p>
+                            <p className="text-xs text-gray-500">{order.items?.length || 0} items • ₹{Number(order.totalAmount || 0).toLocaleString()}</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${statusConfig.bg}`}>
+                            {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                          </span>
+                          <p className="text-xs text-gray-500 mt-1">{formatDate(order.createdAt)}</p>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </motion.div>
+            )}
 
             {/* Personal Info Section */}
             {activeSection === 'overview' && (
-              <div className="bg-white rounded-xl border shadow-sm p-6">
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.3 }}
+                className="bg-white rounded-2xl p-6 shadow-sm"
+              >
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-lg font-semibold text-gray-900">Personal Information</h2>
+                  <h3 className="text-lg font-semibold text-gray-900">Personal Information</h3>
                   {!isEditingProfile && (
                     <button
                       onClick={startEditProfile}
-                      className="text-sm text-primary-600 font-medium hover:text-primary-700"
+                      className="flex items-center gap-2 px-4 py-2 bg-primary-50 text-primary-600 rounded-xl hover:bg-primary-100 transition-colors font-medium text-sm"
                     >
+                      <Edit className="h-4 w-4" />
                       Edit
                     </button>
                   )}
@@ -378,7 +510,7 @@ export default function UserProfile() {
                           type="text"
                           value={profileForm.firstName}
                           onChange={(e) => setProfileForm({ ...profileForm, firstName: e.target.value })}
-                          className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                           required
                         />
                       </div>
@@ -388,7 +520,7 @@ export default function UserProfile() {
                           type="text"
                           value={profileForm.lastName}
                           onChange={(e) => setProfileForm({ ...profileForm, lastName: e.target.value })}
-                          className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                           required
                         />
                       </div>
@@ -398,7 +530,7 @@ export default function UserProfile() {
                           type="email"
                           value={user?.email || ''}
                           disabled
-                          className="w-full px-3 py-2 border border-gray-200 rounded-lg bg-gray-50 text-gray-500"
+                          className="w-full px-4 py-3 border border-gray-200 rounded-xl bg-gray-50 text-gray-500"
                         />
                       </div>
                       <div>
@@ -408,7 +540,7 @@ export default function UserProfile() {
                           value={profileForm.phone}
                           onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
                           placeholder="Enter phone number"
-                          className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                         />
                       </div>
                     </div>
@@ -416,14 +548,14 @@ export default function UserProfile() {
                       <button
                         type="submit"
                         disabled={updateProfileMutation.isPending}
-                        className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50"
+                        className="px-6 py-3 bg-primary-600 text-white font-medium rounded-xl hover:bg-primary-700 disabled:opacity-50 transition-colors"
                       >
                         {updateProfileMutation.isPending ? 'Saving...' : 'Save Changes'}
                       </button>
                       <button
                         type="button"
                         onClick={() => setIsEditingProfile(false)}
-                        className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                        className="px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors"
                       >
                         Cancel
                       </button>
@@ -431,37 +563,42 @@ export default function UserProfile() {
                   </form>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div>
+                    <div className="p-4 bg-gray-50 rounded-xl">
                       <p className="text-sm text-gray-500 mb-1">First Name</p>
-                      <p className="font-medium text-gray-900">{user?.firstName || '-'}</p>
+                      <p className="font-semibold text-gray-900">{user?.firstName || '-'}</p>
                     </div>
-                    <div>
+                    <div className="p-4 bg-gray-50 rounded-xl">
                       <p className="text-sm text-gray-500 mb-1">Last Name</p>
-                      <p className="font-medium text-gray-900">{user?.lastName || '-'}</p>
+                      <p className="font-semibold text-gray-900">{user?.lastName || '-'}</p>
                     </div>
-                    <div>
+                    <div className="p-4 bg-gray-50 rounded-xl">
                       <p className="text-sm text-gray-500 mb-1">Email</p>
-                      <p className="font-medium text-gray-900">{user?.email || '-'}</p>
+                      <p className="font-semibold text-gray-900">{user?.email || '-'}</p>
                     </div>
-                    <div>
+                    <div className="p-4 bg-gray-50 rounded-xl">
                       <p className="text-sm text-gray-500 mb-1">Phone</p>
-                      <p className="font-medium text-gray-900">
+                      <p className="font-semibold text-gray-900">
                         {user?.phone && !user.phone.startsWith('social_') ? `+91 ${user.phone}` : 'Not set'}
                       </p>
                     </div>
                   </div>
                 )}
-              </div>
+              </motion.div>
             )}
 
             {/* Addresses Section */}
-            {(activeSection === 'addresses' || activeTab === 'addresses') && (
-              <div ref={addressesRef} className="bg-white rounded-xl border shadow-sm p-6">
+            {activeSection === 'addresses' && (
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                ref={addressesRef}
+                className="bg-white rounded-2xl p-6 shadow-sm"
+              >
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-                  <h2 className="text-lg font-semibold text-gray-900">Saved Addresses</h2>
+                  <h3 className="text-lg font-semibold text-gray-900">Saved Addresses</h3>
                   <button
                     onClick={() => setShowAddressForm(true)}
-                    className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-xl hover:bg-primary-700 transition-colors font-medium text-sm"
                   >
                     <Plus className="h-4 w-4" />
                     Add Address
@@ -470,9 +607,9 @@ export default function UserProfile() {
 
                 {showAddressForm && (
                   <form onSubmit={handleSubmitAddress} className="mb-6 p-4 bg-gray-50 rounded-xl">
-                    <h3 className="font-medium text-gray-900 mb-4">
+                    <h4 className="font-semibold text-gray-900 mb-4">
                       {editingAddress ? 'Edit Address' : 'Add New Address'}
-                    </h3>
+                    </h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm text-gray-600 mb-1">Name</label>
@@ -481,7 +618,7 @@ export default function UserProfile() {
                           required
                           value={addressForm.name}
                           onChange={(e) => setAddressForm({ ...addressForm, name: e.target.value })}
-                          className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                         />
                       </div>
                       <div>
@@ -491,7 +628,7 @@ export default function UserProfile() {
                           required
                           value={addressForm.phone}
                           onChange={(e) => setAddressForm({ ...addressForm, phone: e.target.value })}
-                          className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                         />
                       </div>
                       <div className="sm:col-span-2">
@@ -521,7 +658,7 @@ export default function UserProfile() {
                           required
                           value={addressForm.addressLine1}
                           onChange={(e) => setAddressForm({ ...addressForm, addressLine1: e.target.value })}
-                          className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                         />
                       </div>
                       <div className="sm:col-span-2">
@@ -530,7 +667,7 @@ export default function UserProfile() {
                           type="text"
                           value={addressForm.addressLine2}
                           onChange={(e) => setAddressForm({ ...addressForm, addressLine2: e.target.value })}
-                          className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                         />
                       </div>
                       <div>
@@ -540,7 +677,7 @@ export default function UserProfile() {
                           required
                           value={addressForm.city}
                           onChange={(e) => setAddressForm({ ...addressForm, city: e.target.value })}
-                          className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                         />
                       </div>
                       <div>
@@ -550,7 +687,7 @@ export default function UserProfile() {
                           required
                           value={addressForm.state}
                           onChange={(e) => setAddressForm({ ...addressForm, state: e.target.value })}
-                          className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                         />
                       </div>
                       <div>
@@ -560,7 +697,7 @@ export default function UserProfile() {
                           required
                           value={addressForm.pincode}
                           onChange={(e) => setAddressForm({ ...addressForm, pincode: e.target.value })}
-                          className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                         />
                       </div>
                       <div className="flex items-center">
@@ -580,14 +717,14 @@ export default function UserProfile() {
                       <button
                         type="submit"
                         disabled={addAddressMutation.isPending || updateAddressMutation.isPending}
-                        className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 transition-colors"
+                        className="px-6 py-3 bg-primary-600 text-white font-medium rounded-xl hover:bg-primary-700 disabled:opacity-50 transition-colors"
                       >
                         {editingAddress ? 'Update' : 'Save'} Address
                       </button>
                       <button
                         type="button"
                         onClick={resetForm}
-                        className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                        className="px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors"
                       >
                         Cancel
                       </button>
@@ -605,7 +742,9 @@ export default function UserProfile() {
                   </div>
                 ) : addresses.length === 0 ? (
                   <div className="text-center py-12">
-                    <MapPin className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <MapPin className="h-8 w-8 text-gray-400" />
+                    </div>
                     <p className="text-gray-500 mb-4">No saved addresses yet</p>
                     <button
                       onClick={() => setShowAddressForm(true)}
@@ -619,7 +758,7 @@ export default function UserProfile() {
                     {addresses.map((address: any) => (
                       <div
                         key={address.id}
-                        className="border border-gray-200 p-4 rounded-xl hover:border-gray-300 transition-colors relative"
+                        className="border border-gray-200 p-4 rounded-xl hover:border-primary-300 hover:shadow-md transition-all relative"
                       >
                         {address.isDefault && (
                           <span className="absolute top-3 right-3 text-xs bg-primary-100 text-primary-700 px-2 py-1 rounded-full font-medium">
@@ -627,7 +766,9 @@ export default function UserProfile() {
                           </span>
                         )}
                         <div className="flex items-start gap-3">
-                          <MapPin className="h-5 w-5 text-gray-400 flex-shrink-0 mt-0.5" />
+                          <div className="p-2 bg-gray-100 rounded-lg">
+                            <MapPin className="h-4 w-4 text-gray-500" />
+                          </div>
                           <div className="flex-1">
                             <p className="font-semibold text-gray-900">{address.name}</p>
                             <p className="text-sm text-gray-600 mt-1">
@@ -659,7 +800,7 @@ export default function UserProfile() {
                     ))}
                   </div>
                 )}
-              </div>
+              </motion.div>
             )}
           </div>
 
@@ -668,6 +809,13 @@ export default function UserProfile() {
             isOpen={!!deleteAddressId}
             onClose={() => setDeleteAddressId(null)}
             onConfirm={() => deleteAddressId && deleteAddressMutation.mutate(deleteAddressId)}
+          />
+
+          {/* Logout Confirmation Modal */}
+          <LogoutModal
+            isOpen={showLogoutModal}
+            onClose={() => setShowLogoutModal(false)}
+            onConfirm={logout}
           />
         </div>
       </div>

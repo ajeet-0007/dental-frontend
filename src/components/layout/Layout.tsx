@@ -9,12 +9,14 @@ import { useWishlistStore } from '@/stores/wishlistStore'
 import api from '@/api'
 import WishlistDrawer from '@/components/common/WishlistDrawer'
 import BottomNav from '@/components/common/BottomNav'
+import LogoutModal from '@/components/common/LogoutModal'
 import { useVoiceSearch } from '@/hooks/useVoiceSearch'
 
 export default function Layout() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [isWishlistOpen, setIsWishlistOpen] = useState(false)
+  const [showLogoutModal, setShowLogoutModal] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const searchRef = useRef<HTMLDivElement>(null)
   const { isAuthenticated, logout } = useAuthStore()
@@ -374,7 +376,7 @@ export default function Layout() {
                     <motion.button
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.95 }}
-                      onClick={logout}
+                      onClick={() => setShowLogoutModal(true)}
                       className="p-2 text-gray-600 hover:text-red-600 transition-colors"
                       title="Logout"
                     >
@@ -498,7 +500,7 @@ export default function Layout() {
                     </Link>
                     <button
                       onClick={() => {
-                        logout()
+                        setShowLogoutModal(true)
                         setIsMenuOpen(false)
                       }}
                       className="w-full flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-gray-50 text-left"
@@ -740,6 +742,12 @@ export default function Layout() {
       <WishlistDrawer
         isOpen={isWishlistOpen}
         onClose={() => setIsWishlistOpen(false)}
+      />
+
+      <LogoutModal
+        isOpen={showLogoutModal}
+        onClose={() => setShowLogoutModal(false)}
+        onConfirm={logout}
       />
     </div>
   )
