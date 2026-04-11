@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { motion } from "framer-motion";
 import api from "@/api";
 import { Package, Shield, Truck, CreditCard, ChevronRight } from "lucide-react";
 import ProductCarousel from "@/components/common/ProductCarousel";
@@ -89,34 +90,111 @@ export default function Home() {
         </section>
       )}
 
-      {/* Trust Badges */}
-      <section className="py-4 md:py-6 bg-white border-y border-gray-100">
+      {/* Trust Badges - Modern Gradient & Shadow */}
+      <section className="py-6 md:py-8 bg-white border-y border-gray-100">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-4 gap-2 md:gap-4">
-            <div className="flex flex-col items-center gap-1 p-2 md:p-3">
-              <div className="w-8 h-8 md:w-14 md:h-14 bg-primary-50 rounded-lg md:rounded-xl flex items-center justify-center">
-                <Shield className="h-4 w-4 md:h-6 md:w-6 text-primary-600" />
+          {/* Mobile: 2x2 Grid - Compact */}
+          <div className="grid grid-cols-2 gap-2 md:hidden">
+            <motion.div 
+              whileHover={{ scale: 1.03 }} 
+              className="flex items-center gap-2 p-2 bg-white rounded-lg border border-gray-100 shadow-sm hover:shadow-md transition-shadow"
+            >
+              <div className="w-8 h-8 bg-gradient-to-br from-primary-400 to-primary-600 rounded-lg flex items-center justify-center shadow-md shadow-primary-500/20">
+                <Shield className="h-4 w-4 text-white" />
               </div>
-              <p className="text-[10px] md:text-xs font-medium text-gray-900 text-center">Genuine</p>
-            </div>
-            <div className="flex flex-col items-center gap-1 p-2 md:p-3">
-              <div className="w-8 h-8 md:w-14 md:h-14 bg-blue-50 rounded-lg md:rounded-xl flex items-center justify-center">
-                <Truck className="h-4 w-4 md:h-6 md:w-6 text-blue-600" />
+              <div>
+                <p className="text-xs font-semibold text-gray-900">Genuine Products</p>
+                <p className="text-[9px] text-gray-500">100% Authentic</p>
               </div>
-              <p className="text-[10px] md:text-xs font-medium text-gray-900 text-center">Fast Delivery</p>
-            </div>
-            <div className="flex flex-col items-center gap-1 p-2 md:p-3">
-              <div className="w-8 h-8 md:w-14 md:h-14 bg-green-50 rounded-lg md:rounded-xl flex items-center justify-center">
-                <CreditCard className="h-4 w-4 md:h-6 md:w-6 text-green-600" />
+            </motion.div>
+            <motion.div 
+              whileHover={{ scale: 1.03 }} 
+              className="flex items-center gap-2 p-2 bg-white rounded-lg border border-gray-100 shadow-sm hover:shadow-md transition-shadow"
+            >
+              <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg flex items-center justify-center shadow-md shadow-blue-500/20">
+                <Truck className="h-4 w-4 text-white" />
               </div>
-              <p className="text-[10px] md:text-xs font-medium text-gray-900 text-center">Secure</p>
-            </div>
-            <div className="flex flex-col items-center gap-1 p-2 md:p-3">
-              <div className="w-8 h-8 md:w-14 md:h-14 bg-amber-50 rounded-lg md:rounded-xl flex items-center justify-center">
-                <Package className="h-4 w-4 md:h-6 md:w-6 text-amber-600" />
+              <div>
+                <p className="text-xs font-semibold text-gray-900">Fast Delivery</p>
+                <p className="text-[9px] text-gray-500">Pan India Delivery</p>
               </div>
-              <p className="text-[10px] md:text-xs font-medium text-gray-900 text-center">Easy Returns</p>
-            </div>
+            </motion.div>
+            <motion.div 
+              whileHover={{ scale: 1.03 }} 
+              className="flex items-center gap-2 p-2 bg-white rounded-lg border border-gray-100 shadow-sm hover:shadow-md transition-shadow"
+            >
+              <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-green-600 rounded-lg flex items-center justify-center shadow-md shadow-green-500/20">
+                <CreditCard className="h-4 w-4 text-white" />
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-gray-900">Secure Payment</p>
+                <p className="text-[9px] text-gray-500">Safe Checkout</p>
+              </div>
+            </motion.div>
+            <motion.div 
+              whileHover={{ scale: 1.03 }} 
+              className="flex items-center gap-2 p-2 bg-white rounded-lg border border-gray-100 shadow-sm hover:shadow-md transition-shadow"
+            >
+              <div className="w-8 h-8 bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg flex items-center justify-center shadow-md shadow-amber-500/20">
+                <Package className="h-4 w-4 text-white" />
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-gray-900">Easy Returns</p>
+                <p className="text-[9px] text-gray-500">7-Day Returns</p>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Desktop: Horizontal Row */}
+          <div className="hidden md:flex items-center justify-between gap-4">
+            <motion.div 
+              whileHover={{ scale: 1.05, y: -2 }} 
+              className="flex-1 flex items-center gap-4 p-4 bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-lg hover:shadow-primary-500/10 transition-all"
+            >
+              <div className="w-14 h-14 bg-gradient-to-br from-primary-400 to-primary-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/20">
+                <Shield className="h-7 w-7 text-white" />
+              </div>
+              <div>
+                <p className="text-base font-bold text-gray-900">Genuine Products</p>
+                <p className="text-sm text-gray-500">100% Authentic Guaranteed</p>
+              </div>
+            </motion.div>
+            <motion.div 
+              whileHover={{ scale: 1.05, y: -2 }} 
+              className="flex-1 flex items-center gap-4 p-4 bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-lg hover:shadow-blue-500/10 transition-all"
+            >
+              <div className="w-14 h-14 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+                <Truck className="h-7 w-7 text-white" />
+              </div>
+              <div>
+                <p className="text-base font-bold text-gray-900">Fast Delivery</p>
+                <p className="text-sm text-gray-500">Pan India Delivery</p>
+              </div>
+            </motion.div>
+            <motion.div 
+              whileHover={{ scale: 1.05, y: -2 }} 
+              className="flex-1 flex items-center gap-4 p-4 bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-lg hover:shadow-green-500/10 transition-all"
+            >
+              <div className="w-14 h-14 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center shadow-lg shadow-green-500/20">
+                <CreditCard className="h-7 w-7 text-white" />
+              </div>
+              <div>
+                <p className="text-base font-bold text-gray-900">Secure Payment</p>
+                <p className="text-sm text-gray-500">256-bit SSL Encrypted</p>
+              </div>
+            </motion.div>
+            <motion.div 
+              whileHover={{ scale: 1.05, y: -2 }} 
+              className="flex-1 flex items-center gap-4 p-4 bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-lg hover:shadow-amber-500/10 transition-all"
+            >
+              <div className="w-14 h-14 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl flex items-center justify-center shadow-lg shadow-amber-500/20">
+                <Package className="h-7 w-7 text-white" />
+              </div>
+              <div>
+                <p className="text-base font-bold text-gray-900">Easy Returns & Refunds</p>
+                <p className="text-sm text-gray-500">7-Day Return Policy</p>
+              </div>
+            </motion.div>
           </div>
         </div>
       </section>
