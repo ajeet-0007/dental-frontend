@@ -43,3 +43,22 @@ api.interceptors.response.use(
 )
 
 export default api
+
+export const reviewsApi = {
+  canReview: (productId: string | number) => api.get(`/reviews/user/can-review/${productId}`),
+  
+  create: (data: { productId: number; rating: number; title?: string; comment?: string; images?: string[] }) => 
+    api.post('/reviews', data),
+  
+  getByProduct: (productId: string | number, params?: { page?: number; limit?: number; sort?: string }) => 
+    api.get(`/reviews/product/${productId}`, { params }),
+  
+  getStats: (productId: string | number) => api.get(`/reviews/product/${productId}/stats`),
+  
+  update: (id: string, data: { rating?: number; title?: string; comment?: string; images?: string[] }) =>
+    api.put(`/reviews/${id}`, data),
+  
+  delete: (id: string) => api.delete(`/reviews/${id}`),
+  
+  markHelpful: (id: string) => api.post(`/reviews/${id}/helpful`),
+}

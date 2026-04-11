@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import api from "@/api";
+import api, { reviewsApi } from "@/api";
 import { useAuthStore } from "@/stores/authStore";
 import { useCartStore } from "@/stores/cartStore";
 import { useWishlistStore } from "@/stores/wishlistStore";
@@ -23,6 +23,7 @@ import {
 import { VariantSelector, ProductVariant } from "@/components/common/VariantSelector";
 import HtmlRenderer from "@/components/common/HtmlRenderer";
 import ProductCarousel from "@/components/common/ProductCarousel";
+import { ReviewsSection } from "@/components/common/Reviews";
 
 const DEFAULT_IMAGE =
   "https://images.unsplash.com/photo-1629909613654-28e377c37b09";
@@ -86,14 +87,6 @@ export default function ProductDetail() {
         setProductError(false);
         return res.data;
       } catch (error: any) {
-        if (error?.response?.status === 404 && slug) {
-          const numericId = slug.match(/^\d+$/) ? slug : null;
-          if (numericId) {
-            const res = await api.get(`/products/${numericId}`);
-            setProductError(false);
-            return res.data;
-          }
-        }
         setProductError(true);
         throw error;
       }
@@ -112,6 +105,16 @@ export default function ProductDetail() {
       return response.data || [];
     },
     enabled: !!product?.category?.slug,
+  });
+
+  const { data: reviewStatsData } = useQuery({
+    queryKey: ["reviewStats", product?.id],
+    queryFn: async () => {
+      if (!product?.id) return null;
+      const response = await reviewsApi.getStats(String(product.id));
+      return response.data;
+    },
+    enabled: !!product?.id,
   });
 
   const recommendedProducts = recommendedData || [];
@@ -436,21 +439,27 @@ export default function ProductDetail() {
                 </h1>
 
                 {/* Rating */}
+                {reviewStatsData?.averageRating ? (
                 <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
                   <div className="flex items-center">
                     {[...Array(5)].map((_, i) => (
                       <Star
                         key={i}
                         className={`h-3.5 w-3.5 md:h-4 md:w-4 ${
-                          i < 4
+                          i < Math.round(reviewStatsData?.averageRating || 0)
                             ? "text-yellow-400 fill-yellow-400"
                             : "text-gray-300"
                         }`}
                       />
                     ))}
                   </div>
-                  <span className="text-xs md:text-sm text-gray-500">(4 reviews)</span>
+                  <span className="text-xs md:text-sm text-gray-500">
+                    {reviewStatsData?.averageRating 
+                      ? `${reviewStatsData.averageRating.toFixed(1)} (${reviewStatsData.totalReviews} reviews)` 
+                      : ''}
+                  </span>
                 </div>
+                ) : null}
 
                 {/* Price */}
                 <div className="flex flex-wrap items-baseline gap-1.5 md:gap-3">
@@ -705,6 +714,9 @@ export default function ProductDetail() {
             </div>
           </section>
         )}
+
+        {/* Reviews Section */}
+        <ReviewsSection productId={product.id} />
       </div>
 
       {/* Lightbox */}

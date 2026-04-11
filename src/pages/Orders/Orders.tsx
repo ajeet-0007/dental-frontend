@@ -186,7 +186,7 @@ export default function Orders() {
                       {(order.items || []).slice(0, 4).map((item: any, idx: number) => (
                         <Link 
                           key={idx} 
-                          to={item.productSlug ? `/products/${item.productSlug}` : `/products/${item.productId}`}
+                          to={(item.productSlug && item.productSlug.trim()) ? `/products/${item.productSlug}` : `/products/${item.productId}`}
                           className="w-16 h-16 md:w-20 md:h-20 bg-gray-50 rounded-xl overflow-hidden flex-shrink-0 border border-gray-100 hover:border-primary-300 hover:shadow-md transition-all"
                         >
                           {item.productImage ? (

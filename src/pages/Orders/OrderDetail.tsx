@@ -286,7 +286,7 @@ export default function OrderDetail() {
                   {order.items?.map((item: any) => (
                     <Link 
                       key={item.id} 
-                      to={item.productSlug ? `/products/${item.productSlug}` : `/products/${item.productId}`}
+                      to={(item.productSlug && item.productSlug.trim()) ? `/products/${item.productSlug}` : `/products/${item.productId}`}
                       className="block p-4 md:p-5 hover:bg-gray-50/50 transition-colors cursor-pointer"
                     >
                       <div className="flex gap-3 md:gap-4">
