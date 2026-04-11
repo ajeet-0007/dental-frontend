@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { MessageSquare, Star, ChevronDown } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import toast from 'react-hot-toast'
 import { reviewsApi } from '@/api'
 import { useAuthStore } from '@/stores/authStore'
 import RatingBreakdown from './RatingBreakdown'
@@ -12,11 +13,20 @@ interface ReviewsSectionProps {
   productId: string | number
 }
 
+const sortOptions = [
+  { value: 'newest', label: 'Newest' },
+  { value: 'oldest', label: 'Oldest' },
+  { value: 'highest', label: 'Highest Rated' },
+  { value: 'lowest', label: 'Lowest Rated' },
+] as const
+
 export default function ReviewsSection({ productId }: ReviewsSectionProps) {
-  const { isAuthenticated } = useAuthStore()
+  const { isAuthenticated, user } = useAuthStore()
   const [sort, setSort] = useState<'newest' | 'oldest' | 'highest' | 'lowest'>('newest')
   const [page, setPage] = useState(1)
   const [showForm, setShowForm] = useState(false)
+  const [editingReview, setEditingReview] = useState<any>(null)
+  const [sortDropdownOpen, setSortDropdownOpen] = useState(false)
 
   const { data: statsData, isLoading: statsLoading } = useQuery({
     queryKey: ['reviewStats', productId],
@@ -43,14 +53,36 @@ export default function ReviewsSection({ productId }: ReviewsSectionProps) {
   const totalPages = reviewsData?.data?.totalPages || 1
   const total = reviewsData?.data?.total || 0
 
-  const handleSortChange = (newSort: typeof sort) => {
-    setSort(newSort)
-    setPage(1)
-  }
+  const userReview = isAuthenticated && user
+    ? reviews.find((r: any) => r.user?.id === user.id)
+    : null
 
   const handleReviewSuccess = () => {
     setShowForm(false)
+    setEditingReview(null)
     refetch()
+  }
+
+  const handleEditReview = (review: any) => {
+    setEditingReview(review)
+    setShowForm(true)
+  }
+
+  const handleDeleteReview = async (reviewId: string) => {
+    if (!confirm('Are you sure you want to delete your review?')) return
+
+    try {
+      await reviewsApi.delete(reviewId)
+      toast.success('Review deleted successfully')
+      refetch()
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Failed to delete review')
+    }
+  }
+
+  const handleCloseForm = () => {
+    setShowForm(false)
+    setEditingReview(null)
   }
 
   return (
@@ -76,23 +108,22 @@ export default function ReviewsSection({ productId }: ReviewsSectionProps) {
             <RatingBreakdown stats={stats} />
           ) : null}
 
-          {/* Write Review Button */}
-          <div className="mt-6">
-            {isAuthenticated && canReviewData?.data?.canReview ? (
-              canReviewData.data.existingReview ? (
-                <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
-                  <p className="text-green-700 font-medium">
-                    You have already reviewed this product
-                  </p>
-                </div>
-              ) : (
-                <button
-                  onClick={() => setShowForm(!showForm)}
-                  className="w-full py-3 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors"
-                >
-                  Write a Review
-                </button>
-              )
+          {/* Write/Edit Review Button */}
+          <div className="mt-6 space-y-3">
+            {isAuthenticated && userReview ? (
+              <button
+                onClick={() => handleEditReview(userReview)}
+                className="w-full py-3 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors"
+              >
+                Edit Your Review
+              </button>
+            ) : isAuthenticated && canReviewData?.data?.canReview && !canReviewData?.data?.existingReview ? (
+              <button
+                onClick={() => setShowForm(!showForm)}
+                className="w-full py-3 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors"
+              >
+                Write a Review
+              </button>
             ) : !isAuthenticated ? (
               <a
                 href="/login"
@@ -119,9 +150,10 @@ export default function ReviewsSection({ productId }: ReviewsSectionProps) {
                 className="mt-4"
               >
                 <ReviewForm
-                  productId={String(productId)}
+                  productId={Number(productId)}
+                  editReview={editingReview}
                   onSuccess={handleReviewSuccess}
-                  onClose={() => setShowForm(false)}
+                  onClose={handleCloseForm}
                 />
               </motion.div>
             )}
@@ -132,23 +164,35 @@ export default function ReviewsSection({ productId }: ReviewsSectionProps) {
         <div className="lg:col-span-2">
           {/* Sort Options */}
           <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600">Sort by:</span>
-              <div className="flex gap-1">
-                {(['newest', 'oldest', 'highest', 'lowest'] as const).map((option) => (
-                  <button
-                    key={option}
-                    onClick={() => handleSortChange(option)}
-                    className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
-                      sort === option
-                        ? 'bg-primary-600 text-white'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                    }`}
-                  >
-                    {option.charAt(0).toUpperCase() + option.slice(1)}
-                  </button>
-                ))}
-              </div>
+            <div className="relative">
+              <button
+                onClick={() => setSortDropdownOpen(!sortDropdownOpen)}
+                className="flex items-center gap-2 px-3 py-1.5 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                <span>Sort by: <span className="font-medium">{sortOptions.find(o => o.value === sort)?.label}</span></span>
+                <ChevronDown className={`w-4 h-4 transition-transform ${sortDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+              
+              {sortDropdownOpen && (
+                <div className="absolute z-10 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg min-w-[150px]">
+                  {sortOptions.map((option) => (
+                    <button
+                      key={option.value}
+                      onClick={() => {
+                        setSort(option.value)
+                        setSortDropdownOpen(false)
+                      }}
+                      className={`block w-full text-left px-4 py-2 text-sm first:rounded-t-lg last:rounded-b-lg ${
+                        sort === option.value 
+                          ? 'bg-primary-50 text-primary-600 font-medium' 
+                          : 'text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
@@ -173,7 +217,12 @@ export default function ReviewsSection({ productId }: ReviewsSectionProps) {
           ) : (
             <div className="space-y-2">
               {reviews.map((review: any) => (
-                <ReviewCard key={review.id} review={review} />
+                <ReviewCard
+                  key={review.id}
+                  review={review}
+                  onEdit={review.user?.id === user?.id ? () => handleEditReview(review) : undefined}
+                  onDelete={review.user?.id === user?.id ? () => handleDeleteReview(review.id) : undefined}
+                />
               ))}
             </div>
           )}

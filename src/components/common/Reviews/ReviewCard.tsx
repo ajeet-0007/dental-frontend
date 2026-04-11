@@ -1,4 +1,4 @@
-import { Star, ThumbsUp, CheckCircle } from 'lucide-react'
+import { Star, ThumbsUp, CheckCircle, Pencil, Trash2 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { reviewsApi } from '@/api'
@@ -20,9 +20,11 @@ interface ReviewCardProps {
       avatar?: string
     }
   }
+  onEdit?: () => void
+  onDelete?: () => void
 }
 
-export default function ReviewCard({ review }: ReviewCardProps) {
+export default function ReviewCard({ review, onEdit, onDelete }: ReviewCardProps) {
   const [helpfulCount, setHelpfulCount] = useState(review.helpfulCount)
   const [markedHelpful, setMarkedHelpful] = useState(false)
 
@@ -103,6 +105,30 @@ export default function ReviewCard({ review }: ReviewCardProps) {
             </div>
           </div>
         </div>
+
+        {/* Edit/Delete buttons for user's own review */}
+        {(onEdit || onDelete) && (
+          <div className="flex items-center gap-2">
+            {onEdit && (
+              <button
+                onClick={onEdit}
+                className="p-2 text-gray-500 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                title="Edit review"
+              >
+                <Pencil className="w-4 h-4" />
+              </button>
+            )}
+            {onDelete && (
+              <button
+                onClick={onDelete}
+                className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                title="Delete review"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       {review.title && (
@@ -134,7 +160,7 @@ export default function ReviewCard({ review }: ReviewCardProps) {
         </div>
       )}
 
-      <div className="mt-4">
+      <div className="mt-4 flex items-center gap-3">
         <button
           onClick={handleMarkHelpful}
           disabled={markedHelpful}

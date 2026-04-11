@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Star, X, Upload, Loader2 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import toast from 'react-hot-toast'
@@ -7,12 +7,19 @@ import { reviewsApi } from '@/api'
 import api from '@/api'
 
 interface ReviewFormProps {
-  productId: string | number
+  productId: number
+  editReview?: {
+    id: string
+    rating: number
+    title?: string
+    comment?: string
+    images?: string[]
+  } | null
   onSuccess?: () => void
   onClose?: () => void
 }
 
-export default function ReviewForm({ productId, onSuccess, onClose }: ReviewFormProps) {
+export default function ReviewForm({ productId, editReview, onSuccess, onClose }: ReviewFormProps) {
   const { isAuthenticated } = useAuthStore()
   const [rating, setRating] = useState(0)
   const [hoverRating, setHoverRating] = useState(0)
@@ -22,6 +29,22 @@ export default function ReviewForm({ productId, onSuccess, onClose }: ReviewForm
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const isEditing = !!editReview
+
+  useEffect(() => {
+    if (editReview) {
+      setRating(editReview.rating)
+      setTitle(editReview.title || '')
+      setComment(editReview.comment || '')
+      setImages(editReview.images || [])
+    } else {
+      setRating(0)
+      setTitle('')
+      setComment('')
+      setImages([])
+    }
+  }, [editReview])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -44,15 +67,24 @@ export default function ReviewForm({ productId, onSuccess, onClose }: ReviewForm
     setIsSubmitting(true)
 
     try {
-      await reviewsApi.create({
-        productId: Number(productId),
-        rating,
-        title: title.trim() || undefined,
-        comment: comment.trim(),
-        images: images.length > 0 ? images : undefined,
-      })
-
-      toast.success('Review submitted successfully!')
+      if (isEditing && editReview) {
+        await reviewsApi.update(editReview.id, {
+          rating,
+          title: title.trim() || undefined,
+          comment: comment.trim(),
+          images: images.length > 0 ? images : undefined,
+        })
+        toast.success('Review updated successfully!')
+      } else {
+        await reviewsApi.create({
+          productId,
+          rating,
+          title: title.trim() || undefined,
+          comment: comment.trim(),
+          images: images.length > 0 ? images : undefined,
+        })
+        toast.success('Review submitted successfully!')
+      }
       setRating(0)
       setTitle('')
       setComment('')
@@ -121,7 +153,9 @@ export default function ReviewForm({ productId, onSuccess, onClose }: ReviewForm
       className="bg-white rounded-xl border border-gray-200 p-6"
     >
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-semibold text-gray-900">Write a Review</h3>
+        <h3 className="text-lg font-semibold text-gray-900">
+          {isEditing ? 'Edit Your Review' : 'Write a Review'}
+        </h3>
         {onClose && (
           <button
             onClick={onClose}
@@ -279,7 +313,7 @@ export default function ReviewForm({ productId, onSuccess, onClose }: ReviewForm
             disabled={isSubmitting || isUploading || rating === 0 || !comment.trim()}
             className="w-full py-3 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
           >
-            {isSubmitting ? 'Submitting...' : 'Submit Review'}
+            {isSubmitting ? 'Submitting...' : isEditing ? 'Update Review' : 'Submit Review'}
           </button>
         </form>
       )}
