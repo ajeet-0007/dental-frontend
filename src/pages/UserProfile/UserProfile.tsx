@@ -189,7 +189,7 @@ export default function UserProfile() {
     } else if (section === 'wishlist') {
       navigate('/wishlist')
     } else if (section === 'addresses') {
-      setActiveTab('addresses')
+      setActiveSection('addresses')
     } else if (section === 'overview') {
       setActiveSection('overview')
     } else if (section === 'help') {
@@ -414,7 +414,7 @@ export default function UserProfile() {
               ].map((stat) => (
                 <button
                   key={stat.label}
-                  onClick={() => stat.label === 'Orders' ? navigate('/orders') : stat.label === 'Wishlist' ? navigate('/wishlist') : setActiveTab('addresses')}
+                  onClick={() => stat.label === 'Orders' ? navigate('/orders') : stat.label === 'Wishlist' ? navigate('/wishlist') : setActiveSection('addresses')}
                   className="bg-white rounded-xl p-4 text-left shadow-sm hover:shadow-md transition-shadow"
                 >
                   <div className={`w-10 h-10 bg-gradient-to-br ${stat.color} rounded-xl flex items-center justify-center mb-3`}>
