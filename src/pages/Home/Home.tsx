@@ -5,9 +5,7 @@ import { motion } from "framer-motion";
 import api from "@/api";
 import { 
   Package, Shield, Truck, CreditCard, ChevronRight, Star, 
-  Flame, Sparkles, TrendingUp, MessageSquare, Award, Building2,
-  Percent, Clock, Users, Phone, Mail, ArrowRight, Tag,
-  Heart, Gift, Zap, CheckCircle
+  MessageSquare, Award, CheckCircle
 } from "lucide-react";
 import ProductCarousel from "@/components/common/ProductCarousel";
 import CategoryCarousel from "@/components/common/CategoryCarousel";
@@ -19,7 +17,6 @@ import CartDrawer from "@/components/common/CartDrawer";
 export default function Home() {
   const [cartDrawerProduct, setCartDrawerProduct] = useState<any>(null);
   const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false);
-  const [newsletterEmail, setNewsletterEmail] = useState("");
 
   const { data: productsData } = useQuery({
     queryKey: ["products", "featured"],
@@ -66,12 +63,6 @@ export default function Home() {
     setIsCartDrawerOpen(true);
   };
 
-  const handleNewsletterSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle newsletter subscription
-    setNewsletterEmail("");
-  };
-
   // Sample testimonials data (in real app, fetch from API)
   const testimonials = [
     {
@@ -98,13 +89,6 @@ export default function Home() {
       text: "Great selection of implant systems. Easy reordering. Highly recommend for dental clinics.",
       avatar: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=100&h=100&fit=crop&crop=face"
     },
-  ];
-
-  // Sample deals data (in real app, fetch from API)
-  const deals = [
-    { id: 1, title: "Up to 40% Off", subtitle: "On Airotors & Handpieces", color: "from-red-500 to-orange-500" },
-    { id: 2, title: "Flat 25% Off", subtitle: "On Composite Materials", color: "from-blue-500 to-cyan-500" },
-    { id: 3, title: "Buy 2 Get 1 Free", subtitle: "On Rotary Files", color: "from-green-500 to-emerald-500" },
   ];
 
   return (
