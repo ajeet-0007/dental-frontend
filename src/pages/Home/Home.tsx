@@ -380,17 +380,17 @@ export default function Home() {
             <h2 className="text-xl md:text-2xl font-bold text-gray-900">Awards & Recognition</h2>
           </div>
           
-          <div className="flex flex-wrap items-center justify-center gap-3 md:gap-6">
+          <div className="grid grid-cols-2 md:flex md:flex-wrap md:items-center md:justify-center gap-3 md:gap-6">
             {['ISO 9001:2015', 'GDP Approved', 'CE Certified', 'Quality Assurance'].map((award, index) => (
               <motion.div
                 key={award}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: index * 0.1 }}
-                className="flex items-center gap-2 md:gap-3 px-3 py-2 md:px-5 md:py-3 bg-gray-50 rounded-lg md:rounded-xl"
+                className="flex items-center justify-center gap-2 px-3 py-3 bg-gray-50 rounded-xl"
               >
                 <CheckCircle className="w-4 h-4 md:w-5 md:h-5 text-green-500" />
-                <span className="text-xs md:text-sm font-medium text-gray-700">{award}</span>
+                <span className="text-xs md:text-sm font-medium text-gray-700 text-center">{award}</span>
               </motion.div>
             ))}
           </div>
