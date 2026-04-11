@@ -218,48 +218,50 @@ export default function OrderCard({
       </div>
 
       {/* Order Actions */}
-      <div className="px-5 md:px-6 pb-5 md:pb-6 pt-2 border-t border-gray-100">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex flex-wrap gap-2">
+      <div className="px-4 md:px-6 pb-4 md:pb-6 pt-2 border-t border-gray-100">
+        <div className="flex flex-row items-center justify-between gap-2 md:gap-3">
+          <div className="flex flex-nowrap gap-1.5 md:gap-2 overflow-x-auto pb-1 scrollbar-hide">
             {order.status === 'shipped' && (
-              <button className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-semibold rounded-xl hover:from-blue-600 hover:to-blue-700 transition-all shadow-lg shadow-blue-500/30">
-                <Truck className="w-4 h-4" />
-                Track Order
+              <button className="group flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 md:py-2.5 bg-blue-50 text-blue-600 text-xs md:text-sm font-medium rounded-full hover:bg-blue-100 hover:shadow-[0_4px_12px_rgba(59,130,246,0.2)] transition-all duration-300 whitespace-nowrap">
+                <Truck className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                <span className="hidden sm:inline">Track</span>
               </button>
             )}
             <button 
               onClick={() => onReorder(order.id)}
               disabled={reorderingId !== null}
-              className="flex items-center gap-2 px-4 py-2.5 bg-white text-gray-700 text-sm font-semibold rounded-xl border-2 border-gray-200 hover:border-primary-300 hover:bg-primary-50 transition-all disabled:opacity-50"
+              title="Reorder"
+              className="group flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 md:py-2.5 text-primary-600 text-xs md:text-sm font-medium rounded-full hover:bg-primary-50 transition-all duration-300 disabled:opacity-50 whitespace-nowrap"
             >
               {reorderingId === order.id ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
-                <RotateCcw className="w-4 h-4" />
+                <RotateCcw className="w-4 h-4 group-hover:rotate-180 transition-transform duration-500" />
               )}
-              {reorderingId === order.id ? 'Adding...' : 'Reorder'}
             </button>
-            <button className="flex items-center gap-2 px-4 py-2.5 bg-white text-gray-700 text-sm font-semibold rounded-xl border-2 border-gray-200 hover:border-primary-300 hover:bg-primary-50 transition-all">
+            <button 
+              title="Invoice"
+              className="group flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 md:py-2.5 text-gray-500 text-xs md:text-sm font-medium rounded-full hover:bg-gray-100 hover:text-gray-700 transition-all duration-300 whitespace-nowrap"
+            >
               <FileText className="w-4 h-4" />
-              Invoice
             </button>
             {canCancel(order.status) && (
               <button
                 onClick={() => onCancel(order.id)}
                 disabled={cancellingId !== null}
-                className="flex items-center gap-2 px-4 py-2.5 bg-white text-red-600 text-sm font-semibold rounded-xl border-2 border-red-200 hover:border-red-300 hover:bg-red-50 transition-all disabled:opacity-50"
+                title="Cancel"
+                className="group flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 md:py-2.5 text-red-500 text-xs md:text-sm font-medium rounded-full hover:bg-red-50 transition-all duration-300 disabled:opacity-50 whitespace-nowrap"
               >
                 <XCircle className="w-4 h-4" />
-                {cancellingId === order.id ? 'Cancelling...' : 'Cancel'}
               </button>
             )}
           </div>
           <button
             onClick={() => window.location.href = `/orders/${order.id}`}
-            className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary-600 to-primary-700 text-white text-sm font-bold rounded-xl hover:from-primary-700 hover:to-primary-800 transition-all shadow-lg shadow-primary-600/30"
+            className="group flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 md:py-2.5 text-primary-600 text-xs md:text-sm font-medium rounded-full hover:bg-primary-50 transition-all duration-300 flex-shrink-0"
           >
-            View Details
-            <ChevronRight className="w-4 h-4" />
+            Details
+            <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
           </button>
         </div>
       </div>

@@ -5,6 +5,7 @@ import toast from 'react-hot-toast'
 import api, { cartApi } from '@/api'
 import { Package, Clock, CheckCircle, AlertCircle, ShoppingBag } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
+import { useCartStore } from '@/stores/cartStore'
 import { motion, AnimatePresence } from 'framer-motion'
 import OrderCard from '@/components/common/OrderCard'
 
@@ -12,6 +13,7 @@ export default function Orders() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const { isAuthenticated } = useAuthStore()
+  const { setCart } = useCartStore()
 
   const [activeFilter, setActiveFilter] = useState<'all' | 'active' | 'completed' | 'cancelled'>('all')
   const [confirmCancelId, setConfirmCancelId] = useState<string | null>(null)
@@ -44,7 +46,13 @@ export default function Orders() {
       const response = await cartApi.reorder(orderId)
       return response.data
     },
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
+      try {
+        const cartRes = await api.get('/cart')
+        setCart(cartRes.data || [], Array.isArray(cartRes.data) ? cartRes.data.length : 0)
+      } catch (error) {
+        console.error('Failed to refresh cart:', error)
+      }
       queryClient.invalidateQueries({ queryKey: ['cart'] })
       if (data.success) {
         const addedCount = data.addedItems.length

@@ -1,4 +1,4 @@
-import { Star, ThumbsUp, CheckCircle, Pencil, Trash2 } from 'lucide-react'
+import { Star, ThumbsUp, CheckCircle, Pencil, Trash2, X } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { reviewsApi } from '@/api'
@@ -27,6 +27,7 @@ interface ReviewCardProps {
 export default function ReviewCard({ review, onEdit, onDelete }: ReviewCardProps) {
   const [helpfulCount, setHelpfulCount] = useState(review.helpfulCount)
   const [markedHelpful, setMarkedHelpful] = useState(false)
+  const [selectedImage, setSelectedImage] = useState<string | null>(null)
 
   const handleMarkHelpful = async () => {
     if (markedHelpful) return
@@ -148,7 +149,8 @@ export default function ReviewCard({ review, onEdit, onDelete }: ReviewCardProps
           {review.images.map((image, index) => (
             <div
               key={index}
-              className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100"
+              onClick={() => setSelectedImage(image)}
+              className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100 cursor-pointer hover:opacity-80 transition-opacity"
             >
               <img
                 src={image}
@@ -158,6 +160,33 @@ export default function ReviewCard({ review, onEdit, onDelete }: ReviewCardProps
             </div>
           ))}
         </div>
+      )}
+
+      {/* Image Lightbox */}
+      {selectedImage && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
+          onClick={() => setSelectedImage(null)}
+        >
+          <button
+            className="absolute top-4 right-4 text-white p-2 hover:bg-white/10 rounded-full transition-colors"
+            onClick={() => setSelectedImage(null)}
+          >
+            <X className="w-6 h-6" />
+          </button>
+          <motion.img
+            initial={{ scale: 0.9 }}
+            animate={{ scale: 1 }}
+            exit={{ scale: 0.9 }}
+            src={selectedImage}
+            alt="Full size"
+            className="max-w-full max-h-[90vh] object-contain rounded-lg"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </motion.div>
       )}
 
       <div className="mt-4 flex items-center gap-3">
