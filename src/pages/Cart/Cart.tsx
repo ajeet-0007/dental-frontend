@@ -33,7 +33,8 @@ export default function Cart() {
 
   const removeMutation = useMutation({
     mutationFn: (id: string) => api.delete(`/cart/${id}`),
-    onSuccess: () => {
+    onSuccess: (_, deletedId) => {
+      removeItem(deletedId);
       queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
   });
