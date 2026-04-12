@@ -345,10 +345,10 @@ export default function ProductDetail() {
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen">
-      <div className="container mx-auto px-3 py-4 md:px-4 md:py-6 lg:px-4 lg:py-12">
-        <div className="bg-white rounded-2xl md:rounded-3xl shadow-sm overflow-hidden">
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-0">
+    <div className="bg-gray-50 min-h-screen overflow-x-hidden">
+      <div className="container mx-auto px-3 py-4 md:px-4 md:py-6 lg:px-4 lg:py-12 max-w-full">
+        <div className="bg-white rounded-2xl md:rounded-3xl shadow-sm overflow-hidden max-w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-0 max-w-full overflow-hidden">
             {/* Images - Left Side */}
             <div className="lg:col-span-2 p-3 md:p-6 lg:p-10">
               <div className="lg:sticky lg:top-8">
@@ -498,7 +498,7 @@ export default function ProductDetail() {
               )}
 
               {/* Trust Badges */}
-              <div className="flex items-center justify-center gap-1.5 md:gap-2 mb-4 md:mb-6">
+              <div className="flex flex-wrap items-center justify-center gap-1 md:gap-2 mb-4 md:mb-6">
                 <div className="flex items-center gap-1 text-[10px] md:text-xs text-gray-600 bg-gray-50 rounded-lg px-1.5 md:px-3 py-1.5 md:py-2">
                   <ShieldCheck className="h-3 w-3 md:h-4 md:w-4 text-green-500" />
                   <span>Quality Assured</span>
@@ -578,8 +578,8 @@ export default function ProductDetail() {
               {/* Tabs */}
               <div className="border-t border-gray-100 pt-4 md:pt-6 mt-4 md:mt-6">
                 {/* Tab Headers - Horizontal Scroll */}
-                <div className="overflow-x-auto scrollbar-hide -mx-3 px-3">
-                  <div className="flex gap-1.5 md:gap-2 min-w-max">
+                <div className="overflow-x-auto scrollbar-hide -mx-3 px-3 max-w-[calc(100vw-1.5rem)]">
+                  <div className="flex gap-1.5 md:gap-2 min-w-max pr-6">
                     {tabs.map((tab) => (
                       <button
                         key={tab.id}
