@@ -798,13 +798,16 @@ export default function Products() {
                   let hasAnyStock = false;
                   
                   if (inventories.length > 0) {
-                    totalStock = inventories.reduce((sum: number, inv: any) => sum + (inv.quantity || 0), 0);
-                    hasAnyStock = inventories.some((inv: any) => (inv.quantity || 0) > 0);
+                    totalStock = inventories.reduce((sum: number, inv: any) => {
+                      const available = (inv.quantity || 0) - (inv.reservedQuantity || 0);
+                      return sum + available;
+                    }, 0);
+                    hasAnyStock = inventories.some((inv: any) => ((inv.quantity || 0) - (inv.reservedQuantity || 0)) > 0);
                   }
                   
                   const isOutOfStock = hasVariants 
                     ? (inventories.length > 0 && !hasAnyStock)
-                    : totalStock === 0;
+                    : totalStock <= 0;
                   
                   let minPrice = product.sellingPrice;
                   let maxPrice = product.sellingPrice;
@@ -832,24 +835,32 @@ export default function Products() {
                       }`}
                     >
                       <Link
-                        to={`/products/${product.slug}`}
-                        className="block"
+                        to={isOutOfStock ? '#' : `/products/${product.slug}`}
+                        onClick={(e) => isOutOfStock && e.preventDefault()}
+                        className={`block ${isOutOfStock ? 'cursor-not-allowed pointer-events-none' : ''}`}
                       >
                         <div className="aspect-square bg-gray-50 overflow-hidden relative">
                           {product.images?.[0] ? (
                             <img
                               src={product.images[0]}
                               alt={product.name}
-                              className="w-full h-full object-cover"
+                              className={`w-full h-full object-cover ${isOutOfStock ? 'opacity-60' : ''}`}
                             />
                           ) : (
                             <img
                               src={DEFAULT_IMAGE}
                               alt={product.name}
-                              className="w-full h-full object-cover"
+                              className={`w-full h-full object-cover ${isOutOfStock ? 'opacity-60' : ''}`}
                             />
                           )}
-                          {colors.length > 0 && (
+                          {isOutOfStock && (
+                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                              <span className="bg-red-600 text-white px-3 py-1 text-sm font-medium rounded-full">
+                                Out of Stock
+                              </span>
+                            </div>
+                          )}
+                          {colors.length > 0 && !isOutOfStock && (
                             <div className="absolute bottom-2 left-2 flex -space-x-1">
                               {colors.slice(0, 4).map((color: string, i: number) => (
                                 <div

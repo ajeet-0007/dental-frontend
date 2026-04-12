@@ -123,11 +123,11 @@ export default function ProductDetail() {
   const hasVariants = activeVariants.length > 0;
 
   const getVariantStock = (variantId: string | undefined) => {
-    if (!variantId || !product?.inventories) return -1;
+    if (!variantId || !product?.inventories) return 0;
     const inv = product.inventories.find(
       (i: any) => i.productVariantId === variantId
     );
-    return inv?.quantity ?? -1;
+    return inv ? inv.quantity - inv.reservedQuantity : 0;
   };
 
   const selectedStock = getVariantStock(selectedVariant?.id);
@@ -490,7 +490,7 @@ export default function ProductDetail() {
                     inventories={
                       product.inventories?.map((inv: any) => ({
                         variantId: inv.productVariantId,
-                        quantity: inv.quantity,
+                        quantity: inv.quantity - (inv.reservedQuantity || 0),
                       })) || []
                     }
                   />

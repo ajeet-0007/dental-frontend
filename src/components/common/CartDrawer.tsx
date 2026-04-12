@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import api from "@/api";
 import { useAuthStore } from "@/stores/authStore";
 import { useCartStore } from "@/stores/cartStore";
-import { X, Plus, Minus, ShoppingCart, Check, Calendar } from "lucide-react";
+import { X, Plus, Minus, ShoppingCart, Check, Calendar, Package } from "lucide-react";
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -61,6 +61,21 @@ export default function CartDrawer({ isOpen, onClose, product }: CartDrawerProps
   const currentPrice = selectedVariant?.sellingPrice || product?.sellingPrice || 0;
   const currentMrp = selectedVariant?.mrp || product?.mrp || 0;
 
+  const getProductInventory = () => {
+    const inventories = product?.inventories || [];
+    if (hasVariants) {
+      const inv = inventories.find((i: any) => i.productVariantId === selectedVariantId);
+      return inv ? inv.quantity - inv.reservedQuantity : 0;
+    } else {
+      const inv = inventories.find((i: any) => !i.productVariantId);
+      return inv ? inv.quantity - inv.reservedQuantity : 0;
+    }
+  };
+
+  const availableStock = getProductInventory();
+  const isOutOfStock = availableStock <= 0;
+  const maxQuantity = isOutOfStock ? 0 : Math.min(availableStock, 10);
+
   const addToCartMutation = useMutation({
     mutationFn: () =>
       api.post("/cart/add", {
@@ -78,6 +93,16 @@ export default function CartDrawer({ isOpen, onClose, product }: CartDrawerProps
       toast.error("Please login to add items to cart");
       onClose();
       navigate("/login");
+      return;
+    }
+
+    if (isOutOfStock) {
+      toast.error("This product is out of stock");
+      return;
+    }
+
+    if (quantity > availableStock) {
+      toast.error(`Only ${availableStock} items available in stock`);
       return;
     }
 
@@ -281,8 +306,8 @@ export default function CartDrawer({ isOpen, onClose, product }: CartDrawerProps
               <div className="flex items-center border border-gray-200 rounded-lg bg-white">
                 <button
                   onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                  className="p-3 hover:bg-gray-50 transition-colors"
-                  disabled={quantity <= 1}
+                  className="p-3 hover:bg-gray-50 transition-colors disabled:opacity-30"
+                  disabled={quantity <= 1 || isOutOfStock}
                 >
                   <Minus className="h-4 w-4 text-gray-600" />
                 </button>
@@ -290,8 +315,9 @@ export default function CartDrawer({ isOpen, onClose, product }: CartDrawerProps
                   {quantity}
                 </span>
                 <button
-                  onClick={() => setQuantity((q) => q + 1)}
-                  className="p-3 hover:bg-gray-50 transition-colors"
+                  onClick={() => setQuantity((q) => Math.min(q + 1, maxQuantity))}
+                  className="p-3 hover:bg-gray-50 transition-colors disabled:opacity-30"
+                  disabled={quantity >= maxQuantity || isOutOfStock}
                 >
                   <Plus className="h-4 w-4 text-gray-600" />
                 </button>
@@ -306,6 +332,24 @@ export default function CartDrawer({ isOpen, onClose, product }: CartDrawerProps
           </div>
 
           {/* Stock Info */}
+          <div className={`rounded-xl p-3 mb-4 ${isOutOfStock ? 'bg-red-50' : 'bg-green-50'}`}>
+            <div className={`flex items-center gap-2 ${isOutOfStock ? 'text-red-600' : 'text-green-700'}`}>
+              {isOutOfStock ? (
+                <>
+                  <Package className="h-4 w-4" />
+                  <span className="text-sm font-medium">Out of Stock</span>
+                </>
+              ) : (
+                <>
+                  <Check className="h-4 w-4" />
+                  <span className="text-sm font-medium">
+                    {availableStock} items available in stock
+                  </span>
+                </>
+              )}
+            </div>
+          </div>
+
           {isInCart && (
             <div className="bg-blue-50 rounded-xl p-4 mb-4">
               <div className="flex items-center gap-2 text-blue-700">
@@ -337,15 +381,22 @@ export default function CartDrawer({ isOpen, onClose, product }: CartDrawerProps
         <div className="p-5 border-t border-gray-100 bg-white">
           <button
             onClick={handleAddToCart}
-            disabled={addToCartMutation.isPending}
+            disabled={addToCartMutation.isPending || isOutOfStock}
             className={`w-full py-4 rounded-xl font-semibold text-base flex items-center justify-center gap-3 transition-all ${
               isInCart
                 ? "bg-green-600 text-white hover:bg-green-700"
-                : "bg-primary-600 text-white hover:bg-primary-700"
+                : isOutOfStock
+                  ? "bg-gray-400 text-white"
+                  : "bg-primary-600 text-white hover:bg-primary-700"
             } disabled:opacity-50`}
           >
             {addToCartMutation.isPending ? (
               "Adding..."
+            ) : isOutOfStock ? (
+              <>
+                <Package className="h-5 w-5" />
+                Out of Stock
+              </>
             ) : isInCart ? (
               <>
                 <Check className="h-5 w-5" />
