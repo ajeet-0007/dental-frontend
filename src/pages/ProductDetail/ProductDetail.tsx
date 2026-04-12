@@ -23,6 +23,7 @@ import {
 import { VariantSelector, ProductVariant } from "@/components/common/VariantSelector";
 import HtmlRenderer from "@/components/common/HtmlRenderer";
 import ProductCarousel from "@/components/common/ProductCarousel";
+import CartDrawer from "@/components/common/CartDrawer";
 import { ReviewsSection } from "@/components/common/Reviews";
 
 const DEFAULT_IMAGE =
@@ -42,6 +43,8 @@ export default function ProductDetail() {
   const [activeTab, setActiveTab] = useState("description");
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false);
+  const [selectedProductForDrawer, setSelectedProductForDrawer] = useState<any>(null);
   const imageContainerRef = useRef<HTMLDivElement>(null);
 
   const minSwipeDistance = 50;
@@ -130,7 +133,15 @@ export default function ProductDetail() {
     return inv ? inv.quantity - inv.reservedQuantity : 0;
   };
 
-  const selectedStock = getVariantStock(selectedVariant?.id);
+  const getProductStock = () => {
+    const inventories = product?.inventories || [];
+    const inv = inventories.find((i: any) => !i.productVariantId);
+    return inv ? inv.quantity - inv.reservedQuantity : 0;
+  };
+
+  const selectedStock = hasVariants 
+    ? getVariantStock(selectedVariant?.id) 
+    : getProductStock();
   const isOutOfStock = selectedStock === 0;
 
   useEffect(() => {
@@ -702,7 +713,13 @@ export default function ProductDetail() {
               </div>
               <h2 className="text-xl font-bold text-gray-900">You May Also Like</h2>
             </div>
-            <ProductCarousel products={recommendedProducts} />
+            <ProductCarousel 
+              products={recommendedProducts} 
+              onOpenCartDrawer={(product) => {
+                setSelectedProductForDrawer(product);
+                setIsCartDrawerOpen(true);
+              }} 
+            />
             <div className="mt-6 text-center">
               <Link
                 to="/products"
@@ -782,6 +799,16 @@ export default function ProductDetail() {
           </div>
         </div>
       )}
+
+      {/* Cart Drawer for related products */}
+      <CartDrawer
+        isOpen={isCartDrawerOpen}
+        onClose={() => {
+          setIsCartDrawerOpen(false);
+          setSelectedProductForDrawer(null);
+        }}
+        product={selectedProductForDrawer}
+      />
     </div>
   );
 }
