@@ -148,7 +148,7 @@ export default function DepartmentCarousel({ departments, itemsPerPage = 6 }: De
                     to={`/products?department=${department.slug}`}
                     className="block"
                   >
-                    <div className={`relative aspect-[4/3] rounded-xl overflow-hidden shadow-md bg-gradient-to-br ${colorClass}`}>
+                    <div className={`relative aspect-[3/4] rounded-xl overflow-hidden shadow-md bg-gradient-to-br ${colorClass}`}>
                       <img
                         src={imageUrl}
                         alt={department.name}
@@ -159,8 +159,8 @@ export default function DepartmentCarousel({ departments, itemsPerPage = 6 }: De
                         }}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                      <div className="absolute inset-0 flex flex-col justify-end p-3">
-                        <h3 className="text-white font-semibold text-xs leading-tight line-clamp-2">
+                      <div className="absolute inset-0 flex flex-col justify-end p-4">
+                        <h3 className="text-white font-semibold text-sm leading-tight line-clamp-2">
                           {department.name}
                         </h3>
                       </div>
@@ -208,7 +208,7 @@ export default function DepartmentCarousel({ departments, itemsPerPage = 6 }: De
                         to={`/products?department=${department.slug}`}
                         className="group/card block"
                       >
-                        <div className={`relative aspect-[4/3] rounded-xl overflow-hidden shadow-md group-hover/card:shadow-xl transition-all duration-300 group-hover/card:-translate-y-1 bg-gradient-to-br ${colorClass}`}>
+                        <div className={`relative aspect-[3/4] rounded-xl overflow-hidden shadow-md group-hover/card:shadow-xl transition-all duration-300 group-hover/card:-translate-y-1 bg-gradient-to-br ${colorClass}`}>
                           <img
                             src={imageUrl}
                             alt={department.name}
@@ -221,8 +221,8 @@ export default function DepartmentCarousel({ departments, itemsPerPage = 6 }: De
 
                           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
-                          <div className="absolute inset-0 flex flex-col justify-end p-3 md:p-4">
-                            <h3 className="text-white font-semibold text-xs md:text-sm leading-tight line-clamp-2 drop-shadow-md">
+                          <div className="absolute inset-0 flex flex-col justify-end p-4">
+                            <h3 className="text-white font-semibold text-sm leading-tight line-clamp-2 drop-shadow-md">
                               {department.name}
                             </h3>
                           </div>

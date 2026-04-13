@@ -146,7 +146,7 @@ export default function CategoryCarousel({ categories, itemsPerPage = 6 }: Categ
                     to={`/products?category=${category.slug}&categoryName=${encodeURIComponent(category.name)}`}
                     className="block"
                   >
-                    <div className={`relative aspect-[4/3] rounded-xl overflow-hidden shadow-md bg-gradient-to-br ${colorClass}`}>
+                    <div className={`relative aspect-[3/4] rounded-xl overflow-hidden shadow-md bg-gradient-to-br ${colorClass}`}>
                       <img
                         src={imageUrl}
                         alt={category.name}
@@ -157,12 +157,12 @@ export default function CategoryCarousel({ categories, itemsPerPage = 6 }: Categ
                         }}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                      <div className="absolute inset-0 flex flex-col justify-end p-3">
-                        <h3 className="text-white font-semibold text-xs leading-tight line-clamp-2">
+                      <div className="absolute inset-0 flex flex-col justify-end p-4">
+                        <h3 className="text-white font-semibold text-sm leading-tight line-clamp-2">
                           {category.name}
                         </h3>
                         {category.productCount !== undefined && (
-                          <p className="text-white/80 text-[10px] mt-0.5">
+                          <p className="text-white/80 text-xs mt-0.5">
                             {category.productCount} Products
                           </p>
                         )}
@@ -211,7 +211,7 @@ export default function CategoryCarousel({ categories, itemsPerPage = 6 }: Categ
                         to={`/products?category=${category.slug}&categoryName=${encodeURIComponent(category.name)}`}
                         className="group/card block"
                       >
-                        <div className={`relative aspect-[4/3] rounded-xl overflow-hidden shadow-md group-hover/card:shadow-xl transition-all duration-300 group-hover/card:-translate-y-1 bg-gradient-to-br ${colorClass}`}>
+                        <div className={`relative aspect-[3/4] rounded-xl overflow-hidden shadow-md group-hover/card:shadow-xl transition-all duration-300 group-hover/card:-translate-y-1 bg-gradient-to-br ${colorClass}`}>
                           <img
                             src={imageUrl}
                             alt={category.name}
@@ -224,12 +224,12 @@ export default function CategoryCarousel({ categories, itemsPerPage = 6 }: Categ
 
                           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
-                          <div className="absolute inset-0 flex flex-col justify-end p-3 md:p-4">
-                            <h3 className="text-white font-semibold text-xs md:text-sm leading-tight line-clamp-2 drop-shadow-md">
+                          <div className="absolute inset-0 flex flex-col justify-end p-4">
+                            <h3 className="text-white font-semibold text-sm leading-tight line-clamp-2 drop-shadow-md">
                               {category.name}
                             </h3>
                             {category.productCount !== undefined && (
-                              <p className="text-white/80 text-[10px] md:text-xs mt-0.5">
+                              <p className="text-white/80 text-xs mt-0.5">
                                 {category.productCount} Products
                               </p>
                             )}

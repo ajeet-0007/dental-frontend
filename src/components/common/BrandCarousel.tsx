@@ -134,12 +134,12 @@ export default function BrandCarousel({ brands, itemsPerPage = 6 }: BrandCarouse
                     to={`/products?brand=${brand.slug}`}
                     className="block"
                   >
-                    <div className={`relative aspect-[4/3] rounded-xl overflow-hidden shadow-md bg-gradient-to-br ${colorClass}`}>
+                    <div className={`relative aspect-[3/4] rounded-xl overflow-hidden shadow-md bg-gradient-to-br ${colorClass}`}>
                       {brand.logo ? (
                         <img
                           src={brand.logo}
                           alt={brand.name}
-                          className="w-full h-full object-contain p-2 bg-white"
+                          className="w-full h-full object-contain p-3 bg-white"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement;
                             target.style.display = "none";
@@ -147,14 +147,14 @@ export default function BrandCarousel({ brands, itemsPerPage = 6 }: BrandCarouse
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center bg-white">
-                          <span className="text-2xl font-bold text-gray-600">
+                          <span className="text-3xl font-bold text-gray-600">
                             {getBrandInitial(brand.name)}
                           </span>
                         </div>
                       )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                      <div className="absolute inset-0 flex flex-col justify-end p-3">
-                        <h3 className="text-white font-semibold text-xs leading-tight line-clamp-2">
+                      <div className="absolute inset-0 flex flex-col justify-end p-4">
+                        <h3 className="text-white font-semibold text-sm leading-tight line-clamp-2">
                           {brand.name}
                         </h3>
                       </div>
@@ -201,12 +201,12 @@ export default function BrandCarousel({ brands, itemsPerPage = 6 }: BrandCarouse
                         to={`/products?brand=${brand.slug}`}
                         className="group/card block"
                       >
-                        <div className={`relative aspect-[4/3] rounded-xl overflow-hidden shadow-md group-hover/card:shadow-xl transition-all duration-300 group-hover/card:-translate-y-1 bg-gradient-to-br ${colorClass}`}>
+                        <div className={`relative aspect-[3/4] rounded-xl overflow-hidden shadow-md group-hover/card:shadow-xl transition-all duration-300 group-hover/card:-translate-y-1 bg-gradient-to-br ${colorClass}`}>
                           {brand.logo ? (
                             <img
                               src={brand.logo}
                               alt={brand.name}
-                              className="w-full h-full object-contain p-2 md:p-3 bg-white"
+                              className="w-full h-full object-contain p-3 bg-white"
                               onError={(e) => {
                                 const target = e.target as HTMLImageElement;
                                 target.style.display = "none";
@@ -214,7 +214,7 @@ export default function BrandCarousel({ brands, itemsPerPage = 6 }: BrandCarouse
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center bg-white">
-                              <span className="text-2xl md:text-3xl font-bold text-gray-600">
+                              <span className="text-3xl font-bold text-gray-600">
                                 {getBrandInitial(brand.name)}
                               </span>
                             </div>
@@ -222,8 +222,8 @@ export default function BrandCarousel({ brands, itemsPerPage = 6 }: BrandCarouse
 
                           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
-                          <div className="absolute inset-0 flex flex-col justify-end p-3 md:p-4">
-                            <h3 className="text-white font-semibold text-xs md:text-sm leading-tight line-clamp-2 drop-shadow-md">
+                          <div className="absolute inset-0 flex flex-col justify-end p-4">
+                            <h3 className="text-white font-semibold text-sm leading-tight line-clamp-2 drop-shadow-md">
                               {brand.name}
                             </h3>
                           </div>
