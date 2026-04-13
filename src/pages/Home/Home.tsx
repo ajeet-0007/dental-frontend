@@ -221,7 +221,7 @@ export default function Home() {
             </div>
             <Link
               to="/products"
-              className="hidden sm:flex items-center gap-1 text-sm font-medium text-gray-500 hover:text-primary-600 transition-colors group"
+              className="flex items-center gap-1 text-sm font-medium text-gray-500 hover:text-primary-600 transition-colors group"
             >
               <span>View All</span>
               <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -237,9 +237,6 @@ export default function Home() {
               <p className="text-gray-500">No products available yet.</p>
             </div>
           )}
-          <Link to="/products" className="sm:hidden flex justify-center mt-4 text-sm font-medium text-primary-600 py-2">
-            View All Products →
-          </Link>
         </div>
       </section>
 
@@ -254,7 +251,7 @@ export default function Home() {
               </div>
               <Link
                 to="/categories"
-                className="hidden sm:flex items-center gap-1 text-sm font-medium text-gray-500 hover:text-primary-600 transition-colors group"
+                className="flex items-center gap-1 text-sm font-medium text-gray-500 hover:text-primary-600 transition-colors group"
               >
                 <span>View All</span>
                 <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -263,9 +260,6 @@ export default function Home() {
               </Link>
             </div>
             <CategoryCarousel categories={categories} itemsPerPage={6} />
-            <Link to="/categories" className="sm:hidden flex justify-center mt-4 text-sm font-medium text-primary-600 py-2">
-              View All Categories →
-            </Link>
           </div>
         </section>
       )}
@@ -281,15 +275,12 @@ export default function Home() {
               </div>
               <Link
                 to="/brands"
-                className="hidden md:flex items-center gap-1 text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors"
+                className="flex items-center gap-1 text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors"
               >
                 View All <ChevronRight className="h-4 w-4" />
               </Link>
             </div>
             <BrandCarousel brands={brands} itemsPerPage={6} />
-            <Link to="/brands" className="sm:hidden flex justify-center mt-4 text-sm font-medium text-primary-600 py-2">
-              View All Brands →
-            </Link>
           </div>
         </section>
       )}
@@ -305,7 +296,7 @@ export default function Home() {
               </div>
               <Link
                 to="/departments"
-                className="hidden sm:flex items-center gap-1 text-sm font-medium text-gray-500 hover:text-primary-600 transition-colors group"
+                className="flex items-center gap-1 text-sm font-medium text-gray-500 hover:text-primary-600 transition-colors group"
               >
                 <span>View All</span>
                 <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -314,9 +305,6 @@ export default function Home() {
               </Link>
             </div>
             <DepartmentCarousel departments={departments} itemsPerPage={6} />
-            <Link to="/departments" className="sm:hidden flex justify-center mt-4 text-sm font-medium text-primary-600 py-2">
-              View All Departments →
-            </Link>
           </div>
         </section>
       )}
