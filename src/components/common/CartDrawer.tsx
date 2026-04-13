@@ -63,13 +63,55 @@ export default function CartDrawer({ isOpen, onClose, product }: CartDrawerProps
 
   const getProductInventory = () => {
     const inventories = product?.inventories || [];
-    if (hasVariants) {
-      const inv = inventories.find((i: any) => i.productVariantId === selectedVariantId);
-      return inv ? inv.quantity - inv.reservedQuantity : 0;
-    } else {
-      const inv = inventories.find((i: any) => !i.productVariantId);
-      return inv ? inv.quantity - inv.reservedQuantity : 0;
+    
+    console.log('[CartDrawer] Checking inventory:', {
+      productName: product?.name,
+      productId: product?.id,
+      hasVariants,
+      selectedVariantId,
+      inventoriesCount: inventories.length,
+      inventories: inventories.map((i: any) => ({
+        id: i.id,
+        productId: i.productId,
+        productVariantId: i.productVariantId,
+        quantity: i.quantity,
+        reservedQuantity: i.reservedQuantity,
+        trackInventory: i.trackInventory
+      }))
+    });
+    
+    // Check for unlimited stock first (trackInventory = false)
+    const hasUnlimitedStock = inventories.some((i: any) => i.trackInventory === false);
+    if (hasUnlimitedStock) {
+      console.log('[CartDrawer] Unlimited stock detected');
+      return 999;
     }
+    
+    let stock = 0;
+    
+    // If has variants and a specific variant is selected, check that variant's inventory first
+    if (hasVariants && selectedVariantId) {
+      const inv = inventories.find((i: any) => i.productVariantId === selectedVariantId);
+      if (inv) {
+        stock = inv.quantity - inv.reservedQuantity;
+        console.log('[CartDrawer] Variant inventory found:', stock);
+      }
+    }
+    
+    // If no variant-specific stock found, check for ANY available inventory
+    if (stock <= 0) {
+      for (const inv of inventories) {
+        const available = inv.quantity - inv.reservedQuantity;
+        console.log('[CartDrawer] Checking inventory:', available);
+        if (available > 0) {
+          stock = available;
+          break;
+        }
+      }
+    }
+    
+    console.log('[CartDrawer] Final stock:', stock);
+    return stock;
   };
 
   const availableStock = getProductInventory();
