@@ -244,9 +244,24 @@ export default function AdminOrderDetail() {
         <h2 className="text-lg font-semibold mb-4">Shipping Address</h2>
         <div className="flex items-start gap-3">
           <MapPin className="h-5 w-5 text-gray-400 mt-0.5" />
-          <p className="text-gray-600 whitespace-pre-line">
-            {order.shippingAddress}
-          </p>
+          {(() => {
+            let addressDisplay = order.shippingAddress;
+            try {
+              const parsed = JSON.parse(order.shippingAddress);
+              if (parsed.name || parsed.addressLine1) {
+                addressDisplay = [
+                  parsed.name,
+                  parsed.addressLine1,
+                  parsed.addressLine2,
+                  parsed.city,
+                  parsed.state,
+                  parsed.pincode,
+                  parsed.country
+                ].filter(Boolean).join(', ');
+              }
+            } catch {}
+            return <p className="text-gray-600">{addressDisplay}</p>;
+          })()}
         </div>
       </div>
 
