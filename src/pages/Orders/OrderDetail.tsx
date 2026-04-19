@@ -320,7 +320,24 @@ export default function OrderDetail() {
                   <div className="w-10 h-10 bg-primary-50 rounded-xl flex items-center justify-center flex-shrink-0">
                     <MapPin className="h-5 w-5 text-primary-600" />
                   </div>
-                  <p className="text-gray-600 whitespace-pre-line">{order.shippingAddress}</p>
+                  {(() => {
+                    let addressDisplay = order.shippingAddress;
+                    try {
+                      const parsed = JSON.parse(order.shippingAddress);
+                      if (parsed.name || parsed.addressLine1) {
+                        addressDisplay = [
+                          parsed.name,
+                          parsed.addressLine1,
+                          parsed.addressLine2,
+                          parsed.city,
+                          parsed.state,
+                          parsed.pincode,
+                          parsed.country
+                        ].filter(Boolean).join(', ');
+                      }
+                    } catch {}
+                    return <p className="text-gray-600">{addressDisplay}</p>;
+                  })()}
                 </div>
               </div>
             )}
