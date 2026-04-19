@@ -35,6 +35,7 @@ import AdminPayments from "./pages/Admin/AdminPayments";
 import AdminInventory from "./pages/Admin/AdminInventory";
 import AdminLogin from "./pages/Admin/AdminLogin";
 import AdminOrderDetail from "./pages/Admin/AdminOrderDetail";
+import AdminShipping from "./pages/Admin/AdminShipping";
 import ScrollToTop from "./components/ScrollToTop";
 
 const queryClient = new QueryClient();
@@ -96,6 +97,7 @@ function App() {
             <Route path="banners" element={<AdminBanners />} />
             <Route path="orders" element={<AdminOrders />} />
             <Route path="orders/:id" element={<AdminOrderDetail />} />
+            <Route path="shipping" element={<AdminShipping />} />
             <Route path="users" element={<AdminUsers />} />
             <Route path="payments" element={<AdminPayments />} />
             <Route path="inventory" element={<AdminInventory />} />

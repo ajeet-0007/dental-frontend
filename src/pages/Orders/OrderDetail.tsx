@@ -14,6 +14,8 @@ export default function OrderDetail() {
   const [loading, setLoading] = useState(true)
   const [verifying, setVerifying] = useState(false)
   const [sessionId, setSessionId] = useState<string | null>(null)
+  const [tracking, setTracking] = useState<any>(null)
+  const [trackingLoading, setTrackingLoading] = useState(false)
   const verificationRef = useRef(false)
 
   const fetchOrder = useCallback(async () => {
@@ -90,6 +92,7 @@ export default function OrderDetail() {
     
     setSessionId(sid)
     fetchOrder()
+    fetchTracking()
     
     if (sid) {
       verifyPayment(sid)
@@ -97,6 +100,29 @@ export default function OrderDetail() {
     
     if (paymentStatus === 'cancelled') {
       toast.error('Payment was cancelled.')
+    }
+  }, [id])
+
+  const fetchTracking = useCallback(async () => {
+    if (!id) return
+    setTrackingLoading(true)
+    try {
+      const token = localStorage.getItem('accessToken')
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/orders/${id}/tracking`, {
+        headers: {
+          'Authorization': token ? `Bearer ${token}` : '',
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      })
+      const data = await res.json()
+      if (data.data) {
+        setTracking(data.data)
+      }
+    } catch (error) {
+      console.error('Error fetching tracking:', error)
+    } finally {
+      setTrackingLoading(false)
     }
   }, [id])
 
@@ -311,6 +337,70 @@ export default function OrderDetail() {
                   ))}
                 </div>
               </div>
+
+            {/* Tracking Timeline Card */}
+            {tracking && tracking.timeline && tracking.timeline.length > 0 && (
+              <div className="bg-white rounded-2xl shadow-sm p-4 md:p-5">
+                <h2 className="text-base md:text-lg font-bold text-gray-900 mb-4">Shipment Tracking</h2>
+                
+                {tracking.shipment && (
+                  <div className="flex flex-wrap items-center gap-3 mb-4 pb-4 border-b border-gray-100">
+                    {tracking.shipment.courierName && (
+                      <div className="text-sm">
+                        <span className="text-gray-500">Courier: </span>
+                        <span className="font-medium text-gray-900">{tracking.shipment.courierName}</span>
+                      </div>
+                    )}
+                    {tracking.shipment.awbNumber && (
+                      <div className="text-sm">
+                        <span className="text-gray-500">AWB: </span>
+                        <span className="font-mono text-gray-900">{tracking.shipment.awbNumber}</span>
+                      </div>
+                    )}
+                    {tracking.shipment.trackingNumber && (
+                      <div className="text-sm">
+                        <span className="text-gray-500">Tracking: </span>
+                        <span className="font-mono text-gray-900">{tracking.shipment.trackingNumber}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <div className="relative">
+                  {tracking.timeline.map((event: any, idx: number) => {
+                    const isLast = idx === tracking.timeline.length - 1
+                    return (
+                      <div key={idx} className="flex gap-4 pb-4 last:pb-0">
+                        <div className="flex flex-col items-center">
+                          <div className={`w-3 h-3 rounded-full ${isLast ? 'bg-primary-500' : 'bg-green-500'}`}></div>
+                          {!isLast && <div className="w-0.5 h-full bg-gray-200 absolute top-3 left-1"></div>}
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-gray-900 capitalize">{event.status?.replace(/_/g, ' ') || event.event?.replace(/_/g, ' ')}</span>
+                            {event.location && (
+                              <span className="text-xs text-gray-500">- {event.location}</span>
+                            )}
+                          </div>
+                          <div className="text-xs text-gray-400 mt-0.5">
+                            {event.timestamp ? new Date(event.timestamp).toLocaleString('en-IN', {
+                              day: 'numeric',
+                              month: 'short',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            }) : ''}
+                          </div>
+                          {event.remarks && (
+                            <p className="text-sm text-gray-600 mt-1">{event.remarks}</p>
+                          )}
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
 
             {/* Shipping Address Card */}
             {order.shippingAddress && (
