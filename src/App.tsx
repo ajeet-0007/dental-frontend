@@ -37,6 +37,9 @@ import AdminLogin from "./pages/Admin/AdminLogin";
 import AdminOrderDetail from "./pages/Admin/AdminOrderDetail";
 import AdminShipping from "./pages/Admin/AdminShipping";
 import ScrollToTop from "./components/ScrollToTop";
+import Returns from "./pages/Returns/Returns";
+import ReturnDetail from "./pages/Returns/ReturnDetail";
+import InitiateReturn from "./pages/Returns/InitiateReturn";
 
 const queryClient = new QueryClient();
 
@@ -80,6 +83,9 @@ function App() {
             <Route path="checkout" element={<Checkout />} />
             <Route path="orders" element={<Orders />} />
             <Route path="orders/:id" element={<OrderDetail />} />
+            <Route path="orders/:orderId/return" element={<InitiateReturn />} />
+            <Route path="returns" element={<Returns />} />
+            <Route path="returns/:id" element={<ReturnDetail />} />
             <Route path="profile" element={<UserProfile />} />
             <Route path="wishlist" element={<Wishlist />} />
             <Route path="help" element={<HelpSupport />} />

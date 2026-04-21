@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
-import { ArrowLeft, Package, MapPin, CheckCircle, Loader2, RefreshCw, Clock, Truck, XCircle, AlertCircle, ShieldCheck, RotateCw, Tag } from 'lucide-react'
+import { ArrowLeft, Package, MapPin, CheckCircle, Loader2, RefreshCw, Clock, Truck, XCircle, AlertCircle, ShieldCheck, RotateCw, Tag, Undo2 } from 'lucide-react'
 
 const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=400&h=400&fit=crop'
 
@@ -15,7 +15,7 @@ export default function OrderDetail() {
   const [verifying, setVerifying] = useState(false)
   const [sessionId, setSessionId] = useState<string | null>(null)
   const [tracking, setTracking] = useState<any>(null)
-  const [trackingLoading, setTrackingLoading] = useState(false)
+  const [_trackingLoading, setTrackingLoading] = useState(false)
   const verificationRef = useRef(false)
 
   const fetchOrder = useCallback(async () => {
@@ -337,6 +337,18 @@ export default function OrderDetail() {
                   ))}
                 </div>
               </div>
+
+              {order.status === 'delivered' && (
+                <div className="mt-4">
+                  <Link
+                    to={`/orders/${order.id}/return`}
+                    className="flex items-center justify-center gap-2 w-full py-3 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition-colors"
+                  >
+                    <Undo2 className="h-5 w-5" />
+                    Request Return
+                  </Link>
+                </div>
+              )}
 
             {/* Tracking Timeline Card */}
             {tracking && tracking.timeline && tracking.timeline.length > 0 && (
