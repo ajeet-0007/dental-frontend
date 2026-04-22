@@ -20,6 +20,17 @@ export default {
           900: '#0c4a6e',
         },
       },
+      utilities: {
+        addUtilities: {
+          '.scrollbar-hide': {
+            '-ms-overflow-style': 'none',
+            'scrollbar-width': 'none',
+            '&::-webkit-scrollbar': {
+              display: 'none',
+            },
+          },
+        },
+      },
     },
   },
   plugins: [],
