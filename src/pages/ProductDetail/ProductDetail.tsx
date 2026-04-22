@@ -7,18 +7,8 @@ import { useAuthStore } from "@/stores/authStore";
 import { useCartStore } from "@/stores/cartStore";
 import { useWishlistStore } from "@/stores/wishlistStore";
 import {
-  Package,
-  ShoppingCart,
-  Star,
-  ChevronLeft,
-  ChevronRight,
-  Heart,
-  ShieldCheck,
-  RotateCw,
-  Minus,
-  Plus,
-  X,
-  ArrowRight,
+  Package, ShoppingCart, Star, ChevronLeft, ChevronRight, Heart,
+  Minus, Plus, X, ArrowRight, Layers
 } from "lucide-react";
 import { VariantSelector, ProductVariant } from "@/components/common/VariantSelector";
 import HtmlRenderer from "@/components/common/HtmlRenderer";
@@ -356,12 +346,12 @@ export default function ProductDetail() {
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen overflow-x-hidden">
-      <div className="container mx-auto px-3 py-4 md:px-4 md:py-6 lg:px-4 lg:py-12 max-w-full">
-        <div className="bg-white rounded-2xl md:rounded-3xl shadow-sm overflow-hidden max-w-full">
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-0 max-w-full overflow-hidden">
+    <div className="bg-gray-50 min-h-screen">
+      <div className="container mx-auto px-4 py-6 md:py-8">
+        <div className="bg-white rounded-2xl md:rounded-3xl shadow-sm overflow-hidden">
+          <div className="grid grid-cols-1 lg:grid-cols-5">
             {/* Images - Left Side */}
-            <div className="lg:col-span-2 p-3 md:p-6 lg:p-10">
+            <div className="lg:col-span-2 p-4 md:p-6 lg:p-8">
               <div className="lg:sticky lg:top-8">
                 {/* Main Image */}
                 <div
@@ -488,6 +478,13 @@ export default function ProductDetail() {
                     </>
                   )}
                 </div>
+
+                {/* Short Description */}
+                {product.shortDescription && (
+                  <p className="text-sm text-gray-600 leading-relaxed mb-4 pt-2">
+                    {product.shortDescription}
+                  </p>
+                )}
               </div>
 
               {/* Variants */}
@@ -507,22 +504,6 @@ export default function ProductDetail() {
                   />
                 </div>
               )}
-
-              {/* Trust Badges */}
-              <div className="flex flex-wrap items-center justify-center gap-1 md:gap-2 mb-4 md:mb-6">
-                <div className="flex items-center gap-1 text-[10px] md:text-xs text-gray-600 bg-gray-50 rounded-lg px-1.5 md:px-3 py-1.5 md:py-2">
-                  <ShieldCheck className="h-3 w-3 md:h-4 md:w-4 text-green-500" />
-                  <span>Quality Assured</span>
-                </div>
-                <div className="flex items-center gap-1 text-[10px] md:text-xs text-gray-600 bg-gray-50 rounded-lg px-1.5 md:px-3 py-1.5 md:py-2">
-                  <ShieldCheck className="h-3 w-3 md:h-4 md:w-4 text-blue-500" />
-                  <span>Genuine Product</span>
-                </div>
-                <div className="flex items-center gap-1 text-[10px] md:text-xs text-gray-600 bg-gray-50 rounded-lg px-1.5 md:px-3 py-1.5 md:py-2">
-                  <RotateCw className="h-3 w-3 md:h-4 md:w-4 text-amber-500" />
-                  <span>Easy Returns</span>
-                </div>
-              </div>
 
               {/* Quantity & Add to Cart */}
               <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
@@ -576,15 +557,6 @@ export default function ProductDetail() {
                   />
                 </button>
               </div>
-
-              {/* Short Description */}
-              {product.shortDescription && (
-                <div className="border-t border-gray-100 pt-4 md:pt-5 mt-4 md:mt-5">
-                  <p className="text-xs md:text-sm text-gray-600 leading-relaxed">
-                    {product.shortDescription}
-                  </p>
-                </div>
-              )}
 
               {/* Tabs */}
               <div className="border-t border-gray-100 pt-4 md:pt-6 mt-4 md:mt-6">
@@ -704,14 +676,25 @@ export default function ProductDetail() {
         {/* Related Products */}
         {recommendedProducts.length > 0 && (
           <section className="mt-12">
-            <div className="mb-6">
-              <div className="flex items-center gap-2 mb-1">
-                <Star className="h-5 w-5 text-primary-600" />
-                <p className="text-xs font-semibold text-primary-600 uppercase tracking-widest">
-                  Related Products
-                </p>
+            <div className="flex items-end justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/20">
+                  <Layers className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-primary-600 uppercase tracking-widest">
+                    Related Products
+                  </p>
+                  <h2 className="text-xl font-bold text-gray-900">You May Also Like</h2>
+                </div>
               </div>
-              <h2 className="text-xl font-bold text-gray-900">You May Also Like</h2>
+              <Link
+                to="/products"
+                className="flex items-center gap-1 text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors"
+              >
+                <span>Explore More</span>
+                <ArrowRight className="h-4 w-4" />
+              </Link>
             </div>
             <ProductCarousel 
               products={recommendedProducts} 
@@ -720,15 +703,6 @@ export default function ProductDetail() {
                 setIsCartDrawerOpen(true);
               }} 
             />
-            <div className="mt-6 text-center">
-              <Link
-                to="/products"
-                className="inline-flex items-center gap-2 text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors"
-              >
-                <span>Explore More Products</span>
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
           </section>
         )}
 

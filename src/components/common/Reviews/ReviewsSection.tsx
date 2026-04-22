@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { MessageSquare, Star, ChevronDown } from 'lucide-react'
+import { MessageSquare, Star, ChevronDown, Edit } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import toast from 'react-hot-toast'
 import { reviewsApi } from '@/api'
@@ -90,24 +90,27 @@ export default function ReviewsSection({ productId }: ReviewsSectionProps) {
   }
 
   return (
-    <div className="mt-12 border-t border-gray-200 pt-12">
-      <div className="flex items-center justify-between mb-8">
-        <h2 className="text-2xl font-bold text-gray-900">
-          Customer Reviews
-        </h2>
-        <div className="flex items-center gap-2">
-          <MessageSquare className="w-5 h-5 text-gray-500" />
-          <span className="font-medium text-gray-900">
-            {total} {total === 1 ? 'review' : 'reviews'}
-          </span>
+    <div className="mt-12 border-t border-gray-200 pt-10">
+      {/* Header with Icon */}
+      <div className="flex items-center gap-3 mb-8">
+        <div className="w-10 h-10 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl flex items-center justify-center shadow-lg shadow-amber-500/20">
+          <Star className="w-5 h-5 text-white" />
+        </div>
+        <div>
+          <p className="text-xs font-semibold text-amber-600 uppercase tracking-widest">
+            Customer Reviews
+          </p>
+          <h2 className="text-xl md:text-2xl font-bold text-gray-900">
+            Rating & Reviews
+          </h2>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
         {/* Rating Summary */}
         <div className="lg:col-span-1">
           {statsLoading ? (
-            <div className="animate-pulse bg-gray-100 h-48 rounded-lg" />
+            <div className="animate-pulse bg-gray-100 h-48 rounded-xl" />
           ) : stats ? (
             <RatingBreakdown stats={stats} />
           ) : null}
@@ -117,26 +120,28 @@ export default function ReviewsSection({ productId }: ReviewsSectionProps) {
             {isAuthenticated && userReview ? (
               <button
                 onClick={() => handleEditReview(userReview)}
-                className="w-full py-3 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors"
+                className="w-full py-3 bg-primary-600 text-white font-medium rounded-xl hover:bg-primary-700 transition-colors flex items-center justify-center gap-2"
               >
+                <Edit className="w-4 h-4" />
                 Edit Your Review
               </button>
             ) : isAuthenticated && canReviewData?.data?.canReview && !canReviewData?.data?.existingReview ? (
               <button
                 onClick={() => setShowForm(!showForm)}
-                className="w-full py-3 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors"
+                className="w-full py-3 bg-primary-600 text-white font-medium rounded-xl hover:bg-primary-700 transition-colors flex items-center justify-center gap-2"
               >
+                <Edit className="w-4 h-4" />
                 Write a Review
               </button>
             ) : !isAuthenticated ? (
               <a
                 href="/login"
-                className="block w-full py-3 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors text-center"
+                className="block w-full py-3 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-colors text-center"
               >
                 Login to Write a Review
               </a>
             ) : (
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center">
+              <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 text-center">
                 <p className="text-gray-600 text-sm">
                   You can only review products you have purchased
                 </p>
@@ -168,12 +173,18 @@ export default function ReviewsSection({ productId }: ReviewsSectionProps) {
         <div className="lg:col-span-2">
           {/* Sort Options */}
           <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-2">
+              <MessageSquare className="w-5 h-5 text-gray-500" />
+              <span className="font-medium text-gray-900">
+                {total} {total === 1 ? 'review' : 'reviews'}
+              </span>
+            </div>
             <div className="relative">
               <button
                 onClick={() => setSortDropdownOpen(!sortDropdownOpen)}
-                className="flex items-center gap-2 px-3 py-1.5 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                className="flex items-center gap-2 px-3 py-2 text-sm font-medium border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
               >
-                <span>Sort by: <span className="font-medium">{sortOptions.find(o => o.value === sort)?.label}</span></span>
+                <span>{sortOptions.find(o => o.value === sort)?.label}</span>
                 <ChevronDown className={`w-4 h-4 transition-transform ${sortDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
               
@@ -186,7 +197,7 @@ export default function ReviewsSection({ productId }: ReviewsSectionProps) {
                         setSort(option.value)
                         setSortDropdownOpen(false)
                       }}
-                      className={`block w-full text-left px-4 py-2 text-sm first:rounded-t-lg last:rounded-b-lg ${
+                      className={`block w-full text-left px-4 py-2.5 text-sm first:rounded-t-lg last:rounded-b-lg ${
                         sort === option.value 
                           ? 'bg-primary-50 text-primary-600 font-medium' 
                           : 'text-gray-700 hover:bg-gray-50'
@@ -212,14 +223,16 @@ export default function ReviewsSection({ productId }: ReviewsSectionProps) {
               ))}
             </div>
           ) : reviews.length === 0 ? (
-            <div className="text-center py-12">
-              <Star className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500 text-sm">
+            <div className="text-center py-12 bg-gray-50 rounded-xl">
+              <p className="text-gray-500 font-medium text-sm mb-1">
+                No reviews yet
+              </p>
+              <p className="text-gray-400 text-xs">
                 Be the first to review this product
               </p>
             </div>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-4">
               {reviews.map((review: any) => (
                 <ReviewCard
                   key={review.id}
@@ -237,17 +250,17 @@ export default function ReviewsSection({ productId }: ReviewsSectionProps) {
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="p-2 rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-2.5 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <ChevronDown className="w-5 h-5 rotate-90" />
               </button>
-              <span className="text-sm text-gray-600">
+              <span className="text-sm text-gray-600 font-medium px-4">
                 Page {page} of {totalPages}
               </span>
               <button
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                className="p-2 rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-2.5 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <ChevronDown className="w-5 h-5 -rotate-90" />
               </button>
