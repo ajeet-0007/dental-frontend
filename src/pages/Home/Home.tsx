@@ -13,6 +13,7 @@ import DepartmentCarousel from "@/components/common/DepartmentCarousel";
 import BrandCarousel from "@/components/common/BrandCarousel";
 import HeroCarousel from "@/components/common/HeroCarousel";
 import CartDrawer from "@/components/common/CartDrawer";
+import NewsSection from "@/components/common/NewsSection";
 
 export default function Home() {
   const [cartDrawerProduct, setCartDrawerProduct] = useState<any>(null);
@@ -356,6 +357,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Latest Dental News Section */}
+      <NewsSection />
 
       {/* Awards & Recognition Section */}
       <section className="py-6 md:py-8 lg:py-10 bg-white">
