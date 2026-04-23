@@ -11,19 +11,14 @@ import {
   Check,
   X,
   DollarSign,
+  Package,
+  Truck,
+  CheckCircle,
+  AlertTriangle,
 } from "lucide-react";
 
 const DEFAULT_IMAGE =
   "https://images.unsplash.com/photo-1629909613654-28e377c37b09";
-
-const ORDER_STATUSES = [
-  { value: "pending_payment", label: "Pending Payment" },
-  { value: "confirmed", label: "Confirmed" },
-  { value: "processing", label: "Processing" },
-  { value: "shipped", label: "Shipped" },
-  { value: "delivered", label: "Delivered" },
-  { value: "cancelled", label: "Cancelled" },
-];
 
 export default function AdminOrderDetail() {
   const { id } = useParams();
@@ -82,26 +77,38 @@ export default function AdminOrderDetail() {
     },
   });
 
-  const getStatusColor = (status: string) => {
+  const isCODOrder = order?.payments?.some((p: any) => p.method === "cod");
+  const shipment = order?.shipments?.[0];
+  
+  const getShipmentStatusLabel = (status: string) => {
+    const statusMap: Record<string, string> = {
+      pending: 'Pending',
+      processing: 'Processing (Label Created)',
+      picked_up: 'Picked Up',
+      in_transit: 'In Transit',
+      out_for_delivery: 'Out for Delivery',
+      delivered: 'Delivered',
+      failed: 'Delivery Failed',
+      rto: 'Return to Sender (RTO)',
+      cancelled: 'Cancelled',
+    };
+    return statusMap[status] || status?.replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase()) || 'Unknown';
+  };
+
+  const getShipmentStatusColor = (status: string) => {
     switch (status) {
-      case "delivered":
-        return "bg-green-100 text-green-800";
-      case "cancelled":
-        return "bg-red-100 text-red-800";
-      case "shipped":
-        return "bg-indigo-100 text-indigo-800";
-      case "confirmed":
-        return "bg-blue-100 text-blue-800";
-      case "processing":
-        return "bg-purple-100 text-purple-800";
-      case "pending_payment":
-        return "bg-orange-100 text-orange-800";
-      default:
-        return "bg-gray-100 text-gray-800";
+      case 'delivered': return 'bg-green-100 text-green-800';
+      case 'failed': case 'rto': return 'bg-red-100 text-red-800';
+      case 'out_for_delivery': return 'bg-blue-100 text-blue-800';
+      case 'in_transit': return 'bg-indigo-100 text-indigo-800';
+      case 'picked_up': return 'bg-purple-100 text-purple-800';
+      case 'processing': return 'bg-yellow-100 text-yellow-800';
+      case 'cancelled': return 'bg-gray-100 text-gray-800';
+      default: return 'bg-gray-100 text-gray-800';
     }
   };
 
-  const isCODOrder = order?.payments?.some((p: any) => p.method === "cod");
+  const showShipmentStatus = shipment && ['confirmed', 'processing', 'shipped', 'delivered'].includes(order?.status);
 
   if (isLoading) {
     return (
@@ -168,21 +175,67 @@ export default function AdminOrderDetail() {
       <div className="bg-white rounded-lg shadow-sm p-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-semibold">Order Status</h2>
-          <select
-            value={order.status}
-            onChange={(e) =>
-              updateStatusMutation.mutate({ status: e.target.value })
-            }
-            disabled={updateStatusMutation.isPending}
-            className={`px-4 py-2 rounded-lg text-sm font-medium border-0 ${getStatusColor(order.status)} disabled:opacity-50`}
-          >
-            {ORDER_STATUSES.map((s) => (
-              <option key={s.value} value={s.value}>
-                {s.label}
-              </option>
-            ))}
-          </select>
+          {order.status !== 'cancelled' && (
+            <button
+              onClick={() => {
+                if (confirm('Are you sure you want to cancel this order?')) {
+                  updateStatusMutation.mutate({ status: 'cancelled' });
+                }
+              }}
+              disabled={updateStatusMutation.isPending || order.status === 'pending_payment'}
+              className="px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {updateStatusMutation.isPending ? 'Cancelling...' : 'Cancel Order'}
+            </button>
+          )}
         </div>
+
+        {showShipmentStatus ? (
+          <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                {shipment.status === 'delivered' ? (
+                  <CheckCircle className="w-6 h-6 text-green-600" />
+                ) : shipment.status === 'failed' || shipment.status === 'rto' ? (
+                  <AlertTriangle className="w-6 h-6 text-red-600" />
+                ) : shipment.status === 'out_for_delivery' ? (
+                  <Truck className="w-6 h-6 text-blue-600" />
+                ) : (
+                  <Package className="w-6 h-6 text-gray-600" />
+                )}
+                <div>
+                  <p className="font-medium text-gray-900">Shipment Status</p>
+                  <p className="text-sm text-gray-500">
+                    {shipment.awbNumber ? `AWB: ${shipment.awbNumber}` : shipment.shippingRocketId ? `ShipRocket ID: ${shipment.shippingRocketId}` : 'No shipment'}
+                  </p>
+                </div>
+              </div>
+              <span className={`px-3 py-1 rounded-full text-sm font-medium ${getShipmentStatusColor(shipment.status)}`}>
+                {getShipmentStatusLabel(shipment.status)}
+              </span>
+            </div>
+            {shipment.courierName && (
+              <p className="mt-2 text-sm text-gray-500">Courier: {shipment.courierName}</p>
+            )}
+            <p className="mt-1 text-xs text-gray-400">
+              Status is synced automatically from ShipRocket
+            </p>
+          </div>
+        ) : (
+          order.status === 'pending_payment' ? (
+            <div className="mb-6 p-4 bg-orange-50 rounded-lg">
+              <p className="text-sm text-orange-800">
+                Awaiting payment confirmation
+              </p>
+            </div>
+          ) : order.status === 'confirmed' ? (
+            <div className="mb-6 p-4 bg-blue-50 rounded-lg">
+              <p className="text-sm text-blue-800">
+                Awaiting shipment creation
+              </p>
+            </div>
+          ) : null
+        )}
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           <div>

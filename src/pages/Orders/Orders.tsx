@@ -131,12 +131,44 @@ export default function Orders() {
           dot: 'bg-orange-400'
         }
       case 'payment_failed':
-        return { 
-          bg: 'bg-gradient-to-r from-red-500 to-pink-500', 
-          text: 'text-white', 
-          icon: AlertCircle, 
+        return {
+          bg: 'bg-gradient-to-r from-red-500 to-pink-500',
+          text: 'text-white',
+          icon: AlertCircle,
           label: 'Payment Failed',
           dot: 'bg-red-400'
+        }
+      case 'refunded':
+        return {
+          bg: 'bg-gradient-to-r from-green-500 to-emerald-500',
+          text: 'text-white',
+          icon: CheckCircle,
+          label: 'Refunded',
+          dot: 'bg-green-400'
+        }
+      case 'rto':
+        return {
+          bg: 'bg-gradient-to-r from-orange-500 to-amber-500',
+          text: 'text-white',
+          icon: Package,
+          label: 'Return to Origin',
+          dot: 'bg-orange-400'
+        }
+      case 'delivery_failed':
+        return {
+          bg: 'bg-gradient-to-r from-red-500 to-rose-500',
+          text: 'text-white',
+          icon: AlertCircle,
+          label: 'Delivery Failed',
+          dot: 'bg-red-400'
+        }
+      case 'pending':
+        return {
+          bg: 'bg-gradient-to-r from-gray-500 to-gray-600',
+          text: 'text-white',
+          icon: Clock,
+          label: 'Pending',
+          dot: 'bg-gray-400'
         }
       default:
         return { 

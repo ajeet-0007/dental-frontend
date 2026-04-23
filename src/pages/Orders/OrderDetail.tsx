@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
-import { ArrowLeft, Package, MapPin, CheckCircle, Loader2, RefreshCw, Clock, Truck, XCircle, AlertCircle, ShieldCheck, RotateCw, Tag } from 'lucide-react'
+import { ArrowLeft, Package, MapPin, CheckCircle, Loader2, RefreshCw, Clock, Truck, XCircle, AlertCircle, ShieldCheck, RotateCw, Tag, Undo2, Calendar } from 'lucide-react'
 
 const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=400&h=400&fit=crop'
 
@@ -14,11 +14,14 @@ export default function OrderDetail() {
   const [loading, setLoading] = useState(true)
   const [verifying, setVerifying] = useState(false)
   const [sessionId, setSessionId] = useState<string | null>(null)
+  const [tracking, setTracking] = useState<any>(null)
+  const [_trackingLoading, setTrackingLoading] = useState(false)
   const verificationRef = useRef(false)
 
   const fetchOrder = useCallback(async () => {
     console.log('[OrderDetail] fetchOrder called with id:', id)
     try {
+      setLoading(true)
       const token = localStorage.getItem('accessToken')
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/orders/${id}`, {
         headers: {
@@ -27,19 +30,53 @@ export default function OrderDetail() {
         },
         credentials: 'include'
       })
-      const data = await res.json()
-      console.log('[OrderDetail] Full response:', JSON.stringify(data, null, 2))
+      
       console.log('[OrderDetail] Response status:', res.status)
       
-      if (data.data) {
-        setOrder(data.data)
-      } else if (data) {
-        setOrder(data)
+      if (!res.ok) {
+        console.error('[OrderDetail] Error response:', res.status, res.statusText)
+        const errorData = await res.json().catch(() => ({}))
+        console.error('[OrderDetail] Error data:', errorData)
+        toast.error(errorData.message || 'Failed to load order')
+        setOrder(null)
+        return
+      }
+      
+      const data = await res.json()
+      console.log('[OrderDetail] Full response:', JSON.stringify(data, null, 2))
+      
+      // Handle both wrapped and unwrapped responses
+      // API might return { data: order } or just order directly
+      let orderData = null
+      
+      if (data && typeof data === 'object') {
+        // Check if it's wrapped in { data: {...} }
+        if (data.data && typeof data.data === 'object' && data.data.id) {
+          orderData = data.data
+        }
+        // Check if it's a direct order object with id
+        else if (data.id) {
+          orderData = data
+        }
+        // Check if it has orderNumber (another possible format)
+        else if (data.orderNumber) {
+          orderData = data
+        }
+      }
+      
+      console.log('[OrderDetail] Parsed orderData:', orderData)
+      
+      if (orderData) {
+        setOrder(orderData)
       } else {
-        console.error('[OrderDetail] No data in response:', data)
+        console.error('[OrderDetail] No valid order data, response was:', data)
+        toast.error('Order not found')
+        setOrder(null)
       }
     } catch (error) {
-      console.error('Error fetching order:', error)
+      console.error('[OrderDetail] Error fetching order:', error)
+      toast.error('Failed to load order')
+      setOrder(null)
     } finally {
       setLoading(false)
     }
@@ -71,6 +108,15 @@ export default function OrderDetail() {
         toast.success('Payment verified! Order confirmed.')
         await fetchOrder()
         queryClient.invalidateQueries({ queryKey: ['orders'] })
+        
+        // Clear URL params after successful verification
+        const url = new URL(window.location.href)
+        if (url.searchParams.has('session_id') || url.searchParams.has('payment')) {
+          url.searchParams.delete('session_id')
+          url.searchParams.delete('payment')
+          window.history.replaceState({}, '', url.toString())
+          console.log('[OrderDetail] Cleared URL params')
+        }
       } else {
         toast.error(data.error || 'Verification failed')
       }
@@ -82,6 +128,45 @@ export default function OrderDetail() {
     }
   }, [verifying, fetchOrder, queryClient])
 
+  const handleRescheduleDelivery = useCallback(async () => {
+    if (!order?.shipmentId) {
+      toast.error('Shipment not found')
+      return
+    }
+    
+    try {
+      const token = localStorage.getItem('accessToken')
+      const tomorrow = new Date()
+      tomorrow.setDate(tomorrow.getDate() + 1)
+      
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/shipping/shipments/${order.shipmentId}/reschedule`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': token ? `Bearer ${token}` : '',
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include',
+          body: JSON.stringify({ 
+            newDeliveryDate: tomorrow.toISOString().split('T')[0]
+          })
+        }
+      )
+      const data = await res.json()
+      
+      if (data.success) {
+        toast.success('Delivery rescheduled successfully')
+        fetchOrder()
+      } else {
+        toast.error(data.message || 'Failed to reschedule delivery')
+      }
+    } catch (error) {
+      console.error('Reschedule error:', error)
+      toast.error('Could not reschedule delivery')
+    }
+  }, [order?.shipmentId, fetchOrder])
+
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const sid = params.get('session_id')
@@ -90,6 +175,7 @@ export default function OrderDetail() {
     
     setSessionId(sid)
     fetchOrder()
+    fetchTracking()
     
     if (sid) {
       verifyPayment(sid)
@@ -100,52 +186,49 @@ export default function OrderDetail() {
     }
   }, [id])
 
+  const fetchTracking = useCallback(async () => {
+    if (!id) return
+    setTrackingLoading(true)
+    try {
+      const token = localStorage.getItem('accessToken')
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/orders/${id}/tracking`, {
+        headers: {
+          'Authorization': token ? `Bearer ${token}` : '',
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      })
+      const data = await res.json()
+      if (data.data) {
+        setTracking(data.data)
+      }
+    } catch (error) {
+      console.error('Error fetching tracking:', error)
+    } finally {
+      setTrackingLoading(false)
+    }
+  }, [id])
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50/50">
-        <div className="container mx-auto px-3 md:px-4 py-4 md:py-6">
-          <div className="animate-pulse space-y-4 md:space-y-6">
-            <div className="h-10 w-32 bg-gray-200 rounded-xl animate-pulse"></div>
-            <div className="h-24 bg-white rounded-2xl shadow-sm animate-pulse"></div>
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6">
-              <div className="lg:col-span-8 space-y-4">
-                <div className="bg-white rounded-2xl shadow-sm p-4 md:p-6 animate-pulse">
-                  <div className="h-6 bg-gray-100 rounded w-1/4 mb-4"></div>
-                  <div className="space-y-4">
-                    {[1, 2].map((i) => (
-                      <div key={i} className="flex gap-3 md:gap-4">
-                        <div className="w-16 h-16 md:w-20 md:h-20 bg-gray-100 rounded-xl"></div>
-                        <div className="flex-1 space-y-2">
-                          <div className="h-4 bg-gray-100 rounded w-3/4"></div>
-                          <div className="h-3 bg-gray-100 rounded w-1/2"></div>
-                          <div className="h-3 bg-gray-100 rounded w-1/4"></div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              <div className="lg:col-span-4 space-y-4">
-                <div className="bg-white rounded-2xl shadow-sm p-4 md:p-5 animate-pulse">
-                  <div className="h-6 bg-gray-100 rounded w-1/3 mb-4"></div>
-                  <div className="space-y-3">
-                    <div className="h-4 bg-gray-100 rounded w-full"></div>
-                    <div className="h-4 bg-gray-100 rounded w-5/6"></div>
-                    <div className="h-4 bg-gray-100 rounded w-4/6"></div>
-                    <div className="h-6 bg-gray-100 rounded w-full mt-4 pt-4 border-t"></div>
-                  </div>
-                </div>
-                <div className="bg-white rounded-2xl shadow-sm p-4 md:p-5 animate-pulse">
-                  <div className="h-6 bg-gray-100 rounded w-1/3 mb-4"></div>
-                  <div className="space-y-2">
-                    <div className="h-4 bg-gray-100 rounded w-full"></div>
-                    <div className="h-4 bg-gray-100 rounded w-5/6"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div className="min-h-screen bg-gray-50/50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent"></div>
+      </div>
+    )
+  }
+
+  if (!order) {
+    return (
+      <div className="min-h-screen bg-gray-50/50 flex flex-col items-center justify-center">
+        <AlertCircle className="h-16 w-16 text-gray-300 mb-4" />
+        <h2 className="text-xl font-semibold text-gray-900 mb-2">Order Not Found</h2>
+        <p className="text-gray-500 mb-4">Unable to load order details. Please try again.</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="px-6 py-3 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition-colors"
+        >
+          Retry
+        </button>
       </div>
     )
   }
@@ -183,6 +266,14 @@ export default function OrderDetail() {
         return { bg: 'bg-orange-50', text: 'text-orange-600', border: 'border-orange-200', icon: AlertCircle, label: 'Payment Pending' }
       case 'payment_failed':
         return { bg: 'bg-red-50', text: 'text-red-600', border: 'border-red-200', icon: XCircle, label: 'Payment Failed' }
+      case 'rto':
+        return { bg: 'bg-orange-50', text: 'text-orange-600', border: 'border-orange-200', icon: RefreshCw, label: 'Return to Origin' }
+      case 'delivery_failed':
+        return { bg: 'bg-red-50', text: 'text-red-600', border: 'border-red-200', icon: AlertCircle, label: 'Delivery Failed' }
+      case 'refunded':
+        return { bg: 'bg-green-50', text: 'text-green-600', border: 'border-green-200', icon: CheckCircle, label: 'Refunded' }
+      case 'pending':
+        return { bg: 'bg-gray-50', text: 'text-gray-600', border: 'border-gray-200', icon: Clock, label: 'Pending' }
       default:
         return { bg: 'bg-yellow-50', text: 'text-yellow-700', border: 'border-yellow-200', icon: Clock, label: status.charAt(0).toUpperCase() + status.slice(1) }
     }
@@ -277,6 +368,49 @@ export default function OrderDetail() {
               </div>
             </div>
 
+            {/* RTO Alert */}
+            {order.isRTO && (
+              <div className="bg-orange-50 border border-orange-200 rounded-2xl p-4">
+                <div className="flex items-start gap-3">
+                  <RefreshCw className="h-5 w-5 text-orange-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="font-semibold text-orange-900 mb-1">Return to Origin</h3>
+                    <p className="text-sm text-orange-700">
+                      Your package is being returned to the sender. If you have any questions, please contact support.
+                    </p>
+                    <Link
+                      to="/help"
+                      className="inline-block mt-2 text-sm font-medium text-orange-700 hover:text-orange-800 underline"
+                    >
+                      Contact Support
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Delivery Failed Alert */}
+            {order.deliveryFailed && (
+              <div className="bg-red-50 border border-red-200 rounded-2xl p-4">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-red-900 mb-1">Delivery Attempt Unsuccessful</h3>
+                    <p className="text-sm text-red-700 mb-3">
+                      {order.deliveryFailedReason || 'The delivery attempt was not successful. Please reschedule for a convenient time.'}
+                    </p>
+                    <button
+                      onClick={() => handleRescheduleDelivery()}
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors"
+                    >
+                      <Calendar className="h-4 w-4" />
+                      Reschedule Delivery
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
               {/* Order Items Card */}
               <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
                 <div className="p-4 md:p-5 border-b border-gray-100">
@@ -311,6 +445,89 @@ export default function OrderDetail() {
                   ))}
                 </div>
               </div>
+
+              {order.status === 'delivered' && (
+                <div className="mt-4">
+                  <Link
+                    to={`/orders/${order.id}/return`}
+                    className="flex items-center justify-center gap-2 w-full py-3 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition-colors"
+                  >
+                    <Undo2 className="h-5 w-5" />
+                    Request Return
+                  </Link>
+                </div>
+              )}
+
+            {/* Tracking Timeline Card */}
+            {(tracking || order.shipmentId || ['shipped', 'processing'].includes(order.status)) && (
+              <div className="bg-white rounded-2xl shadow-sm p-4 md:p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-base md:text-lg font-bold text-gray-900">Shipment Tracking</h2>
+                  {order.shippingStatus && (
+                    <span className="text-sm text-gray-500">
+                      Status: {order.shippingStatus.replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase())}
+                    </span>
+                  )}
+                </div>
+                
+                {tracking?.shipment && (
+                  <div className="flex flex-wrap items-center gap-3 mb-4 pb-4 border-b border-gray-100">
+                    {tracking?.shipment?.courierName && (
+                      <div className="text-sm">
+                        <span className="text-gray-500">Courier: </span>
+                        <span className="font-medium text-gray-900">{tracking?.shipment?.courierName}</span>
+                      </div>
+                    )}
+                    {tracking?.shipment?.awbNumber && (
+                      <div className="text-sm">
+                        <span className="text-gray-500">AWB: </span>
+                        <span className="font-mono text-gray-900">{tracking?.shipment?.awbNumber}</span>
+                      </div>
+                    )}
+                    {tracking?.shipment?.trackingNumber && (
+                      <div className="text-sm">
+                        <span className="text-gray-500">Tracking: </span>
+                        <span className="font-mono text-gray-900">{tracking?.shipment?.trackingNumber}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <div className="relative">
+                  {tracking?.timeline?.map((event: any, idx: number) => {
+                    const isLast = idx === (tracking.timeline?.length || 0) - 1
+                    return (
+                      <div key={idx} className="flex gap-4 pb-4 last:pb-0">
+                        <div className="flex flex-col items-center">
+                          <div className={`w-3 h-3 rounded-full ${isLast ? 'bg-primary-500' : 'bg-green-500'}`}></div>
+                          {!isLast && <div className="w-0.5 h-full bg-gray-200 absolute top-3 left-1"></div>}
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-gray-900 capitalize">{event.status?.replace(/_/g, ' ') || event.event?.replace(/_/g, ' ')}</span>
+                            {event.location && (
+                              <span className="text-xs text-gray-500">- {event.location}</span>
+                            )}
+                          </div>
+                          <div className="text-xs text-gray-400 mt-0.5">
+                            {event.timestamp ? new Date(event.timestamp).toLocaleString('en-IN', {
+                              day: 'numeric',
+                              month: 'short',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            }) : ''}
+                          </div>
+                          {event.remarks && (
+                            <p className="text-sm text-gray-600 mt-1">{event.remarks}</p>
+                          )}
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
 
             {/* Shipping Address Card */}
             {order.shippingAddress && (

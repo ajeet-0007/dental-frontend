@@ -1,5 +1,5 @@
 import { Outlet, Link, useNavigate } from 'react-router-dom'
-import { ShoppingCart, User, Menu, X, Package, Search, Heart, Mic, MicOff } from 'lucide-react'
+import { ShoppingCart, User, Menu, X, Package, Search, Heart, Mic, MicOff, Mail, Phone, MapPin, Instagram, Facebook, Twitter, Youtube, Linkedin } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useQuery } from '@tanstack/react-query'
@@ -699,42 +699,130 @@ export default function Layout() {
 
       <BottomNav />
 
-      <footer className="bg-gray-900 text-white py-12">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Dentalkart</h3>
-              <p className="text-gray-400">
-                India's largest online dental e-commerce platform.
+      <footer className="bg-gradient-to-b from-slate-800 via-slate-800 to-slate-900 text-white pt-16 pb-8 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-slate-500 rounded-full blur-[128px]" />
+          <div className="absolute bottom-0 left-0 w-72 h-72 bg-slate-600 rounded-full blur-[128px]" />
+        </div>
+
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
+            <div className="col-span-2 lg:col-span-2">
+              <Link to="/" className="flex items-center gap-2 mb-4">
+                <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-blue-500 rounded-lg flex items-center justify-center shadow-lg shadow-primary-500/30">
+                  <Package className="w-5 h-5 text-white" />
+                </div>
+                <span className="text-xl font-bold">Dentalkart</span>
+              </Link>
+              <p className="text-gray-300 text-sm leading-relaxed mb-6">
+                India's most trusted dental e-commerce platform. Quality products, competitive prices, and reliable delivery for dental professionals nationwide.
               </p>
+              <div className="flex items-center gap-3">
+                {[
+                  { icon: Instagram, href: '#', label: 'Instagram' },
+                  { icon: Facebook, href: '#', label: 'Facebook' },
+                  { icon: Twitter, href: '#', label: 'Twitter' },
+                  { icon: Youtube, href: '#', label: 'YouTube' },
+                  { icon: Linkedin, href: '#', label: 'LinkedIn' },
+                ].map(({ icon: Icon, href, label }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    aria-label={label}
+                    className="w-10 h-10 bg-white/10 hover:bg-primary-500 border border-white/10 hover:border-primary-500 rounded-lg flex items-center justify-center transition-all duration-300"
+                  >
+                    <Icon className="w-4 h-4" />
+                  </a>
+                ))}
+              </div>
             </div>
+
             <div>
-              <h4 className="font-semibold mb-4">Quick Links</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li><Link to="/products" className="hover:text-white">Products</Link></li>
-                <li><Link to="/departments" className="hover:text-white">Departments</Link></li>
-                <li><Link to="/brands" className="hover:text-white">Brands</Link></li>
-                <li><Link to="/cart" className="hover:text-white">Cart</Link></li>
-                <li><Link to="/orders" className="hover:text-white">Orders</Link></li>
+              <h4 className="font-semibold mb-4 flex items-center gap-2">
+                <div className="w-1 h-4 bg-gradient-to-b from-primary-500 to-blue-500 rounded-full" />
+                Quick Links
+              </h4>
+              <ul className="space-y-3">
+                {[
+                  { label: 'Products', href: '/products' },
+                  { label: 'Categories', href: '/categories' },
+                  { label: 'Brands', href: '/brands' },
+                  { label: 'Departments', href: '/departments' },
+                ].map(({ label, href }) => (
+                  <li key={label}>
+                    <Link to={href} className="text-gray-300 hover:text-white text-sm transition-colors">
+                      {label}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </div>
+
             <div>
-              <h4 className="font-semibold mb-4">Contact</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li>Email: support@dentalkart.com</li>
-                <li>Phone: +91 1234567890</li>
+              <h4 className="font-semibold mb-4 flex items-center gap-2">
+                <div className="w-1 h-4 bg-gradient-to-b from-primary-500 to-blue-500 rounded-full" />
+                Account
+              </h4>
+              <ul className="space-y-3">
+                {[
+                  { label: 'My Account', href: '/account' },
+                  { label: 'My Orders', href: '/orders' },
+                  { label: 'Wishlist', href: '/wishlist' },
+                  { label: 'Returns', href: '/returns' },
+                ].map(({ label, href }) => (
+                  <li key={label}>
+                    <Link to={href} className="text-gray-300 hover:text-white text-sm transition-colors">
+                      {label}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </div>
+
             <div>
-              <h4 className="font-semibold mb-4">Legal</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white">Privacy Policy</a></li>
-                <li><a href="#" className="hover:text-white">Terms of Service</a></li>
+              <h4 className="font-semibold mb-4 flex items-center gap-2">
+                <div className="w-1 h-4 bg-gradient-to-b from-primary-500 to-blue-500 rounded-full" />
+                Contact Us
+              </h4>
+              <ul className="space-y-3">
+                <li className="flex items-start gap-3">
+                  <MapPin className="w-5 h-5 text-primary-400 flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-300 text-sm">Mumbai, Maharashtra, India</span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <Phone className="w-4 h-4 text-primary-400 flex-shrink-0" />
+                  <a href="tel:+911234567890" className="text-gray-300 hover:text-white text-sm transition-colors">
+                    +91 1234567890
+                  </a>
+                </li>
+                <li className="flex items-center gap-3">
+                  <Mail className="w-4 h-4 text-primary-400 flex-shrink-0" />
+                  <a href="mailto:support@dentalkart.com" className="text-gray-300 hover:text-white text-sm transition-colors">
+                    support@dentalkart.com
+                  </a>
+                </li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 Dentalkart. All rights reserved.</p>
+
+          <div className="border-t border-white/10 pt-8">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+              <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-gray-400">
+                {[
+                  { label: 'Privacy Policy', href: '#' },
+                  { label: 'Terms of Service', href: '#' },
+                  { label: 'Shipping Policy', href: '#' },
+                  { label: 'Return Policy', href: '#' },
+                ].map(({ label, href }) => (
+                  <a key={label} href={href} className="hover:text-white transition-colors">
+                    {label}
+                  </a>
+                ))}
+              </div>
+              <p className="text-sm text-gray-500">
+                © 2024 Dentalkart. All rights reserved.
+              </p>
+            </div>
           </div>
         </div>
       </footer>

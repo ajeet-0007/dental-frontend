@@ -3,9 +3,10 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import api from "@/api";
-import { 
-  Package, Shield, Truck, CreditCard, ChevronRight, Star, 
-  MessageSquare, Award, CheckCircle
+import {
+  Package, Shield, Truck, CreditCard, ChevronRight, Star,
+  Sparkles, LayoutGrid, Store, Stethoscope,
+  Flame, Quote, Trophy, BadgeCheck, Award, Stamp, ShieldCheck
 } from "lucide-react";
 import ProductCarousel from "@/components/common/ProductCarousel";
 import CategoryCarousel from "@/components/common/CategoryCarousel";
@@ -13,6 +14,7 @@ import DepartmentCarousel from "@/components/common/DepartmentCarousel";
 import BrandCarousel from "@/components/common/BrandCarousel";
 import HeroCarousel from "@/components/common/HeroCarousel";
 import CartDrawer from "@/components/common/CartDrawer";
+import NewsSection from "@/components/common/NewsSection";
 
 export default function Home() {
   const [cartDrawerProduct, setCartDrawerProduct] = useState<any>(null);
@@ -21,6 +23,11 @@ export default function Home() {
   const { data: productsData } = useQuery({
     queryKey: ["products", "featured"],
     queryFn: () => api.get("/products/featured?limit=8"),
+  });
+
+  const { data: topSellingData } = useQuery({
+    queryKey: ["products", "top-selling"],
+    queryFn: () => api.get("/products/top-selling?limit=20"),
   });
 
   const { data: categoriesData } = useQuery({
@@ -53,6 +60,7 @@ export default function Home() {
   });
 
   const products = productsData?.data?.products || productsData?.data || [];
+  const topSelling = topSellingData?.data?.products || topSellingData?.data || [];
   const categories = categoriesData?.data || [];
   const departments = Array.isArray(departmentsData) ? departmentsData : departmentsData?.data || [];
   const brands = Array.isArray(brandsData) ? brandsData : brandsData?.data || [];
@@ -215,9 +223,14 @@ export default function Home() {
       <section className="py-6 md:py-8 lg:py-10">
         <div className="container mx-auto px-4">
           <div className="flex items-end justify-between mb-4 md:mb-6">
-            <div>
-              <p className="text-xs font-semibold text-primary-600 uppercase tracking-widest mb-1">Don't Miss</p>
-              <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-gray-900 tracking-tight">Featured Products</h2>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/20">
+                <Sparkles className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-primary-600 uppercase tracking-widest mb-1">Don't Miss</p>
+                <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-gray-900 tracking-tight">Featured Products</h2>
+              </div>
             </div>
             <Link
               to="/products"
@@ -245,9 +258,14 @@ export default function Home() {
         <section className="py-6 md:py-8 lg:py-10">
           <div className="container mx-auto px-4">
             <div className="flex items-end justify-between mb-4 md:mb-6">
-              <div>
-                <p className="text-xs font-semibold text-primary-600 uppercase tracking-widest mb-1">Explore</p>
-                <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-gray-900 tracking-tight">Categories</h2>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center shadow-lg shadow-green-500/20">
+                  <LayoutGrid className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-primary-600 uppercase tracking-widest mb-1">Explore</p>
+                  <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-gray-900 tracking-tight">Categories</h2>
+                </div>
               </div>
               <Link
                 to="/categories"
@@ -269,9 +287,14 @@ export default function Home() {
         <section className="py-6 md:py-8 lg:py-10 bg-gray-50/50">
           <div className="container mx-auto px-4">
             <div className="flex items-end justify-between mb-4 md:mb-6">
-              <div>
-                <p className="text-xs font-semibold text-primary-600 uppercase tracking-widest mb-1">Top Picks</p>
-                <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-gray-900 tracking-tight">Brands</h2>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-violet-500 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/20">
+                  <Store className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-primary-600 uppercase tracking-widest mb-1">Top Picks</p>
+                  <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-gray-900 tracking-tight">Brands</h2>
+                </div>
               </div>
               <Link
                 to="/brands"
@@ -290,9 +313,14 @@ export default function Home() {
         <section className="py-6 md:py-8 lg:py-10">
           <div className="container mx-auto px-4">
             <div className="flex items-end justify-between mb-4 md:mb-6">
-              <div>
-                <p className="text-xs font-semibold text-primary-600 uppercase tracking-widest mb-1">Browse</p>
-                <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-gray-900 tracking-tight">Departments</h2>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-rose-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg shadow-rose-500/20">
+                  <Stethoscope className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-primary-600 uppercase tracking-widest mb-1">Browse</p>
+                  <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-gray-900 tracking-tight">Departments</h2>
+                </div>
               </div>
               <Link
                 to="/departments"
@@ -309,12 +337,41 @@ export default function Home() {
         </section>
       )}
 
+      {/* Top Selling Products */}
+      {topSelling.length > 0 && (
+        <section className="py-6 md:py-8 lg:py-10">
+          <div className="container mx-auto px-4">
+            <div className="flex items-end justify-between mb-4 md:mb-6">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center shadow-lg shadow-orange-500/20">
+                  <Flame className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-primary-600 uppercase tracking-widest mb-1">Bestsellers</p>
+                  <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-gray-900 tracking-tight">Top Selling Products</h2>
+                </div>
+              </div>
+              <Link
+                to="/products"
+                className="flex items-center gap-1 text-sm font-medium text-gray-500 hover:text-primary-600 transition-colors group"
+              >
+                <span>View All</span>
+                <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
+            </div>
+            <ProductCarousel products={topSelling} onOpenCartDrawer={handleOpenCartDrawer} />
+          </div>
+        </section>
+      )}
+
       {/* Testimonials Section */}
       <section className="py-6 md:py-8 lg:py-10 bg-gradient-to-br from-primary-50 to-blue-50">
         <div className="container mx-auto px-4">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-blue-500 rounded-xl flex items-center justify-center">
-              <MessageSquare className="w-5 h-5 text-white" />
+            <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg shadow-cyan-500/20">
+              <Quote className="w-5 h-5 text-white" />
             </div>
             <div>
               <p className="text-xs font-semibold text-primary-600 uppercase tracking-widest mb-1">What Our Customers Say</p>
@@ -357,28 +414,61 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Latest Dental News Section */}
+      <NewsSection />
+
       {/* Awards & Recognition Section */}
-      <section className="py-6 md:py-8 lg:py-10 bg-white">
+      <section className="py-12 md:py-16 lg:py-20 bg-white">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-8">
-            <div className="w-12 h-12 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl flex items-center justify-center mx-auto mb-4">
-              <Award className="w-6 h-6 text-white" />
+          <div className="flex items-center gap-3 mb-10">
+            <div className="w-10 h-10 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl flex items-center justify-center shadow-lg shadow-amber-500/30">
+              <Trophy className="w-5 h-5 text-white" />
             </div>
-            <p className="text-xs font-semibold text-primary-600 uppercase tracking-widest mb-1">Recognition</p>
-            <h2 className="text-xl md:text-2xl font-bold text-gray-900">Awards & Recognition</h2>
+            <div>
+              <p className="text-xs font-semibold text-amber-600 uppercase tracking-widest mb-1">Recognition</p>
+              <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900">Awards & Certifications</h2>
+            </div>
           </div>
-          
-          <div className="grid grid-cols-2 md:flex md:flex-wrap md:items-center md:justify-center gap-3 md:gap-6">
-            {['ISO 9001:2015', 'GDP Approved', 'CE Certified', 'Quality Assurance'].map((award, index) => (
+
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+            {[
+              { name: 'ISO 9001:2015', desc: 'Quality Management', color: 'from-emerald-500 to-teal-500', Icon: BadgeCheck },
+              { name: 'GDP Approved', desc: 'Good Distribution', color: 'from-blue-500 to-cyan-500', Icon: ShieldCheck },
+              { name: 'CE Certified', desc: 'Europe Compliance', color: 'from-violet-500 to-purple-500', Icon: Stamp },
+              { name: 'Quality Assurance', desc: 'Standard Verified', color: 'from-amber-500 to-orange-500', Icon: Award },
+            ].map((award, index) => (
               <motion.div
-                key={award}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
+                key={award.name}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="flex items-center justify-center gap-2 px-3 py-3 bg-gray-50 rounded-xl"
+                className="group bg-gray-50 border border-gray-100 rounded-2xl p-5 hover:shadow-xl hover:shadow-gray-200/50 hover:border-gray-200 transition-all duration-300"
               >
-                <CheckCircle className="w-4 h-4 md:w-5 md:h-5 text-green-500" />
-                <span className="text-xs md:text-sm font-medium text-gray-700 text-center">{award}</span>
+                <div className={`w-16 h-16 bg-gradient-to-br ${award.color} rounded-2xl flex items-center justify-center mb-4 mx-auto shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                  <award.Icon className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-base md:text-lg font-bold text-gray-900 text-center mb-1">{award.name}</h3>
+                <p className="text-xs text-gray-500 text-center">{award.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-6 md:gap-10">
+            {[
+              { value: '10+', label: 'Years Experience' },
+              { value: '500+', label: 'Happy Clients' },
+              { value: '50+', label: 'Brand Partners' },
+              { value: '1000+', label: 'Products' },
+            ].map((stat, index) => (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.4 + index * 0.1 }}
+                className="text-center"
+              >
+                <p className="text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">{stat.value}</p>
+                <p className="text-xs md:text-sm text-gray-500 mt-1">{stat.label}</p>
               </motion.div>
             ))}
           </div>

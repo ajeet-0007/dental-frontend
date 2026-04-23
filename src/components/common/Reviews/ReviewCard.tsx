@@ -58,7 +58,7 @@ export default function ReviewCard({ review, onEdit, onDelete }: ReviewCardProps
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="border-b border-gray-100 py-6 last:border-0"
+      className="bg-gray-50 rounded-xl p-4 md:p-5"
     >
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-3">
@@ -77,7 +77,7 @@ export default function ReviewCard({ review, onEdit, onDelete }: ReviewCardProps
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-medium text-gray-900">
+              <span className="font-semibold text-gray-900">
                 {review.user.firstName} {review.user.lastName}
               </span>
               {review.isVerified && (
@@ -87,7 +87,7 @@ export default function ReviewCard({ review, onEdit, onDelete }: ReviewCardProps
                 </span>
               )}
             </div>
-            <div className="flex items-center gap-2 mt-1">
+            <div className="flex items-center gap-2 mt-0.5">
               <div className="flex">
                 {Array.from({ length: 5 }, (_, i) => (
                   <Star
@@ -100,7 +100,7 @@ export default function ReviewCard({ review, onEdit, onDelete }: ReviewCardProps
                   />
                 ))}
               </div>
-              <span className="text-sm text-gray-500">
+              <span className="text-sm text-gray-400">
                 {formatDate(review.createdAt)}
               </span>
             </div>
@@ -109,11 +109,11 @@ export default function ReviewCard({ review, onEdit, onDelete }: ReviewCardProps
 
         {/* Edit/Delete buttons for user's own review */}
         {(onEdit || onDelete) && (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             {onEdit && (
               <button
                 onClick={onEdit}
-                className="p-2 text-gray-500 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                className="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
                 title="Edit review"
               >
                 <Pencil className="w-4 h-4" />
@@ -122,7 +122,7 @@ export default function ReviewCard({ review, onEdit, onDelete }: ReviewCardProps
             {onDelete && (
               <button
                 onClick={onDelete}
-                className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                 title="Delete review"
               >
                 <Trash2 className="w-4 h-4" />
@@ -133,7 +133,7 @@ export default function ReviewCard({ review, onEdit, onDelete }: ReviewCardProps
       </div>
 
       {review.title && (
-        <h4 className="font-medium text-gray-900 mt-4 mb-2">
+        <h4 className="font-semibold text-gray-900 mt-4 mb-2">
           {review.title}
         </h4>
       )}
@@ -193,10 +193,10 @@ export default function ReviewCard({ review, onEdit, onDelete }: ReviewCardProps
         <button
           onClick={handleMarkHelpful}
           disabled={markedHelpful}
-          className={`flex items-center gap-2 text-sm px-3 py-1.5 rounded-lg transition-colors ${
+          className={`flex items-center gap-2 text-sm px-3 py-1.5 rounded-full transition-colors ${
             markedHelpful
               ? 'bg-primary-50 text-primary-600 cursor-default'
-              : 'text-gray-500 hover:bg-gray-100'
+              : 'text-gray-500 hover:bg-gray-200'
           }`}
         >
           <ThumbsUp className="w-4 h-4" />

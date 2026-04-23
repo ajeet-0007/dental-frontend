@@ -16,6 +16,7 @@ import {
   Image,
   Layers,
   Award,
+  Truck,
 } from "lucide-react";
 
 const adminNavItems = [
@@ -26,6 +27,7 @@ const adminNavItems = [
   { label: "Brands", path: "/admin/brands", icon: Award },
   { label: "Banners", path: "/admin/banners", icon: Image },
   { label: "Orders", path: "/admin/orders", icon: ShoppingCart },
+  { label: "Shipping", path: "/admin/shipping", icon: Truck },
   { label: "Payments", path: "/admin/payments", icon: DollarSign },
   { label: "Inventory", path: "/admin/inventory", icon: Boxes },
   { label: "Users", path: "/admin/users", icon: Users },

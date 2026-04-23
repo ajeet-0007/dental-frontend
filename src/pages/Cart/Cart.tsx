@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/api";
-import { Trash2, Plus, Minus, ShoppingCart, ArrowRight, Package, Tag, Star } from "lucide-react";
+import { Trash2, Plus, Minus, ShoppingCart, ArrowRight, Package, Tag, Star, ShoppingBag } from "lucide-react";
 import { useAuthStore } from "@/stores/authStore";
 import { useCartStore } from "@/stores/cartStore";
 import { useEffect, useState } from "react";
@@ -283,12 +283,23 @@ export default function Cart() {
       {/* Recommended Products Carousel */}
       {recommendedProductsArray.length > 0 && (
         <section className="mt-12">
-          <div className="mb-6">
-            <div className="flex items-center gap-2 mb-1">
-              <Star className="h-5 w-5 text-primary-600" />
-              <p className="text-xs font-semibold text-primary-600 uppercase tracking-widest">You May Also Like</p>
+          <div className="flex items-end justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/20">
+                <ShoppingBag className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-primary-600 uppercase tracking-widest">You May Also Like</p>
+                <h2 className="text-xl font-bold text-gray-900">Based on Your Cart</h2>
+              </div>
             </div>
-            <h2 className="text-xl font-bold text-gray-900">Based on Your Cart</h2>
+            <Link
+              to="/products"
+              className="flex items-center gap-1 text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors"
+            >
+              <span>Explore More</span>
+              <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
           <ProductCarousel 
             products={recommendedProductsArray} 
@@ -297,15 +308,6 @@ export default function Cart() {
               setIsCartDrawerOpen(true);
             }}
           />
-          <div className="mt-6 text-center">
-            <Link
-              to="/products"
-              className="inline-flex items-center gap-2 text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors"
-            >
-              <span>Explore More Products</span>
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
         </section>
       )}
 

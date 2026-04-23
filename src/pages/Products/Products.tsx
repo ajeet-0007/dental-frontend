@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import api from "@/api";
 import { useCartStore } from "@/stores/cartStore";
 import { useWishlistStore } from "@/stores/wishlistStore";
-import { Package, ChevronDown, ChevronUp, X, SlidersHorizontal, ShoppingCart, Check, Heart, ArrowUpDown } from "lucide-react";
+import { Package, ChevronDown, ChevronUp, X, SlidersHorizontal, ShoppingCart, Check, Heart, ArrowUpDown, Tag, Layers, Store, DollarSign, PackageCheck } from "lucide-react";
 import CartDrawer from "@/components/common/CartDrawer";
 import { PriceRangeSlider } from "@/components/common/PriceRangeSlider";
 
@@ -492,19 +492,127 @@ export default function Products() {
 
   return (
     <div className="container mx-auto px-3 py-4 md:px-4 md:py-6">
-      {/* Mobile Filter Toggle */}
-      <button
-        onClick={() => setShowFilters(!showFilters)}
-        className="lg:hidden flex items-center gap-2 px-4 py-2.5 mb-4 text-sm font-medium text-gray-700 bg-gray-50 border rounded-lg active:bg-gray-100 transition-colors"
-      >
-        <SlidersHorizontal className="h-4 w-4" />
-        Filters
-        {hasActiveFilters && (
-          <span className="w-5 h-5 bg-primary-600 text-white text-xs rounded-full flex items-center justify-center">
-            {filters.categories.length + filters.departments.length + filters.brands.length + (filters.inStock ? 1 : 0) + (filters.minPrice || filters.maxPrice ? 1 : 0)}
-          </span>
-        )}
-      </button>
+      {/* Horizontal Filter Chips Bar */}
+      <div className="mb-4">
+        <div className="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-hide">
+          {/* Filter Button */}
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-full border border-gray-200 hover:border-primary-500 hover:bg-primary-50 transition-colors whitespace-nowrap"
+          >
+            <SlidersHorizontal className="h-4 w-4" />
+            Filters
+            {hasActiveFilters && (
+              <span className="w-5 h-5 bg-primary-600 text-white text-xs rounded-full flex items-center justify-center">
+                {filters.categories.length + filters.departments.length + filters.brands.length + (filters.inStock ? 1 : 0) + (filters.minPrice || filters.maxPrice ? 1 : 0)}
+              </span>
+            )}
+          </button>
+
+          {/* Clear All */}
+          {hasActiveFilters && (
+            <button
+              onClick={clearFilters}
+              className="text-sm text-primary-600 hover:text-primary-700 font-medium whitespace-nowrap"
+            >
+              Clear All
+            </button>
+          )}
+
+          {/* Category Chips */}
+          {categories.slice(0, 8).map((cat: any) => {
+            const isSelected = filters.categories.includes(cat.slug);
+            return (
+              <button
+                key={cat.slug}
+                onClick={() => toggleCategory(cat.slug)}
+                className={`flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-full border transition-all whitespace-nowrap ${
+                  isSelected
+                    ? "bg-primary-600 text-white border-primary-600"
+                    : "bg-white text-gray-600 border-gray-200 hover:border-primary-500 hover:bg-primary-50"
+                }`}
+              >
+                <Tag className="h-3.5 w-3.5" />
+                {cat.name}
+                {isSelected && <X className="h-3 w-3" />}
+              </button>
+            );
+          })}
+
+          {/* Department Chips */}
+          {departments.slice(0, 6).map((dept: any) => {
+            const isSelected = filters.departments.includes(dept.slug);
+            return (
+              <button
+                key={dept.slug}
+                onClick={() => toggleDepartment(dept.slug)}
+                className={`flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-full border transition-all whitespace-nowrap ${
+                  isSelected
+                    ? "bg-green-600 text-white border-green-600"
+                    : "bg-white text-gray-600 border-gray-200 hover:border-green-500 hover:bg-green-50"
+                }`}
+              >
+                <Layers className="h-3.5 w-3.5" />
+                {dept.name}
+                {isSelected && <X className="h-3 w-3" />}
+              </button>
+            );
+          })}
+
+          {/* Brand Chips */}
+          {brands.slice(0, 6).map((brand: any) => {
+            const isSelected = filters.brands.includes(brand.slug);
+            return (
+              <button
+                key={brand.slug}
+                onClick={() => toggleBrand(brand.slug)}
+                className={`flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-full border transition-all whitespace-nowrap ${
+                  isSelected
+                    ? "bg-amber-600 text-white border-amber-600"
+                    : "bg-white text-gray-600 border-gray-200 hover:border-amber-500 hover:bg-amber-50"
+                }`}
+              >
+                <Store className="h-3.5 w-3.5" />
+                {brand.name}
+                {isSelected && <X className="h-3 w-3" />}
+              </button>
+            );
+          })}
+
+          {/* Price Filter Chip */}
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className={`flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-full border transition-all whitespace-nowrap ${
+              filters.minPrice || filters.maxPrice
+                ? "bg-blue-600 text-white border-blue-600"
+                : "bg-white text-gray-600 border-gray-200 hover:border-blue-500 hover:bg-blue-50"
+            }`}
+          >
+            <DollarSign className="h-3.5 w-3.5" />
+            {filters.minPrice || filters.maxPrice ? `₹${filters.minPrice || 0} - ₹${filters.maxPrice || 100000}` : "Price"}
+          </button>
+
+          {/* In Stock Filter Chip */}
+          <button
+            onClick={() => {
+              setFilters((p) => {
+                const newFilters = { ...p, inStock: !p.inStock };
+                updateURLParams(newFilters);
+                return newFilters;
+              });
+              setPage(1);
+            }}
+            className={`flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-full border transition-all whitespace-nowrap ${
+              filters.inStock
+                ? "bg-emerald-600 text-white border-emerald-600"
+                : "bg-white text-gray-600 border-gray-200 hover:border-emerald-500 hover:bg-emerald-50"
+            }`}
+          >
+            <PackageCheck className="h-3.5 w-3.5" />
+            In Stock
+          </button>
+        </div>
+      </div>
 
       <div className="flex gap-6">
         {/* Desktop Sidebar */}
@@ -729,7 +837,7 @@ export default function Products() {
             <div className="relative">
               <button
                 onClick={() => setShowSortMenu(!showSortMenu)}
-                className="flex items-center gap-2 px-4 py-2.5 text-sm border rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-colors"
+                className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-full border border-gray-200 hover:border-primary-500 hover:bg-primary-50 transition-colors"
               >
                 <ArrowUpDown className="h-4 w-4" />
                 <span className="hidden sm:inline">
