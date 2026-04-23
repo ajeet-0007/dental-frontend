@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/api";
-import { Trash2, Plus, Minus, ShoppingCart, ArrowRight, Package, Tag, Star, ShoppingBag } from "lucide-react";
+import { Trash2, Plus, Minus, ShoppingCart, ArrowRight, Package, Tag, ShoppingBag } from "lucide-react";
 import { useAuthStore } from "@/stores/authStore";
 import { useCartStore } from "@/stores/cartStore";
 import { useEffect, useState } from "react";
