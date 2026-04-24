@@ -158,7 +158,7 @@ const ChatWidget = () => {
                           {message.products.slice(0, 2).map(product => (
                             <a
                               key={product.id}
-                              href={`/product/${product.slug}`}
+                              href={`/products/${product.slug}`}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="block p-2 bg-white border border-gray-200 rounded-lg hover:border-blue-300 transition-colors"

@@ -163,7 +163,7 @@ const ChatPage = () => {
                                 {message.products.map(product => (
                                   <a
                                     key={product.id}
-                                    href={`/product/${product.slug}`}
+                                    href={`/products/${product.slug}`}
                                     className="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:shadow-sm transition-all"
                                   >
                                     <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
