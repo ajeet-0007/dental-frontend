@@ -40,6 +40,7 @@ import ScrollToTop from "./components/ScrollToTop";
 import Returns from "./pages/Returns/Returns";
 import ReturnDetail from "./pages/Returns/ReturnDetail";
 import InitiateReturn from "./pages/Returns/InitiateReturn";
+import ChatPage from "./pages/Chat/ChatPage";
 
 const queryClient = new QueryClient();
 
@@ -89,6 +90,7 @@ function App() {
             <Route path="profile" element={<UserProfile />} />
             <Route path="wishlist" element={<Wishlist />} />
             <Route path="help" element={<HelpSupport />} />
+            <Route path="chat" element={<ChatPage />} />
           </Route>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />

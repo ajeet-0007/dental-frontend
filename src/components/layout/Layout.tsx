@@ -11,6 +11,7 @@ import WishlistDrawer from '@/components/common/WishlistDrawer'
 import BottomNav from '@/components/common/BottomNav'
 import LogoutModal from '@/components/common/LogoutModal'
 import { useVoiceSearch } from '@/hooks/useVoiceSearch'
+import ChatWidget from '@/pages/Chat/ChatWidget'
 
 export default function Layout() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -837,6 +838,8 @@ export default function Layout() {
         onClose={() => setShowLogoutModal(false)}
         onConfirm={logout}
       />
+
+      <ChatWidget />
     </div>
   )
 }
