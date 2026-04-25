@@ -89,7 +89,7 @@ const ChatWidget = () => {
     <>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 w-14 h-14 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-colors flex items-center justify-center z-50"
+        className="fixed bottom-20 md:bottom-6 right-4 md:right-6 w-12 md:w-14 h-12 md:h-14 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-colors flex items-center justify-center z-50"
       >
         <AnimatePresence mode="wait">
           {isOpen ? (
@@ -120,7 +120,7 @@ const ChatWidget = () => {
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="fixed bottom-24 right-6 w-96 max-w-[calc(100vw-48px)] bg-white rounded-2xl shadow-2xl overflow-hidden z-50"
+            className="fixed bottom-36 md:bottom-24 right-4 md:right-6 w-96 max-w-[calc(100vw-48px)] bg-white rounded-2xl shadow-2xl overflow-hidden z-50"
             style={{ maxHeight: 'calc(100vh - 150px)' }}
           >
             <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-3">
