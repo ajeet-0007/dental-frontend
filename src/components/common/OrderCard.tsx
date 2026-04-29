@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { 
   Package, 
@@ -8,8 +8,8 @@ import {
   XCircle, 
   ChevronRight,
   RotateCcw, 
-  FileText, 
-  Loader2
+  Loader2,
+  ArrowRight
 } from 'lucide-react'
 
 interface OrderCardProps {
@@ -24,8 +24,6 @@ interface OrderCardProps {
   timeline: any[]
   StatusIcon: any
   index: number
-  onCancel: (orderId: string) => void
-  cancellingId: string | null
   onReorder: (orderId: string) => void
   reorderingId: string | null
 }
@@ -36,24 +34,20 @@ export default function OrderCard({
   timeline,
   StatusIcon,
   index,
-  onCancel,
-  cancellingId,
   onReorder,
   reorderingId,
 }: OrderCardProps) {
+  const navigate = useNavigate()
   const [trackingExpanded, setTrackingExpanded] = useState(false)
   const completedSteps = timeline.filter(step => step.completed && !step.cancelled).length
 
-  const canCancel = (status: string) => {
-    return ['pending', 'pending_payment', 'confirmed', 'processing'].includes(status)
-  }
-
   return (
     <motion.div 
+      onClick={() => navigate(`/orders/${order.id}`)}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05 }}
-      className="bg-white rounded-3xl shadow-lg shadow-gray-200/50 overflow-hidden hover:shadow-xl hover:shadow-gray-300/30 transition-all duration-300"
+      className="bg-white rounded-3xl shadow-lg shadow-gray-200/50 overflow-hidden hover:shadow-xl hover:shadow-gray-300/30 transition-all duration-300 cursor-pointer"
     >
       {/* Order Header */}
       <div className="p-5 md:p-6 border-b border-gray-100">
@@ -188,9 +182,10 @@ export default function OrderCard({
       <div className="p-5 md:p-6">
         <div className="flex gap-3 overflow-x-auto pb-2 -mx-2 px-2">
           {(order.items || []).slice(0, 4).map((item: any, idx: number) => (
-            <Link 
+            <a 
               key={idx} 
-              to={(item.productSlug && item.productSlug.trim()) ? `/products/${item.productSlug}` : `/products/${item.productId}`}
+              href={(item.productSlug && item.productSlug.trim()) ? `/products/${item.productSlug}` : `/products/${item.productId}`}
+              onClick={(e) => e.stopPropagation()}
               className="relative w-20 h-20 md:w-24 md:h-24 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl overflow-hidden flex-shrink-0 border-2 border-transparent hover:border-primary-300 hover:shadow-lg transition-all duration-300"
             >
               {item.productImage ? (
@@ -207,7 +202,7 @@ export default function OrderCard({
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 hover:opacity-100 transition-opacity flex items-end justify-center pb-2">
                 <span className="text-white text-xs font-medium">View</span>
               </div>
-            </Link>
+            </a>
           ))}
           {(order.items?.length || 0) > 4 && (
             <div className="w-20 h-20 md:w-24 md:h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center flex-shrink-0">
@@ -218,53 +213,36 @@ export default function OrderCard({
       </div>
 
       {/* Order Actions */}
-      <div className="px-4 md:px-6 pb-4 md:pb-6 pt-2 border-t border-gray-100">
-        <div className="flex flex-row items-center justify-between gap-2 md:gap-3">
-          <div className="flex flex-nowrap gap-1.5 md:gap-2 overflow-x-auto pb-1 scrollbar-hide">
-            {order.status === 'shipped' && (
-              <button className="group flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 md:py-2.5 bg-blue-50 text-blue-600 text-xs md:text-sm font-medium rounded-full hover:bg-blue-100 hover:shadow-[0_4px_12px_rgba(59,130,246,0.2)] transition-all duration-300 whitespace-nowrap">
-                <Truck className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                <span className="hidden sm:inline">Track</span>
-              </button>
-            )}
-            {order.status === 'delivered' && (
-              <button 
-                onClick={() => onReorder(order.id)}
-                disabled={reorderingId !== null}
-                title="Reorder"
-                className="group flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 md:py-2.5 text-primary-600 text-xs md:text-sm font-medium rounded-full hover:bg-primary-50 transition-all duration-300 disabled:opacity-50 whitespace-nowrap"
-              >
-                {reorderingId === order.id ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <RotateCcw className="w-4 h-4 group-hover:rotate-180 transition-transform duration-500" />
-                )}
-              </button>
-            )}
-            <button 
-              title="Invoice"
-              className="group flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 md:py-2.5 text-gray-500 text-xs md:text-sm font-medium rounded-full hover:bg-gray-100 hover:text-gray-700 transition-all duration-300 whitespace-nowrap"
-            >
-              <FileText className="w-4 h-4" />
+      <div className="px-4 md:px-6 pb-4 md:pb-6 pt-2">
+        <div className="flex items-center gap-2">
+          {order.status === 'shipped' && (
+            <button onClick={(e) => e.stopPropagation()} className="group flex items-center gap-2 px-4 py-2.5 bg-blue-50 text-blue-600 text-sm font-medium rounded-xl hover:bg-blue-100 hover:shadow-[0_4px_12px_rgba(59,130,246,0.2)] transition-all duration-300">
+              <Truck className="w-4 h-4 group-hover:scale-110 transition-transform" />
+              Track
             </button>
-            {canCancel(order.status) && (
-              <button
-                onClick={() => onCancel(order.id)}
-                disabled={cancellingId !== null}
-                title="Cancel"
-                className="group flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 md:py-2.5 text-red-500 text-xs md:text-sm font-medium rounded-full hover:bg-red-50 transition-all duration-300 disabled:opacity-50 whitespace-nowrap"
-              >
-                <XCircle className="w-4 h-4" />
-              </button>
-            )}
-          </div>
-          <button
-            onClick={() => window.location.href = `/orders/${order.id}`}
-            className="group flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 md:py-2.5 text-primary-600 text-xs md:text-sm font-medium rounded-full hover:bg-primary-50 transition-all duration-300 flex-shrink-0"
+          )}
+          {order.status === 'delivered' && (
+            <button 
+              onClick={(e) => { e.stopPropagation(); onReorder(order.id) }}
+              disabled={reorderingId !== null}
+              className="group flex items-center gap-2 px-4 py-2.5 text-primary-600 text-sm font-medium rounded-xl hover:bg-primary-50 transition-all duration-300 disabled:opacity-50"
+            >
+              {reorderingId === order.id ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <RotateCcw className="w-4 h-4 group-hover:rotate-180 transition-transform duration-500" />
+              )}
+              {reorderingId === order.id ? 'Adding...' : 'Reorder'}
+            </button>
+          )}
+          <a
+            href={`/orders/${order.id}`}
+            onClick={(e) => e.stopPropagation()}
+            className="group flex items-center gap-1.5 px-4 py-2 bg-primary-50/50 text-primary-600 text-sm font-semibold rounded-full border-2 border-primary-100 hover:bg-primary-100 hover:border-primary-200 transition-all duration-300 hover:shadow-sm"
           >
             Details
-            <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-          </button>
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          </a>
         </div>
       </div>
     </motion.div>

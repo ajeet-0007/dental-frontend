@@ -6,7 +6,7 @@ import api, { cartApi } from '@/api'
 import { Package, Clock, CheckCircle, AlertCircle, ShoppingBag } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useCartStore } from '@/stores/cartStore'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import OrderCard from '@/components/common/OrderCard'
 
 export default function Orders() {
@@ -16,26 +16,11 @@ export default function Orders() {
   const { setCart } = useCartStore()
 
   const [activeFilter, setActiveFilter] = useState<'all' | 'active' | 'completed' | 'cancelled'>('all')
-  const [confirmCancelId, setConfirmCancelId] = useState<string | null>(null)
 
   const { data, isLoading } = useQuery({
     queryKey: ['orders'],
     queryFn: () => api.get('/orders'),
     enabled: isAuthenticated,
-  })
-
-  const cancelMutation = useMutation({
-    mutationFn: async (id: string) => {
-      return api.post(`/orders/${id}/cancel`, {})
-    },
-    onSuccess: () => {
-      toast.success('Order cancelled successfully')
-      queryClient.invalidateQueries({ queryKey: ['orders'] })
-      setConfirmCancelId(null)
-    },
-    onError: () => {
-      toast.error('Failed to cancel order')
-    },
   })
 
   const [reorderingId, setReorderingId] = useState<string | null>(null)
@@ -401,8 +386,6 @@ export default function Orders() {
                   timeline={timeline}
                   StatusIcon={StatusIcon}
                   index={index}
-                  onCancel={setConfirmCancelId}
-                  cancellingId={cancelMutation.isPending ? confirmCancelId : null}
                   onReorder={(orderId) => reorderMutation.mutate(orderId)}
                   reorderingId={reorderingId}
                 />
@@ -411,56 +394,6 @@ export default function Orders() {
           </div>
         )}
       </div>
-
-      {/* Cancel Confirmation Modal */}
-      <AnimatePresence>
-        {confirmCancelId && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-          >
-            <motion.div 
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden"
-            >
-              <div className="p-6 md:p-8">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-16 h-16 bg-gradient-to-br from-red-100 to-red-200 rounded-2xl flex items-center justify-center flex-shrink-0">
-                    <AlertCircle className="w-8 h-8 text-red-600" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900">Cancel Order</h3>
-                    <p className="text-sm text-gray-500">This action cannot be undone</p>
-                  </div>
-                </div>
-                <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl p-4 mb-6 border border-amber-100">
-                  <p className="text-sm text-amber-800">
-                    <strong>Note:</strong> Your refund will be processed within 5-7 business days to your original payment method.
-                  </p>
-                </div>
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => setConfirmCancelId(null)}
-                    className="flex-1 px-5 py-3.5 text-gray-700 font-bold bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors"
-                  >
-                    Keep Order
-                  </button>
-                  <button
-                    onClick={() => cancelMutation.mutate(confirmCancelId)}
-                    className="flex-1 px-5 py-3.5 text-white font-bold bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 rounded-xl transition-all shadow-lg shadow-red-500/30"
-                  >
-                    Cancel Order
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   )
 }

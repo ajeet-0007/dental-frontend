@@ -20,6 +20,8 @@ export default function OrderDetail() {
   const verificationRef = useRef(false)
 
   const [trackingExpanded, setTrackingExpanded] = useState(false)
+  const [showCancelModal, setShowCancelModal] = useState(false)
+  const [isCancelling, setIsCancelling] = useState(false)
 
   const fetchOrder = useCallback(async () => {
     console.log('[OrderDetail] fetchOrder called with id:', id)
@@ -232,6 +234,40 @@ export default function OrderDetail() {
     }))
   }
 
+  const canCancel = (status: string) => {
+    return ['pending', 'pending_payment', 'confirmed', 'processing'].includes(status)
+  }
+
+  const handleCancelOrder = async () => {
+    setIsCancelling(true)
+    try {
+      const token = localStorage.getItem('accessToken')
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/orders/${id}/cancel`, {
+        method: 'POST',
+        headers: {
+          'Authorization': token ? `Bearer ${token}` : '',
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({})
+      })
+      const data = await res.json()
+      if (data.success) {
+        toast.success('Order cancelled successfully')
+        setShowCancelModal(false)
+        await fetchOrder()
+        queryClient.invalidateQueries({ queryKey: ['orders'] })
+      } else {
+        toast.error(data.message || 'Failed to cancel order')
+      }
+    } catch (error) {
+      console.error('Cancel error:', error)
+      toast.error('Failed to cancel order')
+    } finally {
+      setIsCancelling(false)
+    }
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50/50 flex items-center justify-center">
@@ -304,6 +340,7 @@ export default function OrderDetail() {
 
   const statusConfig = getStatusConfig(order.status)
   const StatusIcon = statusConfig.icon
+  const isPrepaid = order?.payments?.some((p: any) => p.method !== 'cod') ?? true
 
   return (
     <div className="min-h-screen bg-gray-50/50">
@@ -317,14 +354,26 @@ export default function OrderDetail() {
             <ArrowLeft className="h-4 w-4 md:h-5 md:w-5" />
             <span className="text-sm md:text-base font-medium">Back to Orders</span>
           </Link>
-          <button
-            onClick={fetchOrder}
-            disabled={verifying}
-            className="flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 text-xs md:text-sm bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 rounded-xl disabled:opacity-50 transition-colors shadow-sm"
-          >
-            <RefreshCw className={`h-3.5 w-3.5 md:h-4 md:w-4 ${verifying ? 'animate-spin' : ''}`} />
-            Refresh
-          </button>
+          <div className="flex items-center gap-2">
+            {canCancel(order.status) && (
+              <button
+                onClick={() => setShowCancelModal(true)}
+                disabled={isCancelling}
+                className="flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 text-xs md:text-sm bg-red-50 border border-red-200 text-red-600 hover:bg-red-100 rounded-xl disabled:opacity-50 transition-colors shadow-sm"
+              >
+                <XCircle className="h-3.5 w-3.5 md:h-4 md:w-4" />
+                Cancel Order
+              </button>
+            )}
+            <button
+              onClick={fetchOrder}
+              disabled={verifying}
+              className="flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 text-xs md:text-sm bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 rounded-xl disabled:opacity-50 transition-colors shadow-sm"
+            >
+              <RefreshCw className={`h-3.5 w-3.5 md:h-4 md:w-4 ${verifying ? 'animate-spin' : ''}`} />
+              Refresh
+            </button>
+          </div>
         </div>
 
         {/* Status Alerts */}
@@ -585,7 +634,7 @@ export default function OrderDetail() {
                 </div>
               </div>
 
-              {order.status === 'delivered' && (
+              {order.status === 'delivered' && isPrepaid && (
                 <div className="mt-4">
                   <Link
                     to={`/orders/${order.id}/return`}
@@ -771,6 +820,70 @@ export default function OrderDetail() {
           </div>
         </div>
       </div>
+
+      {/* Cancel Confirmation Modal */}
+      <AnimatePresence>
+        {showCancelModal && (() => {
+          const isPrepaid = order?.payments?.some((p: any) => p.method !== 'cod')
+          return (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+              onClick={() => !isCancelling && setShowCancelModal(false)}
+            >
+              <motion.div 
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                onClick={(e) => e.stopPropagation()}
+                className="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden"
+              >
+                <div className="p-6 md:p-8">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-16 h-16 bg-gradient-to-br from-red-100 to-red-200 rounded-2xl flex items-center justify-center flex-shrink-0">
+                      <AlertCircle className="w-8 h-8 text-red-600" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-900">Cancel Order</h3>
+                      <p className="text-sm text-gray-500">This action cannot be undone</p>
+                    </div>
+                  </div>
+                  {isPrepaid && (
+                    <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl p-4 mb-6 border border-amber-100">
+                      <p className="text-sm text-amber-800">
+                        <strong>Note:</strong> Your refund will be processed within 5-7 business days to your original payment method.
+                      </p>
+                    </div>
+                  )}
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => setShowCancelModal(false)}
+                      disabled={isCancelling}
+                      className="flex-1 px-5 py-3.5 text-gray-700 font-bold bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors disabled:opacity-50"
+                    >
+                      Keep Order
+                    </button>
+                    <button
+                      onClick={handleCancelOrder}
+                      disabled={isCancelling}
+                      className="flex-1 px-5 py-3.5 text-white font-bold bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 rounded-xl transition-all shadow-lg shadow-red-500/30 disabled:opacity-50 flex items-center justify-center gap-2"
+                    >
+                      {isCancelling ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          Cancelling...
+                        </>
+                      ) : 'Cancel Order'}
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          )
+        })()}
+      </AnimatePresence>
     </div>
   )
 }
