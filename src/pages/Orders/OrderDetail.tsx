@@ -2,7 +2,8 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
-import { ArrowLeft, Package, MapPin, CheckCircle, Loader2, RefreshCw, Clock, Truck, XCircle, AlertCircle, ShieldCheck, RotateCw, Tag, Undo2, Calendar } from 'lucide-react'
+import { ArrowLeft, Package, MapPin, CheckCircle, Loader2, RefreshCw, Clock, Truck, XCircle, AlertCircle, ShieldCheck, RotateCw, Tag, Undo2, Calendar, ChevronRight } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
 
 const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=400&h=400&fit=crop'
 
@@ -17,6 +18,8 @@ export default function OrderDetail() {
   const [tracking, setTracking] = useState<any>(null)
   const [_trackingLoading, setTrackingLoading] = useState(false)
   const verificationRef = useRef(false)
+
+  const [trackingExpanded, setTrackingExpanded] = useState(false)
 
   const fetchOrder = useCallback(async () => {
     console.log('[OrderDetail] fetchOrder called with id:', id)
@@ -209,6 +212,26 @@ export default function OrderDetail() {
     }
   }, [id])
 
+  const getOrderTimeline = (status: string) => {
+    const steps = [
+      { key: 'placed', label: 'Placed', icon: Package },
+      { key: 'confirmed', label: 'Confirmed', icon: CheckCircle },
+      { key: 'processing', label: 'Processing', icon: Clock },
+      { key: 'shipped', label: 'Shipped', icon: Truck },
+      { key: 'delivered', label: 'Delivered', icon: CheckCircle },
+    ]
+    
+    const statusOrder = ['pending', 'pending_payment', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled']
+    const currentIndex = statusOrder.indexOf(status)
+    
+    return steps.map((step, index) => ({
+      ...step,
+      completed: currentIndex >= index,
+      active: currentIndex === index,
+      cancelled: status === 'cancelled'
+    }))
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50/50 flex items-center justify-center">
@@ -253,29 +276,29 @@ export default function OrderDetail() {
   const getStatusConfig = (status: string) => {
     switch (status) {
       case 'delivered':
-        return { bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-200', icon: CheckCircle, label: 'Delivered' }
+        return { bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-200', icon: CheckCircle, label: 'Delivered', dot: 'bg-emerald-400' }
       case 'cancelled':
-        return { bg: 'bg-red-50', text: 'text-red-600', border: 'border-red-200', icon: XCircle, label: 'Cancelled' }
+        return { bg: 'bg-red-50', text: 'text-red-600', border: 'border-red-200', icon: XCircle, label: 'Cancelled', dot: 'bg-red-400' }
       case 'shipped':
-        return { bg: 'bg-blue-50', text: 'text-blue-600', border: 'border-blue-200', icon: Truck, label: 'Shipped' }
+        return { bg: 'bg-blue-50', text: 'text-blue-600', border: 'border-blue-200', icon: Truck, label: 'Shipped', dot: 'bg-blue-400' }
       case 'confirmed':
-        return { bg: 'bg-purple-50', text: 'text-purple-600', border: 'border-purple-200', icon: Clock, label: 'Confirmed' }
+        return { bg: 'bg-purple-50', text: 'text-purple-600', border: 'border-purple-200', icon: Clock, label: 'Confirmed', dot: 'bg-purple-400' }
       case 'processing':
-        return { bg: 'bg-amber-50', text: 'text-amber-600', border: 'border-amber-200', icon: Clock, label: 'Processing' }
+        return { bg: 'bg-amber-50', text: 'text-amber-600', border: 'border-amber-200', icon: Clock, label: 'Processing', dot: 'bg-amber-400' }
       case 'pending_payment':
-        return { bg: 'bg-orange-50', text: 'text-orange-600', border: 'border-orange-200', icon: AlertCircle, label: 'Payment Pending' }
+        return { bg: 'bg-orange-50', text: 'text-orange-600', border: 'border-orange-200', icon: AlertCircle, label: 'Payment Pending', dot: 'bg-orange-400' }
       case 'payment_failed':
-        return { bg: 'bg-red-50', text: 'text-red-600', border: 'border-red-200', icon: XCircle, label: 'Payment Failed' }
+        return { bg: 'bg-red-50', text: 'text-red-600', border: 'border-red-200', icon: XCircle, label: 'Payment Failed', dot: 'bg-red-400' }
       case 'rto':
-        return { bg: 'bg-orange-50', text: 'text-orange-600', border: 'border-orange-200', icon: RefreshCw, label: 'Return to Origin' }
+        return { bg: 'bg-orange-50', text: 'text-orange-600', border: 'border-orange-200', icon: RefreshCw, label: 'Return to Origin', dot: 'bg-orange-400' }
       case 'delivery_failed':
-        return { bg: 'bg-red-50', text: 'text-red-600', border: 'border-red-200', icon: AlertCircle, label: 'Delivery Failed' }
+        return { bg: 'bg-red-50', text: 'text-red-600', border: 'border-red-200', icon: AlertCircle, label: 'Delivery Failed', dot: 'bg-red-400' }
       case 'refunded':
-        return { bg: 'bg-green-50', text: 'text-green-600', border: 'border-green-200', icon: CheckCircle, label: 'Refunded' }
+        return { bg: 'bg-green-50', text: 'text-green-600', border: 'border-green-200', icon: CheckCircle, label: 'Refunded', dot: 'bg-green-400' }
       case 'pending':
-        return { bg: 'bg-gray-50', text: 'text-gray-600', border: 'border-gray-200', icon: Clock, label: 'Pending' }
+        return { bg: 'bg-gray-50', text: 'text-gray-600', border: 'border-gray-200', icon: Clock, label: 'Pending', dot: 'bg-gray-400' }
       default:
-        return { bg: 'bg-yellow-50', text: 'text-yellow-700', border: 'border-yellow-200', icon: Clock, label: status.charAt(0).toUpperCase() + status.slice(1) }
+        return { bg: 'bg-yellow-50', text: 'text-yellow-700', border: 'border-yellow-200', icon: Clock, label: status.charAt(0).toUpperCase() + status.slice(1), dot: 'bg-yellow-400' }
     }
   }
 
@@ -367,6 +390,122 @@ export default function OrderDetail() {
                 </div>
               </div>
             </div>
+
+            {/* Order Progress Timeline */}
+            {(() => {
+              const timeline = getOrderTimeline(order.status)
+              const completedSteps = timeline.filter(step => step.completed && !step.cancelled).length
+              return (
+                <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+                  {/* Desktop - Horizontal Timeline */}
+                  <div className="hidden sm:block px-5 md:px-6 py-4">
+                    <div className="flex items-center justify-between">
+                      {timeline.map((step: any, idx: number) => (
+                        <div key={step.key} className="flex items-center flex-1">
+                          <div className="flex flex-col items-center">
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
+                              step.cancelled 
+                                ? 'bg-red-100 text-red-500' 
+                                : step.completed 
+                                  ? `${statusConfig.bg} ${statusConfig.text} shadow-sm`
+                                  : 'bg-gray-200 text-gray-400'
+                            }`}>
+                              {step.cancelled ? (
+                                <XCircle className="w-5 h-5" />
+                              ) : (
+                                <step.icon className="w-5 h-5" />
+                              )}
+                            </div>
+                            <span className={`text-xs mt-1.5 font-medium ${
+                              step.cancelled || step.active ? 'text-gray-700' : 'text-gray-400'
+                            }`}>{step.label}</span>
+                          </div>
+                          {idx < timeline.length - 1 && (
+                            <div className={`flex-1 h-1 mx-2 rounded-full transition-all duration-300 ${
+                              step.cancelled 
+                                ? 'bg-red-200' 
+                                : timeline[idx + 1].completed || timeline[idx + 1].active
+                                  ? statusConfig.dot || 'bg-primary-500'
+                                  : 'bg-gray-200'
+                            }`} />
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Mobile - Collapsible Tracking */}
+                  <div className="sm:hidden">
+                    <button
+                      onClick={() => setTrackingExpanded(!trackingExpanded)}
+                      className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${statusConfig.bg} ${statusConfig.text}`}>
+                          <StatusIcon className="w-5 h-5" />
+                        </div>
+                        <div className="text-left">
+                          <p className="font-semibold text-gray-900">{statusConfig.label}</p>
+                          <p className="text-xs text-gray-500">{completedSteps} of {timeline.length} steps completed</p>
+                        </div>
+                      </div>
+                      <ChevronRight className={`w-5 h-5 text-gray-400 transition-all duration-300 ${trackingExpanded ? 'rotate-90' : ''}`} />
+                    </button>
+                    
+                    <AnimatePresence>
+                      {trackingExpanded && (
+                        <motion.div 
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.2 }}
+                          className="overflow-hidden bg-gray-50"
+                        >
+                          <div className="p-4 space-y-0">
+                            {timeline.map((step: any) => (
+                              <div key={step.key} className="flex items-center justify-between py-2.5">
+                                <div className="flex items-center gap-3">
+                                  <div className={`w-7 h-7 rounded-full flex items-center justify-center ${
+                                    step.cancelled 
+                                      ? 'bg-red-100 text-red-500' 
+                                      : step.completed 
+                                        ? `${statusConfig.bg} ${statusConfig.text}`
+                                        : step.active
+                                          ? `${statusConfig.bg} ${statusConfig.text} ring-2 ring-offset-2 ${statusConfig.text.replace('text-', 'ring-')}`
+                                          : 'bg-gray-200 text-gray-400'
+                                  }`}>
+                                    {step.cancelled ? (
+                                      <XCircle className="w-4 h-4" />
+                                    ) : step.completed ? (
+                                      <CheckCircle className="w-4 h-4" />
+                                    ) : (
+                                      <step.icon className="w-4 h-4" />
+                                    )}
+                                  </div>
+                                  <span className={`text-sm font-medium ${
+                                    step.cancelled || step.completed || step.active ? 'text-gray-900' : 'text-gray-400'
+                                  }`}>
+                                    {step.label}
+                                  </span>
+                                </div>
+                                {step.active && (
+                                  <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${statusConfig.bg} ${statusConfig.text}`}>
+                                    In Progress
+                                  </span>
+                                )}
+                                {step.completed && !step.active && !step.cancelled && (
+                                  <span className="text-xs text-emerald-600 font-medium">Done</span>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </div>
+              )
+            })()}
 
             {/* RTO Alert */}
             {order.isRTO && (
