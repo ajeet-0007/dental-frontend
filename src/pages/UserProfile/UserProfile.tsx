@@ -50,7 +50,7 @@ export default function UserProfile() {
 
   const { data: ordersData } = useQuery({
     queryKey: ['orders'],
-    queryFn: () => api.get('/orders?limit=5'),
+    queryFn: () => api.get('/orders'),
     enabled: isAuthenticated,
   })
 

@@ -246,23 +246,27 @@ export default function Orders() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
-                className="bg-white rounded-3xl shadow-lg shadow-gray-200/50 p-6 animate-pulse"
+                className="bg-white rounded-xl border border-gray-200/80 p-4 animate-pulse"
               >
-                <div className="flex justify-between items-start mb-6">
-                  <div className="space-y-2">
-                    <div className="h-5 w-32 bg-gray-100 rounded-lg"></div>
-                    <div className="h-4 w-48 bg-gray-100 rounded-lg"></div>
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-9 h-9 bg-gray-100 rounded-lg"></div>
+                  <div className="space-y-1.5 flex-1">
+                    <div className="h-4 w-28 bg-gray-100 rounded-md"></div>
+                    <div className="h-3 w-36 bg-gray-100 rounded-md"></div>
                   </div>
-                  <div className="h-8 w-24 bg-gray-100 rounded-xl"></div>
+                  <div className="h-5 w-16 bg-gray-100 rounded-md"></div>
                 </div>
-                <div className="flex gap-4 mb-6">
-                  {[1, 2, 3].map((j) => (
-                    <div key={j} className="w-20 h-20 bg-gray-100 rounded-2xl"></div>
+                <div className="space-y-2">
+                  {[1, 2].map((j) => (
+                    <div key={j} className="flex items-center gap-3 py-2">
+                      <div className="w-16 h-16 bg-gray-100 rounded-lg"></div>
+                      <div className="space-y-1 flex-1">
+                        <div className="h-3.5 w-48 bg-gray-100 rounded-md"></div>
+                        <div className="h-3 w-16 bg-gray-100 rounded-md"></div>
+                      </div>
+                      <div className="h-4 w-12 bg-gray-100 rounded-md"></div>
+                    </div>
                   ))}
-                </div>
-                <div className="flex justify-between items-center pt-4 border-t border-gray-100">
-                  <div className="h-4 w-24 bg-gray-100 rounded-lg"></div>
-                  <div className="h-12 w-32 bg-gray-100 rounded-xl"></div>
                 </div>
               </motion.div>
             ))}
@@ -372,7 +376,7 @@ export default function Orders() {
             </button>
           </motion.div>
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-4">
             {filteredOrders.map((order: any, index: number) => {
               const statusConfig = getStatusConfig(order.status)
               const StatusIcon = statusConfig.icon

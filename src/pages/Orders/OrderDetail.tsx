@@ -359,18 +359,18 @@ export default function OrderDetail() {
               <button
                 onClick={() => setShowCancelModal(true)}
                 disabled={isCancelling}
-                className="flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 text-xs md:text-sm bg-red-50 border border-red-200 text-red-600 hover:bg-red-100 rounded-xl disabled:opacity-50 transition-colors shadow-sm"
+                className="flex items-center gap-1.5 px-3 py-2 text-xs bg-red-50 border border-red-200 text-red-600 hover:bg-red-100 rounded-lg disabled:opacity-50 transition-colors"
               >
-                <XCircle className="h-3.5 w-3.5 md:h-4 md:w-4" />
-                Cancel Order
+                <XCircle className="h-3.5 w-3.5" />
+                Cancel
               </button>
             )}
             <button
               onClick={fetchOrder}
               disabled={verifying}
-              className="flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 text-xs md:text-sm bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 rounded-xl disabled:opacity-50 transition-colors shadow-sm"
+              className="flex items-center gap-1.5 px-3 py-2 text-xs bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 rounded-lg disabled:opacity-50 transition-colors"
             >
-              <RefreshCw className={`h-3.5 w-3.5 md:h-4 md:w-4 ${verifying ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`h-3.5 w-3.5 ${verifying ? 'animate-spin' : ''}`} />
               Refresh
             </button>
           </div>
@@ -378,30 +378,30 @@ export default function OrderDetail() {
 
         {/* Status Alerts */}
         {verifying && (
-          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-4 md:mb-6 flex items-center gap-3">
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-4 flex items-center gap-3">
             <Loader2 className="h-5 w-5 text-amber-600 animate-spin flex-shrink-0" />
             <span className="text-amber-800 text-sm font-medium">Verifying payment with Stripe...</span>
           </div>
         )}
 
         {!verifying && sessionId && order.status !== 'pending_payment' && (
-          <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 mb-4 md:mb-6 flex items-center gap-3">
+          <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 mb-4 flex items-center gap-3">
             <CheckCircle className="h-5 w-5 text-emerald-600 flex-shrink-0" />
             <span className="text-emerald-800 text-sm font-medium">Payment successful! Your order has been confirmed.</span>
           </div>
         )}
 
         {order.status === 'pending_payment' && (
-          <div className="bg-orange-50 border border-orange-200 rounded-2xl p-6 mb-4 md:mb-6 text-center">
-            <AlertCircle className="h-12 w-12 mx-auto text-orange-400 mb-3" />
-            <h3 className="text-lg font-bold text-orange-800 mb-1">Payment Verification Needed</h3>
+          <div className="bg-orange-50 border border-orange-200 rounded-xl p-5 mb-4 text-center">
+            <AlertCircle className="h-10 w-10 mx-auto text-orange-400 mb-2" />
+            <h3 className="text-base font-bold text-orange-800 mb-1">Payment Verification Needed</h3>
             <p className="text-orange-600 text-sm mb-4">
               Click below to verify your payment and confirm the order.
             </p>
             <button
               onClick={() => sessionId && verifyPayment(sessionId)}
               disabled={verifying}
-              className="px-6 py-2.5 bg-orange-600 text-white font-semibold rounded-xl hover:bg-orange-700 disabled:opacity-50 transition-colors shadow-lg shadow-orange-600/30"
+              className="px-6 py-2.5 bg-orange-600 text-white font-semibold rounded-xl hover:bg-orange-700 disabled:opacity-50 transition-colors"
             >
               {verifying ? 'Verifying...' : 'Verify Payment Now'}
             </button>
@@ -412,30 +412,27 @@ export default function OrderDetail() {
           {/* Left Column - Order Items */}
           <div className="lg:col-span-8 space-y-4">
             {/* Order Header Card */}
-            <div className="bg-white rounded-2xl shadow-sm p-4 md:p-6">
+            <div className="bg-white rounded-xl border border-gray-200/80 p-4 md:p-5">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <div className="flex items-center gap-2 mb-2">
+                  <div className="flex items-center gap-2 mb-1.5">
                     <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Order</span>
-                    <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold ${statusConfig.bg} ${statusConfig.text}`}>
-                      <StatusIcon className="w-3.5 h-3.5" />
+                    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-semibold ${statusConfig.bg} ${statusConfig.text}`}>
+                      <StatusIcon className="w-3 h-3" />
                       {statusConfig.label}
                     </span>
                   </div>
-                  <h1 className="text-xl md:text-2xl font-bold text-gray-900">#{order.orderNumber}</h1>
-                  <p className="text-sm text-gray-500 mt-1">
+                  <h1 className="text-xl font-bold text-gray-900">#{order.orderNumber}</h1>
+                  <p className="text-xs text-gray-500 mt-1">
                     Placed on {new Date(order.createdAt).toLocaleDateString('en-IN', { 
-                      weekday: 'short',
                       day: 'numeric', 
                       month: 'short', 
-                      year: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit'
+                      year: 'numeric'
                     })}
                   </p>
                 </div>
                 <div className="text-right">
-                  <span className="text-2xl md:text-3xl font-bold text-gray-900">₹{Number(order.totalAmount || 0).toLocaleString()}</span>
+                  <span className="text-xl font-bold text-gray-900">₹{Number(order.totalAmount || 0).toLocaleString()}</span>
                 </div>
               </div>
             </div>
@@ -445,32 +442,34 @@ export default function OrderDetail() {
               const timeline = getOrderTimeline(order.status)
               const completedSteps = timeline.filter(step => step.completed && !step.cancelled).length
               return (
-                <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+                <div className="bg-white rounded-xl border border-gray-200/80 overflow-hidden">
                   {/* Desktop - Horizontal Timeline */}
-                  <div className="hidden sm:block px-5 md:px-6 py-4">
+                  <div className="hidden sm:block px-4 md:px-5 py-3">
                     <div className="flex items-center justify-between">
                       {timeline.map((step: any, idx: number) => (
                         <div key={step.key} className="flex items-center flex-1">
                           <div className="flex flex-col items-center">
-                            <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${
                               step.cancelled 
                                 ? 'bg-red-100 text-red-500' 
                                 : step.completed 
-                                  ? `${statusConfig.bg} ${statusConfig.text} shadow-sm`
+                                  ? `${statusConfig.bg} ${statusConfig.text}`
                                   : 'bg-gray-200 text-gray-400'
                             }`}>
                               {step.cancelled ? (
-                                <XCircle className="w-5 h-5" />
+                                <XCircle className="w-4 h-4" />
+                              ) : step.completed ? (
+                                <CheckCircle className="w-4 h-4" />
                               ) : (
-                                <step.icon className="w-5 h-5" />
+                                <step.icon className="w-4 h-4" />
                               )}
                             </div>
-                            <span className={`text-xs mt-1.5 font-medium ${
+                            <span className={`text-[10px] mt-1 font-medium ${
                               step.cancelled || step.active ? 'text-gray-700' : 'text-gray-400'
                             }`}>{step.label}</span>
                           </div>
                           {idx < timeline.length - 1 && (
-                            <div className={`flex-1 h-1 mx-2 rounded-full transition-all duration-300 ${
+                            <div className={`flex-1 h-0.5 mx-1.5 rounded-full transition-all duration-300 ${
                               step.cancelled 
                                 ? 'bg-red-200' 
                                 : timeline[idx + 1].completed || timeline[idx + 1].active
@@ -489,16 +488,16 @@ export default function OrderDetail() {
                       onClick={() => setTrackingExpanded(!trackingExpanded)}
                       className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
                     >
-                      <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${statusConfig.bg} ${statusConfig.text}`}>
-                          <StatusIcon className="w-5 h-5" />
+                      <div className="flex items-center gap-2.5">
+                        <div className={`w-7 h-7 rounded-full flex items-center justify-center ${statusConfig.bg} ${statusConfig.text}`}>
+                          <StatusIcon className="w-4 h-4" />
                         </div>
                         <div className="text-left">
-                          <p className="font-semibold text-gray-900">{statusConfig.label}</p>
-                          <p className="text-xs text-gray-500">{completedSteps} of {timeline.length} steps completed</p>
+                          <p className="text-xs font-semibold text-gray-900">{statusConfig.label}</p>
+                          <p className="text-[10px] text-gray-500">{completedSteps}/{timeline.length} steps</p>
                         </div>
                       </div>
-                      <ChevronRight className={`w-5 h-5 text-gray-400 transition-all duration-300 ${trackingExpanded ? 'rotate-90' : ''}`} />
+                      <ChevronRight className={`w-4 h-4 text-gray-400 transition-all duration-300 ${trackingExpanded ? 'rotate-90' : ''}`} />
                     </button>
                     
                     <AnimatePresence>
@@ -508,42 +507,39 @@ export default function OrderDetail() {
                           animate={{ height: 'auto', opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}
                           transition={{ duration: 0.2 }}
-                          className="overflow-hidden bg-gray-50"
+                          className="overflow-hidden bg-gray-50/50"
                         >
-                          <div className="p-4 space-y-0">
+                          <div className="px-4 pb-2.5 space-y-0">
                             {timeline.map((step: any) => (
-                              <div key={step.key} className="flex items-center justify-between py-2.5">
-                                <div className="flex items-center gap-3">
-                                  <div className={`w-7 h-7 rounded-full flex items-center justify-center ${
+                              <div key={step.key} className="flex items-center justify-between py-2">
+                                <div className="flex items-center gap-2.5">
+                                  <div className={`w-5 h-5 rounded-full flex items-center justify-center ${
                                     step.cancelled 
                                       ? 'bg-red-100 text-red-500' 
                                       : step.completed 
                                         ? `${statusConfig.bg} ${statusConfig.text}`
                                         : step.active
-                                          ? `${statusConfig.bg} ${statusConfig.text} ring-2 ring-offset-2 ${statusConfig.text.replace('text-', 'ring-')}`
+                                          ? `${statusConfig.bg} ${statusConfig.text} ring-2 ring-offset-1 ${statusConfig.text.replace('text-', 'ring-')}`
                                           : 'bg-gray-200 text-gray-400'
                                   }`}>
                                     {step.cancelled ? (
-                                      <XCircle className="w-4 h-4" />
+                                      <XCircle className="w-3 h-3" />
                                     ) : step.completed ? (
-                                      <CheckCircle className="w-4 h-4" />
+                                      <CheckCircle className="w-3 h-3" />
                                     ) : (
-                                      <step.icon className="w-4 h-4" />
+                                      <step.icon className="w-3 h-3" />
                                     )}
                                   </div>
-                                  <span className={`text-sm font-medium ${
+                                  <span className={`text-xs font-medium ${
                                     step.cancelled || step.completed || step.active ? 'text-gray-900' : 'text-gray-400'
                                   }`}>
                                     {step.label}
                                   </span>
                                 </div>
                                 {step.active && (
-                                  <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${statusConfig.bg} ${statusConfig.text}`}>
-                                    In Progress
+                                  <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full ${statusConfig.bg} ${statusConfig.text}`}>
+                                    Current
                                   </span>
-                                )}
-                                {step.completed && !step.active && !step.cancelled && (
-                                  <span className="text-xs text-emerald-600 font-medium">Done</span>
                                 )}
                               </div>
                             ))}
@@ -558,7 +554,7 @@ export default function OrderDetail() {
 
             {/* RTO Alert */}
             {order.isRTO && (
-              <div className="bg-orange-50 border border-orange-200 rounded-2xl p-4">
+              <div className="bg-orange-50 border border-orange-200 rounded-xl p-4">
                 <div className="flex items-start gap-3">
                   <RefreshCw className="h-5 w-5 text-orange-600 flex-shrink-0 mt-0.5" />
                   <div>
@@ -579,7 +575,7 @@ export default function OrderDetail() {
 
             {/* Delivery Failed Alert */}
             {order.deliveryFailed && (
-              <div className="bg-red-50 border border-red-200 rounded-2xl p-4">
+              <div className="bg-red-50 border border-red-200 rounded-xl p-4">
                 <div className="flex items-start gap-3">
                   <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
                   <div className="flex-1">
@@ -600,35 +596,32 @@ export default function OrderDetail() {
             )}
 
               {/* Order Items Card */}
-              <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-                <div className="p-4 md:p-5 border-b border-gray-100">
-                  <h2 className="text-base md:text-lg font-bold text-gray-900">Order Items ({order.items?.length || 0})</h2>
+              <div className="bg-white rounded-xl border border-gray-200/80 overflow-hidden">
+                <div className="px-4 md:px-5 py-3 border-b border-gray-100">
+                  <h2 className="text-sm font-bold text-gray-900">Order Items ({order.items?.length || 0})</h2>
                 </div>
-                <div className="divide-y divide-gray-100">
+                <div className="divide-y divide-gray-50">
                   {order.items?.map((item: any) => (
                     <Link 
                       key={item.id} 
                       to={(item.productSlug && item.productSlug.trim()) ? `/products/${item.productSlug}` : `/products/${item.productId}`}
-                      className="block p-4 md:p-5 hover:bg-gray-50/50 transition-colors cursor-pointer"
+                      className="flex items-center gap-3 px-4 md:px-5 py-3 hover:bg-gray-50/50 transition-colors"
                     >
-                      <div className="flex gap-3 md:gap-4">
-                        <div className="w-16 h-16 md:w-20 md:h-20 bg-gray-100 rounded-xl overflow-hidden flex-shrink-0">
-                          {item.productImage ? (
-                            <img src={item.productImage} alt={item.productName} className="w-full h-full object-cover" />
-                          ) : (
-                            <img src={DEFAULT_IMAGE} alt={item.productName} className="w-full h-full object-cover" />
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-gray-900 line-clamp-2 hover:text-primary-600 transition-colors">{item.productName}</h3>
-                          {item.sku && <p className="text-xs text-gray-400 mt-0.5">SKU: {item.sku}</p>}
-                          {item.variantName && <p className="text-sm text-gray-500 mt-0.5">{item.variantName}</p>}
-                          <div className="flex flex-wrap items-center justify-between gap-2 mt-2">
-                            <span className="text-sm text-gray-500">Qty: {item.quantity}</span>
-                            <span className="text-base md:text-lg font-bold text-gray-900">₹{Number(item.totalAmount || 0).toLocaleString()}</span>
-                          </div>
+                      <div className="w-16 h-16 rounded-lg bg-gray-50 overflow-hidden flex-shrink-0 border border-gray-100">
+                        {item.productImage ? (
+                          <img src={item.productImage} alt={item.productName} className="w-full h-full object-cover" />
+                        ) : (
+                          <img src={DEFAULT_IMAGE} alt={item.productName} className="w-full h-full object-cover" />
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-sm font-medium text-gray-900 truncate hover:text-primary-600 transition-colors">{item.productName}</h3>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          {item.variantName && <span className="text-xs text-gray-500">{item.variantName}</span>}
+                          <span className="text-xs text-gray-400">Qty: {item.quantity}</span>
                         </div>
                       </div>
+                      <span className="text-sm font-semibold text-gray-900 flex-shrink-0">₹{Number(item.totalAmount || 0).toLocaleString()}</span>
                     </Link>
                   ))}
                 </div>
@@ -648,34 +641,28 @@ export default function OrderDetail() {
 
             {/* Tracking Timeline Card */}
             {(tracking || order.shipmentId || ['shipped', 'processing'].includes(order.status)) && (
-              <div className="bg-white rounded-2xl shadow-sm p-4 md:p-5">
+              <div className="bg-white rounded-xl border border-gray-200/80 p-4 md:p-5">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-base md:text-lg font-bold text-gray-900">Shipment Tracking</h2>
+                  <h2 className="text-sm font-bold text-gray-900">Shipment Tracking</h2>
                   {order.shippingStatus && (
-                    <span className="text-sm text-gray-500">
+                    <span className="text-xs text-gray-500">
                       Status: {order.shippingStatus.replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase())}
                     </span>
                   )}
                 </div>
                 
                 {tracking?.shipment && (
-                  <div className="flex flex-wrap items-center gap-3 mb-4 pb-4 border-b border-gray-100">
+                  <div className="flex flex-wrap items-center gap-3 mb-4 pb-3 border-b border-gray-100">
                     {tracking?.shipment?.courierName && (
-                      <div className="text-sm">
+                      <div className="text-xs">
                         <span className="text-gray-500">Courier: </span>
                         <span className="font-medium text-gray-900">{tracking?.shipment?.courierName}</span>
                       </div>
                     )}
                     {tracking?.shipment?.awbNumber && (
-                      <div className="text-sm">
+                      <div className="text-xs">
                         <span className="text-gray-500">AWB: </span>
                         <span className="font-mono text-gray-900">{tracking?.shipment?.awbNumber}</span>
-                      </div>
-                    )}
-                    {tracking?.shipment?.trackingNumber && (
-                      <div className="text-sm">
-                        <span className="text-gray-500">Tracking: </span>
-                        <span className="font-mono text-gray-900">{tracking?.shipment?.trackingNumber}</span>
                       </div>
                     )}
                   </div>
@@ -685,19 +672,19 @@ export default function OrderDetail() {
                   {tracking?.timeline?.map((event: any, idx: number) => {
                     const isLast = idx === (tracking.timeline?.length || 0) - 1
                     return (
-                      <div key={idx} className="flex gap-4 pb-4 last:pb-0">
+                      <div key={idx} className="flex gap-3 pb-3 last:pb-0">
                         <div className="flex flex-col items-center">
-                          <div className={`w-3 h-3 rounded-full ${isLast ? 'bg-primary-500' : 'bg-green-500'}`}></div>
-                          {!isLast && <div className="w-0.5 h-full bg-gray-200 absolute top-3 left-1"></div>}
+                          <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${isLast ? 'bg-primary-500' : 'bg-green-500'}`}></div>
+                          {!isLast && <div className="w-0.5 h-full bg-gray-200 mt-0.5"></div>}
                         </div>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <span className="font-medium text-gray-900 capitalize">{event.status?.replace(/_/g, ' ') || event.event?.replace(/_/g, ' ')}</span>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="text-xs font-medium text-gray-900 capitalize">{event.status?.replace(/_/g, ' ') || event.event?.replace(/_/g, ' ')}</span>
                             {event.location && (
-                              <span className="text-xs text-gray-500">- {event.location}</span>
+                              <span className="text-[10px] text-gray-400">- {event.location}</span>
                             )}
                           </div>
-                          <div className="text-xs text-gray-400 mt-0.5">
+                          <div className="text-[10px] text-gray-400 mt-0.5">
                             {event.timestamp ? new Date(event.timestamp).toLocaleString('en-IN', {
                               day: 'numeric',
                               month: 'short',
@@ -707,43 +694,48 @@ export default function OrderDetail() {
                             }) : ''}
                           </div>
                           {event.remarks && (
-                            <p className="text-sm text-gray-600 mt-1">{event.remarks}</p>
+                            <p className="text-xs text-gray-600 mt-0.5">{event.remarks}</p>
                           )}
                         </div>
                       </div>
                     )
                   })}
+                  {!tracking?.timeline?.length && (
+                    <div className="text-center py-4">
+                      <Truck className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+                      <p className="text-xs text-gray-500">Tracking updates will appear here once your order ships</p>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
 
             {/* Shipping Address Card */}
             {order.shippingAddress && (
-              <div className="bg-white rounded-2xl shadow-sm p-4 md:p-5">
-                <h2 className="text-base md:text-lg font-bold text-gray-900 mb-3">Shipping Address</h2>
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 bg-primary-50 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <MapPin className="h-5 w-5 text-primary-600" />
+              <div className="bg-white rounded-xl border border-gray-200/80 p-4 md:p-5">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <MapPin className="h-4 w-4 text-primary-600" />
                   </div>
-                  {(() => {
-                    let addressDisplay = order.shippingAddress;
-                    try {
-                      const parsed = JSON.parse(order.shippingAddress);
-                      if (parsed.name || parsed.addressLine1) {
-                        addressDisplay = [
-                          parsed.name,
-                          parsed.addressLine1,
-                          parsed.addressLine2,
-                          parsed.city,
-                          parsed.state,
-                          parsed.pincode,
-                          parsed.country
-                        ].filter(Boolean).join(', ');
-                      }
-                    } catch {}
-                    return <p className="text-gray-600">{addressDisplay}</p>;
-                  })()}
+                  <h2 className="text-sm font-bold text-gray-900">Shipping Address</h2>
                 </div>
+                {(() => {
+                  let addressDisplay = order.shippingAddress;
+                  try {
+                    const parsed = JSON.parse(order.shippingAddress);
+                    if (parsed.name || parsed.addressLine1) {
+                      return (
+                        <div className="text-sm text-gray-600 ml-10">
+                          {parsed.name && <p className="font-medium text-gray-900">{parsed.name}</p>}
+                          {parsed.addressLine1 && <p>{parsed.addressLine1}</p>}
+                          {parsed.addressLine2 && <p>{parsed.addressLine2}</p>}
+                          <p>{[parsed.city, parsed.state, parsed.pincode, parsed.country].filter(Boolean).join(', ')}</p>
+                        </div>
+                      )
+                    }
+                  } catch {}
+                  return <p className="text-sm text-gray-600 ml-10">{addressDisplay}</p>;
+                })()}
               </div>
             )}
           </div>
@@ -751,18 +743,18 @@ export default function OrderDetail() {
           {/* Right Column - Order Summary */}
           <div className="lg:col-span-4 space-y-4">
             {/* Order Summary Card */}
-            <div className="bg-white rounded-2xl shadow-sm p-4 md:p-5 sticky top-4">
-              <h2 className="text-base md:text-lg font-bold text-gray-900 mb-4">Order Summary</h2>
+            <div className="bg-white rounded-xl border border-gray-200/80 p-4 md:p-5 sticky top-4">
+              <h2 className="text-sm font-bold text-gray-900 mb-4">Payment Details</h2>
 
-              <div className="space-y-3 pb-4 border-b border-gray-100">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Subtotal</span>
+              <div className="space-y-2.5 pb-3 border-b border-gray-100">
+                <div className="flex justify-between text-xs">
+                  <span className="text-gray-500">Subtotal</span>
                   <span className="font-medium text-gray-900">₹{Number(order.subtotal || 0).toLocaleString()}</span>
                 </div>
                 
                 {order.items?.length > 0 && (
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Shipping</span>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-gray-500">Shipping</span>
                     <span className={`font-medium ${order.shippingAmount == 0 ? 'text-emerald-600' : 'text-gray-900'}`}>
                       {order.shippingAmount == 0 ? 'Free' : `₹${Number(order.shippingAmount || 0).toLocaleString()}`}
                     </span>
@@ -770,23 +762,23 @@ export default function OrderDetail() {
                 )}
                 
                 {order.taxAmount > 0 && (
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Tax</span>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-gray-500">Tax</span>
                     <span className="font-medium text-gray-900">₹{Number(order.taxAmount || 0).toLocaleString()}</span>
                   </div>
                 )}
                 
                 {order.discountAmount > 0 && (
-                  <div className="flex justify-between text-sm text-emerald-600">
+                  <div className="flex justify-between text-xs text-emerald-600">
                     <span>Discount</span>
                     <span className="font-medium">-₹{Number(order.discountAmount).toLocaleString()}</span>
                   </div>
                 )}
 
                 {order.couponCode && (
-                  <div className="flex justify-between text-sm text-primary-600">
+                  <div className="flex justify-between text-xs text-primary-600">
                     <span className="flex items-center gap-1">
-                      <Tag className="w-3.5 h-3.5" />
+                      <Tag className="w-3 h-3" />
                       Coupon: {order.couponCode}
                     </span>
                     <span className="font-medium">-₹{Number(order.discountAmount || 0).toLocaleString()}</span>
@@ -794,25 +786,31 @@ export default function OrderDetail() {
                 )}
               </div>
 
-              <div className="pt-4">
-                <div className="flex justify-between items-baseline">
-                  <span className="font-bold text-gray-900">Total</span>
-                  <span className="text-2xl font-bold text-gray-900">₹{Number(order.totalAmount || 0).toLocaleString()}</span>
+              <div className="pt-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-bold text-gray-900">Total</span>
+                  <span className="text-xl font-bold text-gray-900">₹{Number(order.totalAmount || 0).toLocaleString()}</span>
                 </div>
+                {order.paymentMethod && (
+                  <div className="mt-2 flex items-center gap-1.5 text-xs text-gray-500">
+                    <span className="font-medium">Paid via</span>
+                    <span className="text-gray-700 capitalize">{order.paymentMethod === 'cod' ? 'Cash on Delivery' : order.paymentMethod}</span>
+                  </div>
+                )}
               </div>
 
               {/* Trust Badges */}
-              <div className="mt-5 pt-4 border-t border-gray-100 space-y-2">
+              <div className="mt-4 pt-3 border-t border-gray-100 space-y-2">
                 <div className="flex items-center gap-2 text-xs text-gray-500">
-                  <ShieldCheck className="w-4 h-4 text-emerald-500" />
-                  <span>100% Authentic Product</span>
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+                  <span>100% Authentic</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-gray-500">
-                  <RotateCw className="w-4 h-4 text-blue-500" />
+                  <RotateCw className="w-3.5 h-3.5 text-blue-500" />
                   <span>Easy 7-day Returns</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-gray-500">
-                  <Package className="w-4 h-4 text-amber-500" />
+                  <Package className="w-3.5 h-3.5 text-amber-500" />
                   <span>Secure Packaging</span>
                 </div>
               </div>
@@ -838,20 +836,20 @@ export default function OrderDetail() {
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
                 onClick={(e) => e.stopPropagation()}
-                className="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden"
+                className="bg-white rounded-xl shadow-2xl max-w-md w-full overflow-hidden border border-gray-200"
               >
-                <div className="p-6 md:p-8">
+                <div className="p-6">
                   <div className="flex items-center gap-4 mb-6">
-                    <div className="w-16 h-16 bg-gradient-to-br from-red-100 to-red-200 rounded-2xl flex items-center justify-center flex-shrink-0">
-                      <AlertCircle className="w-8 h-8 text-red-600" />
+                    <div className="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <AlertCircle className="w-6 h-6 text-red-600" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-gray-900">Cancel Order</h3>
+                      <h3 className="text-lg font-bold text-gray-900">Cancel Order</h3>
                       <p className="text-sm text-gray-500">This action cannot be undone</p>
                     </div>
                   </div>
                   {isPrepaid && (
-                    <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl p-4 mb-6 border border-amber-100">
+                    <div className="bg-amber-50 rounded-lg p-3 mb-6 border border-amber-100">
                       <p className="text-sm text-amber-800">
                         <strong>Note:</strong> Your refund will be processed within 5-7 business days to your original payment method.
                       </p>
@@ -861,14 +859,14 @@ export default function OrderDetail() {
                     <button
                       onClick={() => setShowCancelModal(false)}
                       disabled={isCancelling}
-                      className="flex-1 px-5 py-3.5 text-gray-700 font-bold bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors disabled:opacity-50"
+                      className="flex-1 px-5 py-2.5 text-gray-700 font-medium bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50"
                     >
                       Keep Order
                     </button>
                     <button
                       onClick={handleCancelOrder}
                       disabled={isCancelling}
-                      className="flex-1 px-5 py-3.5 text-white font-bold bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 rounded-xl transition-all shadow-lg shadow-red-500/30 disabled:opacity-50 flex items-center justify-center gap-2"
+                      className="flex-1 px-5 py-2.5 text-white font-medium bg-red-600 hover:bg-red-700 rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                     >
                       {isCancelling ? (
                         <>
