@@ -2,29 +2,45 @@ import { Link } from 'react-router-dom'
 import { Heart, Trash2, ShoppingBag } from 'lucide-react'
 import { useWishlistStore } from '@/stores/wishlistStore'
 import { useCartStore } from '@/stores/cartStore'
+import { useAuthStore } from '@/stores/authStore'
+import api from '@/api'
 import toast from 'react-hot-toast'
 
 export default function Wishlist() {
   const { items, removeItem } = useWishlistStore()
   const { addItem: addToCart } = useCartStore()
+  const { isAuthenticated } = useAuthStore()
 
-  const handleAddToCart = (item: any) => {
-    addToCart({
-      id: item.product.id,
-      quantity: 1,
-      product: {
-        id: item.product.id,
-        name: item.product.name,
-        slug: item.product.slug,
-        images: item.product.images || [],
-        price: item.product.price,
-        sellingPrice: item.product.sellingPrice,
-        mrp: item.product.mrp,
-        unit: item.product.unit,
-      },
-      variant: null,
-    })
-    toast.success('Added to cart')
+  const handleAddToCart = async (item: any) => {
+    if (!isAuthenticated) {
+      toast.error('Please login to add items to cart')
+      return
+    }
+
+    const productId = String(item.product.id)
+    const cartItemId = productId
+
+    try {
+      await api.post('/cart/add', { productId, quantity: 1 })
+      addToCart({
+        id: cartItemId,
+        quantity: 1,
+        product: {
+          id: productId,
+          name: item.product.name,
+          slug: item.product.slug,
+          images: item.product.images || [],
+          price: item.product.price,
+          sellingPrice: item.product.sellingPrice,
+          mrp: item.product.mrp,
+          unit: item.product.unit,
+        },
+        variant: null,
+      })
+      toast.success('Added to cart')
+    } catch {
+      toast.error('Failed to add to cart')
+    }
   }
 
   if (items.length === 0) {

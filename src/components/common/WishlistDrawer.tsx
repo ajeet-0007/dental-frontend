@@ -37,15 +37,28 @@ export default function WishlistDrawer({ isOpen, onClose }: WishlistDrawerProps)
     toast.success("Removed from wishlist");
   };
 
-  const handleAddToCart = (item: any) => {
-    addItem({
-      id: item.id,
-      quantity: 1,
-      product: item.product,
-      variant: null,
-    });
-    toast.success("Added to cart!");
-  };
+  const handleAddToCart = async (item: any) => {
+    if (!isAuthenticated) {
+      toast.error('Please login to add items to cart')
+      return
+    }
+
+    const productId = String(item.product.id)
+    const cartItemId = productId
+
+    try {
+      await api.post('/cart/add', { productId, quantity: 1 })
+      addItem({
+        id: cartItemId,
+        quantity: 1,
+        product: item.product,
+        variant: null,
+      })
+      toast.success('Added to cart!')
+    } catch {
+      toast.error('Failed to add to cart')
+    }
+  }
 
   if (!isOpen) return null;
 
