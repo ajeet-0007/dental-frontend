@@ -29,6 +29,12 @@ interface OrderCardProps {
   reorderingId: string | null
 }
 
+const getPaymentMethodLabel = (method: string): string => {
+  if (method === 'cod') return 'Cash on Delivery'
+  if (method === 'card') return 'Credit/Debit Card'
+  return method || ''
+}
+
 export default function OrderCard({
   order,
   statusConfig,
@@ -69,6 +75,14 @@ export default function OrderCard({
                 <span>{new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
                 <span className="text-gray-300">•</span>
                 <span>{order.items?.length || 0} item{(order.items?.length || 0) !== 1 ? 's' : ''}</span>
+                {order.payments?.[0] && (
+                  <>
+                    <span className="text-gray-300">•</span>
+                    <span className="text-gray-600">
+                      {getPaymentMethodLabel(order.payments[0].method)}
+                    </span>
+                  </>
+                )}
               </div>
             </div>
           </div>

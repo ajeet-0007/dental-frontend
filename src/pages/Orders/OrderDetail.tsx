@@ -745,12 +745,42 @@ export default function OrderDetail() {
             <div className="bg-white rounded-xl border border-gray-200/80 p-4 md:p-5 sticky top-4">
               <h2 className="text-sm font-bold text-gray-900 mb-4">Order Info</h2>
 
-              {order.paymentMethod && (
-                <div className="flex items-center gap-1.5 text-xs text-gray-500 mb-4">
-                  <span className="font-medium">Payment:</span>
-                  <span className="text-gray-700 capitalize">{order.paymentMethod === 'cod' ? 'Cash on Delivery' : order.paymentMethod}</span>
-                </div>
-              )}
+              {(() => {
+                const payment = order.payments?.[0];
+                if (!payment) return null;
+
+                const methodLabel = payment.method === 'cod'
+                  ? 'Cash on Delivery'
+                  : payment.method === 'card'
+                    ? 'Credit/Debit Card'
+                    : payment.method;
+
+                const statusMap: Record<string, { label: string; color: string }> = {
+                  pending: { label: 'Pending', color: 'text-orange-600 bg-orange-50' },
+                  completed: { label: 'Paid', color: 'text-emerald-600 bg-emerald-50' },
+                  failed: { label: 'Failed', color: 'text-red-600 bg-red-50' },
+                  refunded: { label: 'Refunded', color: 'text-gray-600 bg-gray-50' },
+                };
+                const status = statusMap[payment.status] || {
+                  label: payment.status,
+                  color: 'text-gray-600 bg-gray-50',
+                };
+
+                return (
+                  <div className="mb-4 space-y-2">
+                    <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                      <span className="font-medium">Payment Method:</span>
+                      <span className="text-gray-700">{methodLabel}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                      <span className="font-medium">Payment Status:</span>
+                      <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${status.color}`}>
+                        {status.label}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })()}
 
               {/* Trust Badges */}
               <div className="pt-4 border-t border-gray-100 space-y-2">

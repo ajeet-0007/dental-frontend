@@ -1,9 +1,9 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import api, { cartApi } from '@/api'
-import { Package, Clock, CheckCircle, AlertCircle, ShoppingBag } from 'lucide-react'
+import { Package, Clock, CheckCircle, AlertCircle, ShoppingBag, Search, X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useCartStore } from '@/stores/cartStore'
 import { motion } from 'framer-motion'
@@ -14,14 +14,46 @@ export default function Orders() {
   const queryClient = useQueryClient()
   const { isAuthenticated } = useAuthStore()
   const { setCart } = useCartStore()
+  const [searchParams, setSearchParams] = useSearchParams()
 
-  const [activeFilter, setActiveFilter] = useState<'all' | 'active' | 'completed' | 'cancelled'>('all')
+  const [activeFilter, setActiveFilter] = useState<string>(
+    searchParams.get('filter') || 'all'
+  )
+  const [searchTerm, setSearchTerm] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
+  const pageSize = 10
 
-  const { data, isLoading } = useQuery({
-    queryKey: ['orders'],
-    queryFn: () => api.get('/orders'),
+  const statusFilterMap: Record<string, string | null> = {
+    all: null,
+    active: null, // handled client-side for multiple statuses
+    completed: 'delivered',
+    cancelled: 'cancelled',
+    payment_pending: 'pending_payment',
+    processing: 'processing',
+    shipped: 'shipped',
+    confirmed: 'confirmed',
+    pending: 'pending',
+  }
+
+  const { data, isLoading, isFetching } = useQuery({
+    queryKey: ['orders', currentPage, activeFilter],
+    queryFn: () => {
+      const params: any = { page: currentPage, limit: pageSize }
+      const status = statusFilterMap[activeFilter]
+      if (status) {
+        params.status = status
+      }
+      return api.get('/orders', { params })
+    },
     enabled: isAuthenticated,
   })
+
+  // Sync filter to URL
+  const handleFilterChange = (filter: string) => {
+    setActiveFilter(filter)
+    setCurrentPage(1)
+    setSearchParams(filter === 'all' ? {} : { filter })
+  }
 
   const [reorderingId, setReorderingId] = useState<string | null>(null)
 
@@ -63,7 +95,49 @@ export default function Orders() {
     },
   })
 
-  const orders = data?.data?.orders || []
+  const ordersData = data?.data || { orders: [], total: 0, counts: { all: 0, active: 0, completed: 0, cancelled: 0 } }
+  const orders = ordersData.orders || []
+  const totalOrders = ordersData.total || 0
+  const totalPages = Math.ceil(totalOrders / pageSize)
+  const serverCounts = ordersData.counts || { all: 0, active: 0, completed: 0, cancelled: 0 }
+
+  // Client-side filtering for 'all' and 'active' (multiple statuses)
+  // For other filters, backend handles it
+  const filteredOrders = useMemo(() => {
+    let result = orders
+
+    // Apply client-side filter for 'all' and 'active' filters
+    if (activeFilter === 'all') {
+      // Exclude payment_failed from all
+      result = result.filter((o: any) => o.status !== 'payment_failed')
+    } else if (activeFilter === 'active') {
+      const activeStatuses = ['pending', 'pending_payment', 'confirmed', 'processing', 'shipped']
+      result = result.filter((o: any) => activeStatuses.includes(o.status))
+    }
+
+    // Apply search filter
+    if (searchTerm.trim()) {
+      const term = searchTerm.toLowerCase().trim()
+      result = result.filter((o: any) =>
+        o.orderNumber?.toLowerCase().includes(term) ||
+        o.items?.some((item: any) =>
+          item.productName?.toLowerCase().includes(term)
+        )
+      )
+    }
+
+    return result
+  }, [orders, activeFilter, searchTerm])
+
+  // Use server-side counts from API (accurate for all filters)
+  const filterCounts = useMemo(() => {
+    return {
+      all: serverCounts.all || 0,
+      active: serverCounts.active || 0,
+      completed: serverCounts.completed || 0,
+      cancelled: serverCounts.cancelled || 0,
+    }
+  }, [serverCounts])
 
   const getStatusConfig = (status: string) => {
     switch (status) {
@@ -186,21 +260,6 @@ export default function Orders() {
     }))
   }
 
-  const filteredOrders = orders.filter((order: any) => {
-    if (activeFilter === 'all') return true
-    if (activeFilter === 'active') return ['pending', 'pending_payment', 'confirmed', 'processing', 'shipped'].includes(order.status)
-    if (activeFilter === 'completed') return order.status === 'delivered'
-    if (activeFilter === 'cancelled') return order.status === 'cancelled' || order.status === 'payment_failed'
-    return true
-  })
-
-  const filterCounts = {
-    all: orders.length,
-    active: orders.filter((o: any) => ['pending', 'pending_payment', 'confirmed', 'processing', 'shipped'].includes(o.status)).length,
-    completed: orders.filter((o: any) => o.status === 'delivered').length,
-    cancelled: orders.filter((o: any) => ['cancelled', 'payment_failed'].includes(o.status)).length,
-  }
-
   if (!isAuthenticated) {
     return (
       <div className="min-h-[70vh] flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
@@ -287,50 +346,78 @@ export default function Orders() {
         >
           <div>
             <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">My Orders</h1>
-            {orders.length > 0 && (
+            {/* {orders.length > 0 && (
               <p className="text-gray-500 mt-1">{orders.length} order{orders.length !== 1 ? 's' : ''} placed</p>
-            )}
+            )} */}
           </div>
         </motion.div>
 
-        {/* Filter Tabs */}
+        {/* Search and Filter Section */}
         {orders.length > 0 && (
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="flex gap-2 mb-8 overflow-x-auto pb-2 scrollbar-hide"
+            className="space-y-4 mb-8"
           >
-            {[
-              { key: 'all', label: 'All Orders', count: filterCounts.all },
-              { key: 'active', label: 'Active', count: filterCounts.active },
-              { key: 'completed', label: 'Completed', count: filterCounts.completed },
-              { key: 'cancelled', label: 'Cancelled', count: filterCounts.cancelled },
-            ].map((filter) => (
-              <button
-                key={filter.key}
-                onClick={() => setActiveFilter(filter.key as typeof activeFilter)}
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl font-medium text-sm whitespace-nowrap transition-all duration-300 ${
-                  activeFilter === filter.key
-                    ? 'bg-gradient-to-r from-primary-600 to-primary-700 text-white shadow-lg shadow-primary-600/30'
-                    : 'bg-white text-gray-600 hover:bg-gray-50 shadow-sm border border-gray-200'
-                }`}
-              >
-                {filter.label}
-                <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${
-                  activeFilter === filter.key
-                    ? 'bg-white/20 text-white'
-                    : 'bg-gray-100 text-gray-600'
-                }`}>
-                  {filter.count}
-                </span>
-              </button>
-            ))}
+            {/* Search Bar */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search by order number or product name..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-10 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-sm"
+              />
+              {searchTerm && (
+                <button
+                  onClick={() => setSearchTerm('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2"
+                >
+                  <X className="w-4 h-4 text-gray-400 hover:text-gray-600" />
+                </button>
+              )}
+            </div>
+
+            {/* Filter Tabs */}
+            <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+              {[
+                { key: 'all', label: 'All Orders', count: filterCounts.all },
+                { key: 'active', label: 'Active', count: filterCounts.active },
+                { key: 'completed', label: 'Completed', count: filterCounts.completed },
+                { key: 'cancelled', label: 'Cancelled', count: filterCounts.cancelled },
+                { key: 'payment_pending', label: 'Payment Pending', count: 0 },
+                { key: 'processing', label: 'Processing', count: 0 },
+                { key: 'shipped', label: 'Shipped', count: 0 },
+              ].map((filter) => (
+                <button
+                  key={filter.key}
+                  onClick={() => handleFilterChange(filter.key)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium text-xs whitespace-nowrap transition-all duration-300 ${
+                    activeFilter === filter.key
+                      ? 'bg-gradient-to-r from-primary-600 to-primary-700 text-white shadow-lg shadow-primary-600/30'
+                      : 'bg-white text-gray-600 hover:bg-gray-50 shadow-sm border border-gray-200'
+                  }`}
+                >
+                  {filter.label}
+                  {filter.count > 0 && (
+                    <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${
+                      activeFilter === filter.key
+                        ? 'bg-white/20 text-white'
+                        : 'bg-gray-100 text-gray-600'
+                    }`}>
+                      {filter.count}
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
           </motion.div>
         )}
 
         {/* Orders List */}
-        {filteredOrders.length === 0 && orders.length > 0 ? (
+        {filteredOrders.length === 0 && (searchTerm || activeFilter !== 'all') ? (
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -339,19 +426,32 @@ export default function Orders() {
             <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl flex items-center justify-center mx-auto mb-6">
               <Package className="h-10 w-10 text-gray-400" />
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No {activeFilter !== 'all' ? activeFilter : ''} orders</h3>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              {searchTerm ? 'No orders found' : `No ${activeFilter} orders`}
+            </h3>
             <p className="text-gray-500 mb-6">
-              {activeFilter === 'active' && "You don't have any active orders right now."}
-              {activeFilter === 'completed' && "You haven't completed any orders yet."}
-              {activeFilter === 'cancelled' && "No cancelled orders."}
-              {activeFilter === 'all' && "When you place an order, it will appear here."}
+              {searchTerm 
+                ? `No orders matching "${searchTerm}"` 
+                : activeFilter === 'active' 
+                  ? "You don't have any active orders right now."
+                  : activeFilter === 'completed' 
+                    ? "You haven't completed any orders yet."
+                    : activeFilter === 'cancelled' 
+                      ? "No cancelled orders."
+                      : "When you place an order, it will appear here."
+              }
             </p>
-            <button
-              onClick={() => navigate('/products')}
-              className="px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-semibold rounded-xl hover:from-primary-700 hover:to-primary-800 transition-all shadow-lg shadow-primary-600/30"
-            >
-              Start Shopping
-            </button>
+            {(searchTerm || activeFilter !== 'all') && (
+              <button
+                onClick={() => {
+                  setSearchTerm('')
+                  handleFilterChange('all')
+                }}
+                className="px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-semibold rounded-xl hover:from-primary-700 hover:to-primary-800 transition-all shadow-lg shadow-primary-600/30"
+              >
+                View All Orders
+              </button>
+            )}
           </motion.div>
         ) : filteredOrders.length === 0 ? (
           <motion.div 
@@ -376,26 +476,81 @@ export default function Orders() {
             </button>
           </motion.div>
         ) : (
-          <div className="space-y-4">
-            {filteredOrders.map((order: any, index: number) => {
-              const statusConfig = getStatusConfig(order.status)
-              const StatusIcon = statusConfig.icon
-              const timeline = getOrderTimeline(order.status)
-              
-              return (
-                <OrderCard
-                  key={order.id}
-                  order={order}
-                  statusConfig={statusConfig}
-                  timeline={timeline}
-                  StatusIcon={StatusIcon}
-                  index={index}
-                  onReorder={(orderId) => reorderMutation.mutate(orderId)}
-                  reorderingId={reorderingId}
-                />
-              )
-            })}
-          </div>
+          <>
+            <div className="space-y-4">
+              {filteredOrders.map((order: any, index: number) => {
+                const statusConfig = getStatusConfig(order.status)
+                const StatusIcon = statusConfig.icon
+                const timeline = getOrderTimeline(order.status)
+                
+                return (
+                  <OrderCard
+                    key={order.id}
+                    order={order}
+                    statusConfig={statusConfig}
+                    timeline={timeline}
+                    StatusIcon={StatusIcon}
+                    index={index}
+                    onReorder={(orderId) => reorderMutation.mutate(orderId)}
+                    reorderingId={reorderingId}
+                  />
+                )
+              })}
+            </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center gap-2 mt-8">
+                <button
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1 || isFetching}
+                  className="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                
+                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  let pageNum;
+                  if (totalPages <= 5) {
+                    pageNum = i + 1;
+                  } else if (currentPage <= 3) {
+                    pageNum = i + 1;
+                  } else if (currentPage >= totalPages - 2) {
+                    pageNum = totalPages - 4 + i;
+                  } else {
+                    pageNum = currentPage - 2 + i;
+                  }
+                  
+                  return (
+                    <button
+                      key={pageNum}
+                      onClick={() => setCurrentPage(pageNum)}
+                      disabled={isFetching}
+                      className={`w-10 h-10 rounded-lg font-medium text-sm transition-all ${
+                        currentPage === pageNum
+                          ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/30'
+                          : 'border border-gray-200 hover:bg-gray-50'
+                      }`}
+                    >
+                      {pageNum}
+                    </button>
+                  )
+                })}
+                
+                <button
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages || isFetching}
+                  className="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+                
+                <span className="ml-4 text-xs text-gray-500">
+                  Page {currentPage} of {totalPages}
+                </span>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
