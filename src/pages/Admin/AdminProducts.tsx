@@ -43,7 +43,6 @@ export default function AdminProducts() {
     slug: "",
     description: "",
     shortDescription: "",
-    price: "",
     sellingPrice: "",
     mrp: "",
     sku: "",
@@ -197,7 +196,6 @@ export default function AdminProducts() {
         slug: product.slug || "",
         description: product.description || "",
         shortDescription: product.shortDescription || "",
-        price: product.price || "",
         sellingPrice: product.sellingPrice || "",
         mrp: product.mrp || "",
         sku: product.sku || "",
@@ -225,7 +223,6 @@ export default function AdminProducts() {
         slug: "",
         description: "",
         shortDescription: "",
-        price: "",
         sellingPrice: "",
         mrp: "",
         sku: "",
@@ -284,7 +281,6 @@ export default function AdminProducts() {
       slug: formData.slug,
       description: formData.description,
       shortDescription: formData.shortDescription,
-      price: parseFloat(formData.price) || 0,
       sellingPrice: parseFloat(formData.sellingPrice) || 0,
       mrp: parseFloat(formData.mrp) || 0,
       sku: formData.sku,
@@ -630,7 +626,6 @@ export default function AdminProducts() {
                             }
                             createMutation.mutate({
                               ...formData,
-                              price: parseFloat(formData.price) || 0,
                               sellingPrice: parseFloat(formData.sellingPrice) || 0,
                               mrp: parseFloat(formData.mrp) || 0,
                               stock: parseInt(formData.stock) || 0,
@@ -653,11 +648,7 @@ export default function AdminProducts() {
                       </div>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-3 gap-4">
-                      <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">Price (₹)</label>
-                        <input type="number" value={formData.price} onChange={(e) => setFormData({ ...formData, price: e.target.value })} className="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-primary-500" />
-                      </div>
+                    <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs font-medium text-gray-700 mb-1">Selling Price (₹)</label>
                         <input type="number" value={formData.sellingPrice} onChange={(e) => setFormData({ ...formData, sellingPrice: e.target.value })} className="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-primary-500" />

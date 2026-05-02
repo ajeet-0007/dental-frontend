@@ -100,7 +100,6 @@ export default function OrderCard({
               <p className="text-sm font-medium text-gray-900 truncate">{item.productName}</p>
               <p className="text-xs text-gray-500 mt-0.5">Qty: {item.quantity || 1}</p>
             </div>
-            <span className="text-sm font-semibold text-gray-900 flex-shrink-0">₹{Number(item.price || item.totalPrice || 0).toLocaleString()}</span>
           </a>
         ))}
         {(order.items?.length || 0) > 2 && (

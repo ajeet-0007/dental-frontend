@@ -129,7 +129,7 @@ export default function Checkout() {
   const displayCartItems = serverCartItems.length > 0 ? serverCartItems : cartItems;
 
   const subtotal = displayCartItems.reduce((sum: number, item: any) => {
-    const price = item.variant?.sellingPrice || item.product.sellingPrice || item.product.price;
+                    const price = item.variant?.sellingPrice || item.product.sellingPrice;
     return sum + price * item.quantity;
   }, 0);
   const tax = Math.round(subtotal * 0.18);
@@ -650,7 +650,7 @@ export default function Checkout() {
               <>
                 <div className="space-y-3 max-h-48 overflow-y-auto mb-4">
                   {displayCartItems.map((item: any) => {
-                    const price = item.variant?.sellingPrice || item.product.sellingPrice || item.product.price;
+    const price = item.variant?.sellingPrice || item.product.sellingPrice;
                     const image = item.variant?.image || item.product.images?.[0];
                     return (
                       <div key={item.id} className="flex gap-3">

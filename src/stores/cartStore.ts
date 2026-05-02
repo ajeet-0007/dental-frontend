@@ -9,7 +9,6 @@ interface CartItemVariant {
   size?: string;
   flavor?: string;
   packQuantity: number;
-  price: number;
   sellingPrice: number;
   mrp: number;
   image?: string;
@@ -25,7 +24,6 @@ interface CartItem {
     name: string;
     slug: string;
     images: string[];
-    price: number;
     sellingPrice: number;
     mrp: number;
     unit: string;

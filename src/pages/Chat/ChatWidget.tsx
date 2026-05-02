@@ -12,7 +12,7 @@ interface Message {
     id: number;
     name: string;
     slug: string;
-    price: number;
+    sellingPrice: number;
     category: string;
     brand: string;
   }>;
@@ -164,7 +164,7 @@ const ChatWidget = () => {
                               className="block p-2 bg-white border border-gray-200 rounded-lg hover:border-blue-300 transition-colors"
                             >
                               <p className="text-sm font-medium text-gray-900 truncate">{product.name}</p>
-                              <p className="text-xs text-blue-600 font-semibold">₹{product.price.toLocaleString()}</p>
+                              <p className="text-xs text-blue-600 font-semibold">₹{product.sellingPrice.toLocaleString()}</p>
                             </a>
                           ))}
                         </div>

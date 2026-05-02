@@ -28,7 +28,6 @@ export interface ProductVariant {
   id: string;
   name?: string;
   sku?: string;
-  price: number;
   sellingPrice: number;
   mrp: number;
   weight?: number;
@@ -82,7 +81,7 @@ export function VariantSelector({
   };
 
   const getVariantPrice = (variant: ProductVariant) => {
-    if (variant.sellingPrice !== variant.price && variant.sellingPrice < variant.mrp) {
+    if (variant.sellingPrice < variant.mrp) {
       return (
         <div className="flex items-center gap-2">
           <span className="font-bold text-primary-600">₹{variant.sellingPrice}</span>

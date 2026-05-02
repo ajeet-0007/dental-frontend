@@ -8,7 +8,6 @@ interface WishlistItem {
     name: string;
     slug: string;
     images: string[];
-    price: number;
     sellingPrice: number;
     mrp: number;
     unit: string;

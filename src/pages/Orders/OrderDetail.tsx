@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
-import { ArrowLeft, Package, MapPin, CheckCircle, Loader2, RefreshCw, Clock, Truck, XCircle, AlertCircle, ShieldCheck, RotateCw, Tag, Undo2, Calendar, ChevronRight } from 'lucide-react'
+import { ArrowLeft, Package, MapPin, CheckCircle, Loader2, RefreshCw, Clock, Truck, XCircle, AlertCircle, ShieldCheck, RotateCw, Undo2, Calendar, ChevronRight } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=400&h=400&fit=crop'
@@ -621,7 +621,6 @@ export default function OrderDetail() {
                           <span className="text-xs text-gray-400">Qty: {item.quantity}</span>
                         </div>
                       </div>
-                      <span className="text-sm font-semibold text-gray-900 flex-shrink-0">₹{Number(item.totalAmount || 0).toLocaleString()}</span>
                     </Link>
                   ))}
                 </div>
@@ -740,67 +739,21 @@ export default function OrderDetail() {
             )}
           </div>
 
-          {/* Right Column - Order Summary */}
+          {/* Right Column */}
           <div className="lg:col-span-4 space-y-4">
-            {/* Order Summary Card */}
+            {/* Order Info Card */}
             <div className="bg-white rounded-xl border border-gray-200/80 p-4 md:p-5 sticky top-4">
-              <h2 className="text-sm font-bold text-gray-900 mb-4">Payment Details</h2>
+              <h2 className="text-sm font-bold text-gray-900 mb-4">Order Info</h2>
 
-              <div className="space-y-2.5 pb-3 border-b border-gray-100">
-                <div className="flex justify-between text-xs">
-                  <span className="text-gray-500">Subtotal</span>
-                  <span className="font-medium text-gray-900">₹{Number(order.subtotal || 0).toLocaleString()}</span>
+              {order.paymentMethod && (
+                <div className="flex items-center gap-1.5 text-xs text-gray-500 mb-4">
+                  <span className="font-medium">Payment:</span>
+                  <span className="text-gray-700 capitalize">{order.paymentMethod === 'cod' ? 'Cash on Delivery' : order.paymentMethod}</span>
                 </div>
-                
-                {order.items?.length > 0 && (
-                  <div className="flex justify-between text-xs">
-                    <span className="text-gray-500">Shipping</span>
-                    <span className={`font-medium ${order.shippingAmount == 0 ? 'text-emerald-600' : 'text-gray-900'}`}>
-                      {order.shippingAmount == 0 ? 'Free' : `₹${Number(order.shippingAmount || 0).toLocaleString()}`}
-                    </span>
-                  </div>
-                )}
-                
-                {order.taxAmount > 0 && (
-                  <div className="flex justify-between text-xs">
-                    <span className="text-gray-500">Tax</span>
-                    <span className="font-medium text-gray-900">₹{Number(order.taxAmount || 0).toLocaleString()}</span>
-                  </div>
-                )}
-                
-                {order.discountAmount > 0 && (
-                  <div className="flex justify-between text-xs text-emerald-600">
-                    <span>Discount</span>
-                    <span className="font-medium">-₹{Number(order.discountAmount).toLocaleString()}</span>
-                  </div>
-                )}
-
-                {order.couponCode && (
-                  <div className="flex justify-between text-xs text-primary-600">
-                    <span className="flex items-center gap-1">
-                      <Tag className="w-3 h-3" />
-                      Coupon: {order.couponCode}
-                    </span>
-                    <span className="font-medium">-₹{Number(order.discountAmount || 0).toLocaleString()}</span>
-                  </div>
-                )}
-              </div>
-
-              <div className="pt-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-bold text-gray-900">Total</span>
-                  <span className="text-xl font-bold text-gray-900">₹{Number(order.totalAmount || 0).toLocaleString()}</span>
-                </div>
-                {order.paymentMethod && (
-                  <div className="mt-2 flex items-center gap-1.5 text-xs text-gray-500">
-                    <span className="font-medium">Paid via</span>
-                    <span className="text-gray-700 capitalize">{order.paymentMethod === 'cod' ? 'Cash on Delivery' : order.paymentMethod}</span>
-                  </div>
-                )}
-              </div>
+              )}
 
               {/* Trust Badges */}
-              <div className="mt-4 pt-3 border-t border-gray-100 space-y-2">
+              <div className="pt-4 border-t border-gray-100 space-y-2">
                 <div className="flex items-center gap-2 text-xs text-gray-500">
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
                   <span>100% Authentic</span>

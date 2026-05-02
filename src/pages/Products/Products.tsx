@@ -263,7 +263,6 @@ export default function Products() {
           name: product.name,
           slug: product.slug,
           images: product.images,
-          price: product.price,
           sellingPrice: product.sellingPrice,
           mrp: product.mrp,
           unit: product.unit || "unit",

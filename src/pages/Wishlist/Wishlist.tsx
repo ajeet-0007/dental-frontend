@@ -30,7 +30,6 @@ export default function Wishlist() {
           name: item.product.name,
           slug: item.product.slug,
           images: item.product.images || [],
-          price: item.product.price,
           sellingPrice: item.product.sellingPrice,
           mrp: item.product.mrp,
           unit: item.product.unit,

@@ -32,7 +32,6 @@ interface ProductVariant {
   productId?: string;
   name?: string;
   sku?: string;
-  price: number;
   sellingPrice: number;
   mrp: number;
   weight?: number;
@@ -65,7 +64,7 @@ export default function VariantManager({ productId, onClose, onVariantsChange }:
   const [editingOptionHexCode, setEditingOptionHexCode] = useState('');
 
   const [selectedOptionValues, setSelectedOptionValues] = useState<Record<string, string[]>>({});
-  const [bulkPrice, setBulkPrice] = useState<{ price?: number; sellingPrice?: number; mrp?: number }>({});
+  const [bulkPrice, setBulkPrice] = useState<{ sellingPrice?: number; mrp?: number }>({});
   const [editingInventoryId, setEditingInventoryId] = useState<string | null>(null);
   const [inventoryStock, setInventoryStock] = useState<Record<string, number>>({});
 
@@ -183,7 +182,6 @@ export default function VariantManager({ productId, onClose, onVariantsChange }:
   const [formData, setFormData] = useState<Partial<ProductVariant>>({
     name: "",
     sku: "",
-    price: 0,
     sellingPrice: 0,
     mrp: 0,
     weight: 0,
@@ -198,7 +196,6 @@ export default function VariantManager({ productId, onClose, onVariantsChange }:
     setFormData({
       name: "",
       sku: "",
-      price: product?.sellingPrice || 0,
       sellingPrice: product?.sellingPrice || 0,
       mrp: product?.mrp || 0,
       weight: 0,
@@ -319,7 +316,6 @@ export default function VariantManager({ productId, onClose, onVariantsChange }:
         productId,
         name,
         sku: '',
-        price: bulkPrice.price || product?.price || 0,
         sellingPrice: bulkPrice.sellingPrice || product?.sellingPrice || 0,
         mrp: bulkPrice.mrp || product?.mrp || 0,
         weight: 0,
@@ -352,7 +348,6 @@ export default function VariantManager({ productId, onClose, onVariantsChange }:
     const data = {
       ...formData,
       productId,
-      price: Number(formData.price) || 0,
       sellingPrice: Number(formData.sellingPrice) || 0,
       mrp: Number(formData.mrp) || 0,
       weight: Number(formData.weight) || 0,
@@ -371,7 +366,6 @@ export default function VariantManager({ productId, onClose, onVariantsChange }:
     setFormData({
       name: variant.name || "",
       sku: variant.sku || "",
-      price: variant.price,
       sellingPrice: variant.sellingPrice,
       mrp: variant.mrp,
       weight: variant.weight || 0,
@@ -693,21 +687,7 @@ export default function VariantManager({ productId, onClose, onVariantsChange }:
                     </div>
                   )}
 
-                  <div className="grid grid-cols-3 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Price (₹)
-                      </label>
-                      <input
-                        type="number"
-                        value={formData.price || ""}
-                        onChange={(e) =>
-                          setFormData({ ...formData, price: Number(e.target.value) })
-                        }
-                        className="w-full px-3 py-2 border rounded-lg"
-                        required
-                      />
-                    </div>
+                  <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Selling Price (₹)
@@ -1051,17 +1031,7 @@ export default function VariantManager({ productId, onClose, onVariantsChange }:
 
                   <div className="bg-gray-50 rounded-lg p-4">
                     <h4 className="font-medium text-gray-900 mb-3">Bulk Pricing</h4>
-                    <div className="grid grid-cols-3 gap-4">
-                      <div>
-                        <label className="block text-sm text-gray-600 mb-1">Price (₹)</label>
-                        <input
-                          type="number"
-                          value={bulkPrice.price || ''}
-                          onChange={(e) => setBulkPrice({ ...bulkPrice, price: Number(e.target.value) })}
-                          placeholder={String(product?.price || 0)}
-                          className="w-full px-3 py-2 border rounded-lg"
-                        />
-                      </div>
+                    <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm text-gray-600 mb-1">Selling Price (₹)</label>
                         <input

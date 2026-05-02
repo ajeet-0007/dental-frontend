@@ -12,7 +12,7 @@ interface Message {
     id: number;
     name: string;
     slug: string;
-    price: number;
+    sellingPrice: number;
     category: string;
     brand: string;
   }>;
@@ -174,7 +174,7 @@ const ChatPage = () => {
                                       <p className="text-xs text-gray-500">{product.category} • {product.brand}</p>
                                     </div>
                                     <div className="text-right">
-                                      <p className="font-semibold text-blue-600">₹{product.price.toLocaleString()}</p>
+                                      <p className="font-semibold text-blue-600">₹{product.sellingPrice.toLocaleString()}</p>
                                     </div>
                                   </a>
                                 ))}

@@ -150,12 +150,12 @@ export default function ProductDetail() {
       : null) ??
     (product?.sellingPrice && product.sellingPrice > 0
       ? product.sellingPrice
-      : product?.price ?? 0);
+      : 0);
   const selectedMRP =
     (selectedVariant && selectedVariant.mrp > 0
       ? selectedVariant.mrp
       : null) ??
-    (product?.mrp && product.mrp > 0 ? product.mrp : product?.price ?? 0);
+    (product?.mrp && product.mrp > 0 ? product.mrp : 0);
 
   const variantImages = selectedVariant?.images?.filter(Boolean) || [];
   const productImages = Array.isArray(product?.images)
@@ -223,7 +223,6 @@ export default function ProductDetail() {
           size: selectedVariant.size,
           flavor: selectedVariant.flavor,
           packQuantity: selectedVariant.packQuantity || 1,
-          price: selectedVariant.price,
           sellingPrice: selectedVariant.sellingPrice,
           mrp: selectedVariant.mrp,
           image: selectedVariant.image,
@@ -248,9 +247,8 @@ export default function ProductDetail() {
           name: product.name,
           slug: product.slug,
           images: product.images || [],
-          price: product.price || 0,
-          sellingPrice: product.sellingPrice || product.price || 0,
-          mrp: product.mrp || product.price || 0,
+          sellingPrice: product.sellingPrice || 0,
+          mrp: product.mrp || 0,
           unit: product.unit || "unit",
         },
         variant: variantData,
@@ -288,9 +286,8 @@ export default function ProductDetail() {
           name: product.name,
           slug: product.slug,
           images: product.images || [],
-          price: product.price || 0,
-          sellingPrice: product.sellingPrice || product.price || 0,
-          mrp: product.mrp || product.price || 0,
+          sellingPrice: product.sellingPrice || 0,
+          mrp: product.mrp || 0,
           unit: product.unit || "unit",
         },
         addedAt: Date.now(),

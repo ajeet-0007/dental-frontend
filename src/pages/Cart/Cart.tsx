@@ -55,7 +55,7 @@ export default function Cart() {
 
   const subtotal = allItems.reduce(
     (sum: number, item: any) =>
-      sum + (item.variant?.sellingPrice || item.product.sellingPrice || item.product.price) * item.quantity,
+      sum + (item.variant?.sellingPrice || item.product.sellingPrice) * item.quantity,
     0,
   );
 
@@ -184,19 +184,19 @@ export default function Cart() {
                   {/* Price */}
                   <div className="flex items-center gap-2 mt-1">
                     <span className="text-lg font-bold text-gray-900">
-                      ₹{((item.variant?.sellingPrice || item.product.sellingPrice || item.product.price) * item.quantity).toLocaleString()}
+                      ₹{((item.variant?.sellingPrice || item.product.sellingPrice) * item.quantity).toLocaleString()}
                     </span>
-                    {(item.variant?.price || item.product.mrp) && (
-                      <span className="text-sm text-gray-400 line-through">
-                        ₹{((item.variant?.price || item.product.mrp || item.product.price) * item.quantity).toLocaleString()}
-                      </span>
+                    {item.product.mrp && item.product.mrp > (item.variant?.sellingPrice || item.product.sellingPrice) && (
+                      <>
+                        <span className="text-sm text-gray-400 line-through">
+                          ₹{((item.product.mrp) * item.quantity).toLocaleString()}
+                        </span>
+                        <span className="text-xs text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded ml-1">
+                          ₹{(item.variant?.sellingPrice || item.product.sellingPrice).toLocaleString()} per unit
+                        </span>
+                      </>
                     )}
                   </div>
-
-                  {/* Unit Price */}
-                  <p className="text-xs text-gray-400 mt-0.5">
-                    ₹{(item.variant?.sellingPrice || item.product.sellingPrice || item.product.price).toLocaleString()} per unit
-                  </p>
                 </Link>
 
                 {/* Actions */}

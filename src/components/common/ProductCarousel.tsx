@@ -112,9 +112,8 @@ export default function ProductCarousel({ products, onOpenCartDrawer }: ProductC
           name: product.name,
           slug: product.slug,
           images: product.images || [],
-          price: product.price || 0,
-          sellingPrice: product.sellingPrice || product.price || 0,
-          mrp: product.mrp || product.price || 0,
+          sellingPrice: product.sellingPrice || 0,
+          mrp: product.mrp || 0,
           unit: product.unit || "unit",
         },
         addedAt: Date.now(),
@@ -221,7 +220,7 @@ export default function ProductCarousel({ products, onOpenCartDrawer }: ProductC
                     </h3>
                     <div className="flex items-center gap-2">
                       <span className="text-base font-bold text-primary-600">
-                        ₹{product.sellingPrice || product.price}
+                        ₹{product.sellingPrice}
                       </span>
                       {product.mrp > product.sellingPrice && (
                         <span className="text-xs text-gray-400 line-through">
