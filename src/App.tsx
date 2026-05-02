@@ -8,6 +8,7 @@ import Products from "./pages/Products/Products";
 import ProductDetail from "./pages/ProductDetail/ProductDetail";
 import Cart from "./pages/Cart/Cart";
 import Checkout from "./pages/Checkout/Checkout";
+import PaymentSuccess from "./pages/Checkout/PaymentSuccess";
 import Orders from "./pages/Orders/Orders";
 import OrderDetail from "./pages/Orders/OrderDetail";
 import UserProfile from "./pages/UserProfile/UserProfile";
@@ -82,6 +83,7 @@ function App() {
             <Route path="categories" element={<Categories />} />
             <Route path="cart" element={<Cart />} />
             <Route path="checkout" element={<Checkout />} />
+            <Route path="payment-success" element={<PaymentSuccess />} />
             <Route path="orders" element={<Orders />} />
             <Route path="orders/:id" element={<OrderDetail />} />
             <Route path="orders/:orderId/return" element={<InitiateReturn />} />

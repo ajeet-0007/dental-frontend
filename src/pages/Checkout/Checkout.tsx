@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import api from "@/api";
 import { useAuthStore } from "@/stores/authStore";
 import { useCartStore } from "@/stores/cartStore";
-import { 
-  Plus, Check, ShoppingCart, MapPin, Loader2, 
+import {
+  Plus, Check, ShoppingCart, MapPin, Loader2,
   Trash2, Home, Phone, CreditCard, Banknote,
-  X, ArrowRight, Package, Star, CheckCircle
+  X, ArrowRight, Package, Star, CheckCircle, XCircle
 } from "lucide-react";
 
 const PAYMENT_METHODS = [
@@ -165,6 +165,17 @@ export default function Checkout() {
     onError: () => toast.error("Failed to update default address"),
   });
 
+  const [searchParams] = useSearchParams();
+  const paymentCancelled = searchParams.get('payment') === 'cancelled';
+
+  useEffect(() => {
+    if (paymentCancelled) {
+      toast.error('Payment was cancelled. You can try again.');
+      // Clean URL
+      window.history.replaceState({}, '', '/checkout');
+    }
+  }, [paymentCancelled]);
+
   const createOrderMutation = useMutation({
     mutationFn: async (data: any) => {
       if (data.paymentMethod === "cod") {
@@ -172,16 +183,29 @@ export default function Checkout() {
         return { order: orderRes.data, isCOD: true };
       }
 
-      const orderRes = await api.post("/orders", data);
-      const orderId = orderRes.data.id;
-
-      const paymentRes = await api.post("/payments/create-checkout-session", { orderId });
+      // For card payment: send all order data to create checkout session (no order created yet)
+      const paymentRes = await api.post("/payments/create-checkout-session", {
+        ...data,
+        items: displayCartItems.map((item: any) => ({
+          productId: item.productId || item.product?.id,
+          productVariantId: item.productVariantId || item.variant?.id,
+          productName: item.productName || item.product?.name,
+          productImage: item.productImage || item.variant?.image || item.product?.images?.[0],
+          sku: item.sku || item.product?.sku || '',
+          quantity: item.quantity,
+          unitPrice: item.variant?.sellingPrice || item.product?.sellingPrice,
+        })),
+        subtotal,
+        taxAmount: tax,
+        shippingAmount: 0,
+        totalAmount: total,
+      });
 
       if (paymentRes.data.url) {
         window.location.href = paymentRes.data.url;
       }
 
-      return { order: orderRes.data, isCOD: false };
+      return { isCOD: false };
     },
     onSuccess: (result) => {
       if (result.isCOD) {
@@ -314,6 +338,13 @@ export default function Checkout() {
 
   return (
     <div className="container mx-auto px-4 py-6">
+      {paymentCancelled && (
+        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3">
+          <XCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
+          <p className="text-red-700 text-sm">Payment was cancelled. Please try again or choose a different payment method.</p>
+        </div>
+      )}
+
       <div className="flex items-center gap-3 mb-6">
         <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
           <ShoppingCart className="w-5 h-5 text-primary-600" />
