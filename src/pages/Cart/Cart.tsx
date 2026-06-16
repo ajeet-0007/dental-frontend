@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/api";
-import { Trash2, Plus, Minus, ShoppingCart, ArrowRight, Package, Tag, ShoppingBag } from "lucide-react";
+import { Trash2, Plus, Minus, ShoppingCart, ArrowRight, Package, Tag, ShoppingBag, Shield } from "lucide-react";
 import { useAuthStore } from "@/stores/authStore";
 import { useCartStore } from "@/stores/cartStore";
 import { useEffect, useState } from "react";
@@ -14,10 +14,17 @@ const DEFAULT_IMAGE =
 export default function Cart() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, user } = useAuthStore();
   const { items, removeItem, updateQuantity, setCart } = useCartStore();
   const [cartDrawerProduct, setCartDrawerProduct] = useState<any>(null);
   const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false);
+  const { data: verificationData } = useQuery({
+    queryKey: ['professional-verification-status'],
+    queryFn: () => api.get('/profile/verification'),
+    enabled: isAuthenticated,
+  });
+
+  const isVerified = verificationData?.data?.verified ?? user?.isProfessionalVerified;
 
   const { data, isLoading } = useQuery({
     queryKey: ["cart"],
@@ -250,8 +257,34 @@ export default function Cart() {
               </div>
             </div>
 
+            {!isVerified && (
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl mb-3">
+                <div className="flex items-center gap-2">
+                  <Shield className="h-4 w-4 text-amber-600 flex-shrink-0" />
+                  <p className="text-xs text-amber-700">
+                    Professional verification required to place orders.{' '}
+                    <button
+                      onClick={() => {
+                        sessionStorage.setItem('redirectAfterVerification', '/checkout');
+                        navigate('/profile?section=verification');
+                      }}
+                      className="font-medium text-amber-800 underline hover:no-underline"
+                    >
+                      Verify your credentials
+                    </button>
+                  </p>
+                </div>
+              </div>
+            )}
             <button
-              onClick={() => navigate("/checkout")}
+              onClick={() => {
+                if (isVerified) {
+                  navigate("/checkout")
+                } else {
+                  sessionStorage.setItem('redirectAfterVerification', '/checkout');
+                  navigate('/profile?section=verification');
+                }
+              }}
               className="w-full py-3 bg-primary-600 text-white rounded-xl font-semibold hover:bg-primary-700 transition-colors flex items-center justify-center gap-2"
             >
               Proceed to Checkout

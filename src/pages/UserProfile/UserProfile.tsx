@@ -1,21 +1,23 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import api from '@/api'
-import { User, MapPin, Plus, Edit, ShoppingBag, Heart, ChevronRight, HelpCircle, Loader2, Package, Clock, CheckCircle } from 'lucide-react'
+import { User, MapPin, Plus, Edit, ShoppingBag, Heart, ChevronRight, HelpCircle, Loader2, Package, Clock, CheckCircle, Shield } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useAuthStore } from '@/stores/authStore'
 import { useWishlistStore } from '@/stores/wishlistStore'
 import { useGeolocation } from '@/hooks/useGeolocation'
 import DeleteConfirmModal from '@/components/common/DeleteConfirmModal'
 import LogoutModal from '@/components/common/LogoutModal'
+import ProfessionalVerification from './ProfessionalVerification'
 
 export default function UserProfile() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const { user, isAuthenticated, logout, setUser } = useAuthStore()
   const { items: wishlistItems } = useWishlistStore()
+  const [searchParams] = useSearchParams()
 
   const [showAddressForm, setShowAddressForm] = useState(false)
   const [editingAddress, setEditingAddress] = useState<any>(null)
@@ -27,6 +29,16 @@ export default function UserProfile() {
     phone: '',
   })
   const [deleteAddressId, setDeleteAddressId] = useState<string | null>(null)
+
+  useEffect(() => {
+    const section = searchParams.get('section')
+    if (section === 'verification') {
+      setActiveSection('verification')
+      const url = new URL(window.location.href)
+      url.searchParams.delete('section')
+      window.history.replaceState({}, '', url.pathname)
+    }
+  }, [searchParams])
   const [showLogoutModal, setShowLogoutModal] = useState(false)
   const addressesRef = useRef<HTMLDivElement>(null)
   const { getLocationWithAddress, loading: locationLoading } = useGeolocation()
@@ -192,6 +204,8 @@ export default function UserProfile() {
       setActiveSection('addresses')
     } else if (section === 'overview') {
       setActiveSection('overview')
+    } else if (section === 'verification') {
+      setActiveSection('verification')
     } else if (section === 'help') {
       navigate('/help')
     }
@@ -253,6 +267,7 @@ export default function UserProfile() {
 
   const menuItems = [
     { id: 'overview', icon: User, label: 'My Profile' },
+    { id: 'verification', icon: Shield, label: 'Professional Verification' },
     { id: 'orders', icon: ShoppingBag, label: 'My Orders', badge: orders.length },
     { id: 'addresses', icon: MapPin, label: 'My Addresses', badge: addresses.length },
     { id: 'wishlist', icon: Heart, label: 'My Wishlist', badge: wishlistItems.length },
@@ -580,6 +595,11 @@ export default function UserProfile() {
                   </div>
                 )}
               </motion.div>
+            )}
+
+            {/* Professional Verification Section */}
+            {activeSection === 'verification' && (
+              <ProfessionalVerification />
             )}
 
             {/* Addresses Section */}

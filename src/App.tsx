@@ -39,6 +39,7 @@ import AdminOrderDetail from "./pages/Admin/AdminOrderDetail";
 import AdminShipping from "./pages/Admin/AdminShipping";
 import AdminBulkUpload from "./pages/Admin/AdminBulkUpload";
 import AdminEntityBulkUpload from "./pages/Admin/AdminEntityBulkUpload";
+import AdminVerification from "./pages/Admin/AdminVerification";
 import ScrollToTop from "./components/ScrollToTop";
 import Returns from "./pages/Returns/Returns";
 import ReturnDetail from "./pages/Returns/ReturnDetail";
@@ -115,6 +116,7 @@ function App() {
             <Route path="inventory" element={<AdminInventory />} />
             <Route path="bulk-upload" element={<AdminBulkUpload />} />
             <Route path="entity-bulk-upload" element={<AdminEntityBulkUpload />} />
+            <Route path="verification" element={<AdminVerification />} />
           </Route>
         </Routes>
       </BrowserRouter>

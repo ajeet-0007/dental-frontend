@@ -8,7 +8,7 @@ import { useCartStore } from "@/stores/cartStore";
 import {
   Plus, Check, ShoppingCart, MapPin, Loader2,
   Trash2, Home, Phone, CreditCard, Banknote,
-  X, ArrowRight, Package, Star, CheckCircle, XCircle
+  X, ArrowRight, Package, Star, CheckCircle, XCircle, Shield, ShieldCheck
 } from "lucide-react";
 
 const PAYMENT_METHODS = [
@@ -19,7 +19,7 @@ const PAYMENT_METHODS = [
 export default function Checkout() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, user } = useAuthStore();
   const { items: cartItems, setCart } = useCartStore();
   const [useNewAddress, setUseNewAddress] = useState(false);
   const [selectedAddressId, setSelectedAddressId] = useState<number | null>(null);
@@ -121,6 +121,12 @@ export default function Checkout() {
   const { data: addressesData, isLoading: addressesLoading } = useQuery({
     queryKey: ["addresses"],
     queryFn: () => api.get("/addresses"),
+    enabled: isAuthenticated,
+  });
+
+  const { data: verificationData } = useQuery({
+    queryKey: ['professional-verification-status'],
+    queryFn: () => api.get('/profile/verification'),
     enabled: isAuthenticated,
   });
 
@@ -310,6 +316,37 @@ export default function Checkout() {
             className="px-6 py-2.5 bg-primary-600 text-white rounded-xl hover:bg-primary-700 font-medium"
           >
             Login
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const isVerified = verificationData?.data?.verified ?? user?.isProfessionalVerified;
+
+  if (isAuthenticated && !isVerified) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto px-4">
+          <div className="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Shield className="w-10 h-10 text-amber-600" />
+          </div>
+          <h2 className="text-xl font-semibold mb-2">Professional Verification Required</h2>
+          <p className="text-gray-500 mb-2">
+            Only verified dental professionals can place orders.
+          </p>
+          <p className="text-sm text-gray-400 mb-6">
+            Verify your dental credentials to unlock checkout and start ordering products.
+          </p>
+          <button
+            onClick={() => {
+              sessionStorage.setItem('redirectAfterVerification', '/checkout');
+              navigate('/profile?section=verification');
+            }}
+            className="px-6 py-2.5 bg-amber-600 text-white rounded-xl hover:bg-amber-700 font-medium flex items-center gap-2 mx-auto"
+          >
+            <ShieldCheck className="h-4 w-4" />
+            Verify Now
           </button>
         </div>
       </div>

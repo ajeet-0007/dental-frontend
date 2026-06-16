@@ -8,6 +8,9 @@ interface User {
   firstName: string
   lastName: string
   role: 'user' | 'admin'
+  isProfessionalVerified?: boolean
+  dentalRegistrationId?: string
+  stateDentalCouncil?: string
 }
 
 interface AuthState {
