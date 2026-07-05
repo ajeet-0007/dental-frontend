@@ -18,6 +18,7 @@ import {
   Award,
   Truck,
   Upload,
+  Bug,
 } from "lucide-react";
 
 const adminNavItems = [
@@ -34,6 +35,7 @@ const adminNavItems = [
   { label: "Bulk Upload", path: "/admin/bulk-upload", icon: Upload },
   { label: "Entity Bulk Upload", path: "/admin/entity-bulk-upload", icon: Upload },
   { label: "Users", path: "/admin/users", icon: Users },
+  { label: "Error Logs", path: "/admin/logs", icon: Bug },
 ];
 
 export default function AdminLayout() {
