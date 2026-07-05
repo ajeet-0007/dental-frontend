@@ -121,7 +121,7 @@ export default function BrandCarousel({ brands, itemsPerPage = 6 }: BrandCarouse
                   to={`/products?brand=${brand.slug}`}
                   className="group/card block"
                 >
-                  <div className={`relative aspect-[3/4] rounded-xl overflow-hidden shadow-md group-hover/card:shadow-xl transition-all duration-300 group-hover/card:-translate-y-1 bg-gradient-to-br ${colorClass}`}>
+                  <div className={`relative aspect-[4/3] rounded-xl overflow-hidden shadow-md group-hover/card:shadow-xl transition-all duration-300 group-hover/card:-translate-y-1 bg-gradient-to-br ${colorClass}`}>
                     {brand.logo ? (
                       <img
                         src={brand.logo}

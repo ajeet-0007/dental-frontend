@@ -186,7 +186,7 @@ export default function ProductCarousel({ products, onOpenCartDrawer }: ProductC
                         className="w-full h-full object-cover"
                       />
                     )}
-                    <div className={`absolute top-2 right-2 flex flex-col gap-1.5 transition-opacity md:opacity-0 group-hover/card:opacity-100 ${isMobile ? 'opacity-100' : ''}`}>
+                    <div className={`absolute top-2 right-2 transition-opacity md:opacity-0 group-hover/card:opacity-100 ${isMobile ? 'opacity-100' : ''}`}>
                       <button
                         onClick={(e) => handleToggleWishlist(e, product)}
                         className={`p-2.5 rounded-full shadow-md transition-colors touch-manipulation ${
@@ -196,16 +196,6 @@ export default function ProductCarousel({ products, onOpenCartDrawer }: ProductC
                         }`}
                       >
                         <Heart className={`w-4 h-4 ${isInWishlist ? "fill-white" : ""}`} />
-                      </button>
-                      <button
-                        onClick={(e) => handleQuickAddToCart(e, product)}
-                        className={`p-2.5 rounded-full shadow-md transition-colors touch-manipulation ${
-                          isInCart
-                            ? "bg-green-500 text-white"
-                            : "bg-primary-600 text-white hover:bg-primary-700"
-                        }`}
-                      >
-                        <ShoppingCart className="w-4 h-4" />
                       </button>
                     </div>
                     {product.mrp > product.sellingPrice && (
@@ -218,15 +208,27 @@ export default function ProductCarousel({ products, onOpenCartDrawer }: ProductC
                     <h3 className="font-medium text-gray-900 text-sm mb-1 line-clamp-2 min-h-[40px]">
                       {product.name}
                     </h3>
-                    <div className="flex items-center gap-2">
-                      <span className="text-base font-bold text-primary-600">
-                        ₹{product.sellingPrice}
-                      </span>
-                      {product.mrp > product.sellingPrice && (
-                        <span className="text-xs text-gray-400 line-through">
-                          ₹{product.mrp}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-base font-bold text-primary-600">
+                          ₹{product.sellingPrice}
                         </span>
-                      )}
+                        {product.mrp > product.sellingPrice && (
+                          <span className="text-xs text-gray-400 line-through">
+                            ₹{product.mrp}
+                          </span>
+                        )}
+                      </div>
+                      <button
+                        onClick={(e) => handleQuickAddToCart(e, product)}
+                        className={`p-2 rounded-full transition-colors touch-manipulation ${
+                          isInCart
+                            ? "bg-green-100 text-green-600"
+                            : "bg-primary-50 text-primary-600 hover:bg-primary-100"
+                        }`}
+                      >
+                        <ShoppingCart className="w-4 h-4" />
+                      </button>
                     </div>
                   </div>
                 </Link>
