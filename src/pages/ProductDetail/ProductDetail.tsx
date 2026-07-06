@@ -10,7 +10,7 @@ import {
   Package, ShoppingCart, Star, ChevronLeft, ChevronRight, Heart,
   Minus, Plus, X, ArrowRight, Layers
 } from "lucide-react";
-import { VariantSelector, ProductVariant } from "@/components/common/VariantSelector";
+import type { ProductVariant } from "@/components/common/VariantSelector";
 import HtmlRenderer from "@/components/common/HtmlRenderer";
 import ProductCarousel from "@/components/common/ProductCarousel";
 import CartDrawer from "@/components/common/CartDrawer";
@@ -29,7 +29,6 @@ export default function ProductDetail() {
   const [productError, setProductError] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showLightbox, setShowLightbox] = useState(false);
-  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
   const [activeTab, setActiveTab] = useState("description");
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
@@ -129,44 +128,23 @@ export default function ProductDetail() {
     return inv ? inv.quantity - inv.reservedQuantity : 0;
   };
 
-  const selectedStock = hasVariants 
-    ? getVariantStock(selectedVariant?.id) 
-    : getProductStock();
-  const isOutOfStock = selectedStock === 0;
+  const productStock = getProductStock();
 
   useEffect(() => {
     setActiveTab("description");
   }, []);
 
-  useEffect(() => {
-    if (hasVariants && !selectedVariant && activeVariants.length > 0) {
-      setSelectedVariant(activeVariants[0]);
-    }
-  }, [hasVariants, activeVariants, selectedVariant]);
+  const displayPrice = hasVariants
+    ? Math.min(...activeVariants.map(v => v.sellingPrice).filter(p => p > 0))
+    : (product?.sellingPrice ?? 0);
+  const displayMRP = hasVariants
+    ? Math.max(...activeVariants.map(v => v.mrp).filter(p => p > 0))
+    : (product?.mrp ?? 0);
 
-  const selectedPrice =
-    (selectedVariant && selectedVariant.sellingPrice > 0
-      ? selectedVariant.sellingPrice
-      : null) ??
-    (product?.sellingPrice && product.sellingPrice > 0
-      ? product.sellingPrice
-      : 0);
-  const selectedMRP =
-    (selectedVariant && selectedVariant.mrp > 0
-      ? selectedVariant.mrp
-      : null) ??
-    (product?.mrp && product.mrp > 0 ? product.mrp : 0);
-
-  const variantImages = selectedVariant?.images?.filter(Boolean) || [];
   const productImages = Array.isArray(product?.images)
     ? product.images.filter(Boolean)
     : [];
-  const images =
-    variantImages.length > 0
-      ? [...variantImages, ...productImages]
-      : productImages.length > 0
-        ? productImages
-        : [DEFAULT_IMAGE];
+  const images = productImages.length > 0 ? productImages : [DEFAULT_IMAGE];
   const hasMultipleImages = images.length > 1;
 
   const nextImage = () => {
@@ -200,47 +178,24 @@ export default function ProductDetail() {
       return;
     }
 
-    if (selectedStock === 0) {
-      toast.error("This variant is out of stock");
+    if (productStock === 0) {
+      toast.error("This product is out of stock");
       return;
     }
 
-    if (selectedStock > 0 && quantity > selectedStock) {
-      toast.error(`Only ${selectedStock} items available in stock`);
+    if (productStock > 0 && quantity > productStock) {
+      toast.error(`Only ${productStock} items available in stock`);
       return;
     }
-
-    const productId = String(product.id);
-    const variantId = selectedVariant?.id;
-    const cartItemId = variantId ? `${product.id}-${variantId}` : productId;
-
-    const variantData = selectedVariant
-      ? {
-          id: selectedVariant.id,
-          name: selectedVariant.name || "",
-          sku: selectedVariant.sku,
-          color: selectedVariant.color,
-          size: selectedVariant.size,
-          flavor: selectedVariant.flavor,
-          packQuantity: selectedVariant.packQuantity || 1,
-          sellingPrice: selectedVariant.sellingPrice,
-          mrp: selectedVariant.mrp,
-          image: selectedVariant.image,
-          weight: selectedVariant.weight,
-          weightUnit: selectedVariant.weightUnit,
-          options: selectedVariant.options,
-        }
-      : null;
 
     try {
       addToCartMutation.mutate({
-        productId,
-        productVariantId: variantId,
+        productId: String(product.id),
         quantity,
       });
 
       addItem({
-        id: cartItemId,
+        id: String(product.id),
         quantity,
         product: {
           id: product.id,
@@ -251,17 +206,55 @@ export default function ProductDetail() {
           mrp: product.mrp || 0,
           unit: product.unit || "unit",
         },
-        variant: variantData,
+        variant: null,
       });
     } catch (error) {
       toast.error("Failed to add to cart");
     }
   };
 
-  const handleVariantSelect = (variant: ProductVariant) => {
-    setSelectedVariant(variant);
-    setQuantity(1);
-    setCurrentImageIndex(0);
+  const handleVariantAddToCart = (variant: ProductVariant) => {
+    if (!product) return;
+
+    if (!isAuthenticated) {
+      toast.error("Please login to add items to cart");
+      return;
+    }
+
+    const stock = getVariantStock(variant.id);
+    if (stock === 0) {
+      toast.error("This variant is out of stock");
+      return;
+    }
+
+    addToCartMutation.mutate({
+      productId: String(product.id),
+      productVariantId: variant.id,
+      quantity: 1,
+    });
+
+    addItem({
+      id: `${product.id}-${variant.id}`,
+      quantity: 1,
+      product: {
+        id: product.id,
+        name: product.name,
+        slug: product.slug,
+        images: product.images || [],
+        sellingPrice: product.sellingPrice || 0,
+        mrp: product.mrp || 0,
+        unit: product.unit || "unit",
+      },
+      variant: {
+        id: variant.id,
+        name: variant.name || "",
+        sku: variant.sku,
+        sellingPrice: variant.sellingPrice,
+        mrp: variant.mrp,
+        image: variant.image,
+        packQuantity: variant.packQuantity || 1,
+      },
+    });
   };
 
   const handleToggleWishlist = () => {
@@ -461,16 +454,21 @@ export default function ProductDetail() {
 
                 {/* Price */}
                 <div className="flex flex-wrap items-baseline gap-1.5 md:gap-3">
+                  {hasVariants && (
+                    <span className="text-sm md:text-base font-medium text-gray-500 mr-1">
+                      Starting at
+                    </span>
+                  )}
                   <span className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900">
-                    ₹{selectedPrice.toLocaleString()}
+                    ₹{displayPrice.toLocaleString()}
                   </span>
-                  {selectedMRP > selectedPrice && selectedMRP > 0 && (
+                  {displayMRP > displayPrice && displayMRP > 0 && (
                     <>
                       <span className="text-sm md:text-lg text-gray-400 line-through">
-                        ₹{selectedMRP.toLocaleString()}
+                        ₹{displayMRP.toLocaleString()}
                       </span>
                       <span className="bg-green-100 text-green-700 text-[10px] md:text-sm font-bold px-2 md:px-3 py-0.5 md:py-1 rounded-full">
-                        {Math.round((1 - selectedPrice / selectedMRP) * 100)}% OFF
+                        {Math.round((1 - displayPrice / displayMRP) * 100)}% OFF
                       </span>
                     </>
                   )}
@@ -484,76 +482,141 @@ export default function ProductDetail() {
                 )}
               </div>
 
-              {/* Variants */}
+              {/* Variant List */}
               {hasVariants && (
                 <div className="mb-4 md:mb-6">
-                  <VariantSelector
-                    variants={activeVariants}
-                    options={product.options}
-                    selectedVariant={selectedVariant}
-                    onVariantSelect={handleVariantSelect}
-                    inventories={
-                      product.inventories?.map((inv: any) => ({
-                        variantId: inv.productVariantId,
-                        quantity: inv.quantity - (inv.reservedQuantity || 0),
-                      })) || []
-                    }
-                  />
+                  <h3 className="text-sm font-medium text-gray-800 mb-2">Variants</h3>
+                  <div className="space-y-2">
+                    {activeVariants.map((variant) => {
+                      const stock = getVariantStock(variant.id);
+                      const isOutOfStock = stock === 0;
+                      const variantPrice = variant.sellingPrice || displayPrice;
+                      const variantMRP = variant.mrp || displayMRP;
+                      const discount = variantMRP > variantPrice
+                        ? Math.round((1 - variantPrice / variantMRP) * 100)
+                        : 0;
+
+                      return (
+                        <div
+                          key={variant.id}
+                          className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${
+                            isOutOfStock
+                              ? "opacity-55 bg-gray-50"
+                              : "bg-white hover:border-primary-300 hover:shadow-sm"
+                          }`}
+                        >
+                          <div className="w-12 h-12 md:w-14 md:h-14 rounded-lg overflow-hidden bg-gray-50 flex-shrink-0 border">
+                            <img
+                              src={variant.image || variant.images?.[0] || product?.images?.[0] || DEFAULT_IMAGE}
+                              alt={variant.name || "Variant"}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-gray-900 text-sm leading-tight truncate">
+                              {variant.name || variant.sku || "Variant"}
+                            </p>
+                            <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
+                              <span className="text-sm font-bold text-gray-900">
+                                ₹{variantPrice.toLocaleString()}
+                              </span>
+                              {variantMRP > variantPrice && variantMRP > 0 && (
+                                <span className="text-xs text-gray-400 line-through">
+                                  ₹{variantMRP.toLocaleString()}
+                                </span>
+                              )}
+                              {discount > 0 && (
+                                <span className="text-[10px] bg-green-100 text-green-700 font-medium px-1.5 py-0.5 rounded">
+                                  {discount}% OFF
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-1 mt-0.5">
+                              <span className={`inline-block w-1.5 h-1.5 rounded-full ${
+                                isOutOfStock ? "bg-red-500" : stock <= 5 ? "bg-orange-500" : "bg-green-500"
+                              }`} />
+                              <span className={`text-xs ${
+                                isOutOfStock ? "text-red-500" : stock <= 5 ? "text-orange-500" : "text-green-600"
+                              }`}>
+                                {isOutOfStock ? "Out of Stock" : stock <= 5 ? `Only ${stock} left` : "In Stock"}
+                              </span>
+                            </div>
+                          </div>
+
+                          <button
+                            onClick={() => handleVariantAddToCart(variant)}
+                            disabled={addToCartMutation.isPending || isOutOfStock}
+                            className={`flex items-center gap-1 px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-xs md:text-sm font-medium transition-all flex-shrink-0 ${
+                              isOutOfStock
+                                ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                                : "bg-primary-600 text-white hover:bg-primary-700 active:scale-[0.97]"
+                            }`}
+                          >
+                            <ShoppingCart className="w-3.5 h-3.5" />
+                            {addToCartMutation.isPending ? "Adding..." : "Add"}
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               )}
 
-              {/* Quantity & Add to Cart */}
-              <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
-                <div className="flex items-center bg-gray-100 rounded-lg md:rounded-xl">
+              {/* Quantity & Add to Cart (single product) */}
+              {!hasVariants && (
+                <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
+                  <div className="flex items-center bg-gray-100 rounded-lg md:rounded-xl">
+                    <button
+                      onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                      className="p-2 md:p-3 hover:bg-gray-200 rounded-l-lg md:rounded-l-xl transition-colors"
+                    >
+                      <Minus className="h-3.5 w-3.5 md:h-4 md:w-4" />
+                    </button>
+                    <span className="px-2 md:px-4 font-semibold text-sm md:text-base min-w-[36px] md:min-w-[48px] text-center">
+                      {quantity}
+                    </span>
+                    <button
+                      onClick={() => setQuantity((q) => q + 1)}
+                      className="p-2 md:p-3 hover:bg-gray-200 rounded-r-lg md:rounded-r-xl transition-colors"
+                    >
+                      <Plus className="h-3.5 w-3.5 md:h-4 md:w-4" />
+                    </button>
+                  </div>
+
                   <button
-                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                    className="p-2 md:p-3 hover:bg-gray-200 rounded-l-lg md:rounded-l-xl transition-colors"
+                    onClick={handleAddToCart}
+                    disabled={addToCartMutation.isPending || productStock === 0}
+                    className={`flex-1 flex items-center justify-center gap-1.5 md:gap-2 py-2.5 md:py-3.5 rounded-lg md:rounded-xl font-semibold text-xs md:text-sm transition-all ${
+                      productStock === 0
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-primary-600 text-white hover:bg-primary-700 active:scale-[0.98]"
+                    }`}
                   >
-                    <Minus className="h-3.5 w-3.5 md:h-4 md:w-4" />
+                    <ShoppingCart className="h-4 w-4 md:h-5 md:w-5" />
+                    {addToCartMutation.isPending
+                      ? "Adding..."
+                      : productStock === 0
+                        ? "Out of Stock"
+                        : "Add to Cart"}
                   </button>
-                  <span className="px-2 md:px-4 font-semibold text-sm md:text-base min-w-[36px] md:min-w-[48px] text-center">
-                    {quantity}
-                  </span>
+
                   <button
-                    onClick={() => setQuantity((q) => q + 1)}
-                    className="p-2 md:p-3 hover:bg-gray-200 rounded-r-lg md:rounded-r-xl transition-colors"
+                    onClick={handleToggleWishlist}
+                    className={`p-2 md:p-3 rounded-lg md:rounded-xl transition-colors ${
+                      isInWishlist
+                        ? "bg-red-50 hover:bg-red-100"
+                        : "bg-gray-100 hover:bg-gray-200"
+                    }`}
                   >
-                    <Plus className="h-3.5 w-3.5 md:h-4 md:w-4" />
+                    <Heart
+                      className={`h-4 w-4 md:h-5 md:w-5 ${
+                        isInWishlist ? "text-red-500 fill-red-500" : "text-gray-600"
+                      }`}
+                    />
                   </button>
                 </div>
-
-                <button
-                  onClick={handleAddToCart}
-                  disabled={addToCartMutation.isPending || isOutOfStock}
-                  className={`flex-1 flex items-center justify-center gap-1.5 md:gap-2 py-2.5 md:py-3.5 rounded-lg md:rounded-xl font-semibold text-xs md:text-sm transition-all ${
-                    isOutOfStock
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      : "bg-primary-600 text-white hover:bg-primary-700 active:scale-[0.98]"
-                  }`}
-                >
-                  <ShoppingCart className="h-4 w-4 md:h-5 md:w-5" />
-                  {addToCartMutation.isPending
-                    ? "Adding..."
-                    : isOutOfStock
-                      ? "Out of Stock"
-                      : "Add to Cart"}
-                </button>
-
-                <button
-                  onClick={handleToggleWishlist}
-                  className={`p-2 md:p-3 rounded-lg md:rounded-xl transition-colors ${
-                    isInWishlist
-                      ? "bg-red-50 hover:bg-red-100"
-                      : "bg-gray-100 hover:bg-gray-200"
-                  }`}
-                >
-                  <Heart
-                    className={`h-4 w-4 md:h-5 md:w-5 ${
-                      isInWishlist ? "text-red-500 fill-red-500" : "text-gray-600"
-                    }`}
-                  />
-                </button>
-              </div>
+              )}
 
               {/* Tabs */}
               <div className="border-t border-gray-100 pt-4 md:pt-6 mt-4 md:mt-6">
