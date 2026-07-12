@@ -4,9 +4,10 @@ import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import api from "@/api";
 import {
-  Package, Shield, Truck, CreditCard, ChevronRight, Star,
+  Package, Shield, Truck, CreditCard, ChevronRight,
   Sparkles, LayoutGrid, Store, Stethoscope,
-  Flame, Quote, Trophy, BadgeCheck, Award, Stamp, ShieldCheck, History
+  Flame, Trophy, BadgeCheck, Award, Stamp, ShieldCheck, History,
+  GraduationCap
 } from "lucide-react";
 import ProductCarousel from "@/components/common/ProductCarousel";
 import CategoryCarousel from "@/components/common/CategoryCarousel";
@@ -66,45 +67,23 @@ export default function Home() {
     },
   });
 
+  const { data: studentData } = useQuery({
+    queryKey: ["products", "student-section"],
+    queryFn: () => api.get("/products?category=student-section&limit=10"),
+  });
+
   const products = productsData?.data?.products || productsData?.data || [];
   const topSelling = topSellingData?.data?.products || topSellingData?.data || [];
   const categories = categoriesData?.data || [];
   const departments = Array.isArray(departmentsData) ? departmentsData : departmentsData?.data || [];
   const brands = Array.isArray(brandsData) ? brandsData : brandsData?.data || [];
   const banners = Array.isArray(bannersData) ? bannersData : [];
+  const studentProducts = studentData?.data?.products || studentData?.data || [];
 
   const handleOpenCartDrawer = (product: any) => {
     setCartDrawerProduct(product);
     setIsCartDrawerOpen(true);
   };
-
-  // Sample testimonials data (in real app, fetch from API)
-  const testimonials = [
-    {
-      id: 1,
-      name: "Dr. Priya Sharma",
-      specialty: "Orthodontist, Mumbai",
-      rating: 5,
-      text: "Excellent quality products and super fast delivery. Been ordering for my clinic for 2 years now.",
-      avatar: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=100&h=100&fit=crop&crop=face"
-    },
-    {
-      id: 2,
-      name: "Dr. Rajesh Kumar",
-      specialty: "Endodontist, Delhi",
-      rating: 5,
-      text: "Best prices in the market for genuine products. Customer service is very responsive.",
-      avatar: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=100&h=100&fit=crop&crop=face"
-    },
-    {
-      id: 3,
-      name: "Dr. Ananya Patel",
-      specialty: "Prosthodontist, Bangalore",
-      rating: 4,
-      text: "Great selection of implant systems. Easy reordering. Highly recommend for dental clinics.",
-      avatar: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=100&h=100&fit=crop&crop=face"
-    },
-  ];
 
   return (
     <div>
@@ -399,53 +378,34 @@ export default function Home() {
         </section>
       )}
 
-      {/* Testimonials Section */}
-      <section className="py-6 md:py-8 lg:py-10 bg-gradient-to-br from-primary-50 to-blue-50">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg shadow-cyan-500/20">
-              <Quote className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <p className="text-xs font-semibold text-primary-600 uppercase tracking-widest mb-1">What Our Customers Say</p>
-              <h2 className="text-xl md:text-2xl font-bold text-gray-900">Testimonials</h2>
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-            {testimonials.map((testimonial, index) => (
-              <motion.div
-                key={testimonial.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="bg-white rounded-xl p-4 md:p-6 shadow-md hover:shadow-lg transition-shadow"
+      {/* Student Essentials Section */}
+      {studentProducts.length > 0 && (
+        <section className="py-6 md:py-8 lg:py-10">
+          <div className="container mx-auto px-4">
+            <div className="flex items-end justify-between mb-4 md:mb-6">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-purple-500 rounded-xl flex items-center justify-center shadow-lg shadow-violet-500/20">
+                  <GraduationCap className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-primary-600 uppercase tracking-widest mb-1">For Dental Students</p>
+                  <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-gray-900 tracking-tight">Student Essentials</h2>
+                </div>
+              </div>
+              <Link
+                to="/products?category=student-section"
+                className="flex items-center gap-1 text-sm font-medium text-gray-500 hover:text-primary-600 transition-colors group"
               >
-                <div className="flex items-center gap-3 mb-3">
-                  <img
-                    src={testimonial.avatar}
-                    alt={testimonial.name}
-                    className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover"
-                  />
-                  <div>
-                    <p className="font-medium md:font-semibold text-gray-900 text-sm md:text-base">{testimonial.name}</p>
-                    <p className="text-xs md:text-sm text-gray-500">{testimonial.specialty}</p>
-                  </div>
-                </div>
-                <div className="flex gap-1 mb-3">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`w-4 h-4 ${i < testimonial.rating ? 'text-amber-400 fill-amber-400' : 'text-gray-300'}`}
-                    />
-                  ))}
-                </div>
-                <p className="text-gray-600 text-sm leading-relaxed">"{testimonial.text}"</p>
-              </motion.div>
-            ))}
+                <span>View All</span>
+                <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
+            </div>
+            <ProductCarousel products={studentProducts} onOpenCartDrawer={handleOpenCartDrawer} />
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Latest Dental News Section */}
       <NewsSection />
