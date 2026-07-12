@@ -324,7 +324,11 @@ export default function Checkout() {
 
   const isVerified = verificationData?.data?.verified ?? user?.isProfessionalVerified;
 
-  if (isAuthenticated && !isVerified) {
+  const isStudentOnlyCart = displayCartItems.length > 0 && displayCartItems.every(
+    (item: any) => item.product.category?.slug === 'student-section'
+  );
+
+  if (isAuthenticated && !isVerified && !isStudentOnlyCart) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
         <div className="text-center max-w-md mx-auto px-4">

@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import api from "@/api";
 import {
-  Package, Shield, Truck, CreditCard, ChevronRight,
+  Package, Shield, Truck, CreditCard,
   Sparkles, LayoutGrid, Store, Stethoscope,
   Flame, Trophy, BadgeCheck, Award, Stamp, ShieldCheck, History,
   GraduationCap
@@ -267,7 +267,7 @@ export default function Home() {
 
       {/* Categories Section */}
       {categories.length > 0 && (
-        <section className="py-6 md:py-8 lg:py-10">
+        <section className="py-6 md:py-8 lg:py-10 bg-gray-50/50">
           <div className="container mx-auto px-4">
             <div className="flex items-end justify-between mb-4 md:mb-6">
               <div className="flex items-center gap-3">
@@ -281,7 +281,7 @@ export default function Home() {
               </div>
               <Link
                 to="/categories"
-                className="flex items-center gap-1 text-sm font-medium text-gray-500 hover:text-primary-600 transition-colors group"
+                className="flex items-center gap-1 text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors group"
               >
                 <span>View All</span>
                 <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -310,9 +310,12 @@ export default function Home() {
               </div>
               <Link
                 to="/brands"
-                className="flex items-center gap-1 text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors"
+                className="flex items-center gap-1 text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors group"
               >
-                View All <ChevronRight className="h-4 w-4" />
+                <span>View All</span>
+                <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
               </Link>
             </div>
             <BrandCarousel brands={brands} itemsPerPage={6} />
@@ -322,7 +325,7 @@ export default function Home() {
 
       {/* Departments Section */}
       {departments.length > 0 && (
-        <section className="py-6 md:py-8 lg:py-10">
+        <section className="py-6 md:py-8 lg:py-10 bg-gray-50/50">
           <div className="container mx-auto px-4">
             <div className="flex items-end justify-between mb-4 md:mb-6">
               <div className="flex items-center gap-3">
@@ -336,7 +339,7 @@ export default function Home() {
               </div>
               <Link
                 to="/departments"
-                className="flex items-center gap-1 text-sm font-medium text-gray-500 hover:text-primary-600 transition-colors group"
+                className="flex items-center gap-1 text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors group"
               >
                 <span>View All</span>
                 <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -60,6 +60,11 @@ export default function Cart() {
   const serverItems = data?.data || [];
   const allItems = items.length > 0 ? items : serverItems;
 
+  const isStudentOnlyCart = allItems.length > 0 && allItems.every(
+    (item: any) => item.product.category?.slug === 'student-section'
+  );
+  const canCheckoutWithoutVerification = isVerified || isStudentOnlyCart;
+
   const subtotal = allItems.reduce(
     (sum: number, item: any) =>
       sum + (item.variant?.sellingPrice || item.product.sellingPrice) * item.quantity,
@@ -257,12 +262,12 @@ export default function Cart() {
               </div>
             </div>
 
-            {!isVerified && (
+            {!canCheckoutWithoutVerification && (
               <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl mb-3">
                 <div className="flex items-center gap-2">
                   <Shield className="h-4 w-4 text-amber-600 flex-shrink-0" />
                   <p className="text-xs text-amber-700">
-                    Professional verification required to place orders.{' '}
+                    Professional verification required to place orders. Remove non-student items from your cart or{' '}
                     <button
                       onClick={() => {
                         sessionStorage.setItem('redirectAfterVerification', '/checkout');
@@ -270,7 +275,7 @@ export default function Cart() {
                       }}
                       className="font-medium text-amber-800 underline hover:no-underline"
                     >
-                      Verify your credentials
+                      verify your credentials
                     </button>
                   </p>
                 </div>
@@ -278,7 +283,7 @@ export default function Cart() {
             )}
             <button
               onClick={() => {
-                if (isVerified) {
+                if (canCheckoutWithoutVerification) {
                   navigate("/checkout")
                 } else {
                   sessionStorage.setItem('redirectAfterVerification', '/checkout');

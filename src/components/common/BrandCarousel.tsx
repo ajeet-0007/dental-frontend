@@ -17,7 +17,11 @@ interface BrandCarouselProps {
   itemsPerPage?: number;
 }
 
-const BRAND_COLORS = [
+function getBrandInitial(name: string): string {
+  return name.charAt(0).toUpperCase();
+}
+
+const INITIAL_COLORS = [
   "from-blue-500 to-blue-600",
   "from-green-500 to-green-600",
   "from-purple-500 to-purple-600",
@@ -26,15 +30,7 @@ const BRAND_COLORS = [
   "from-teal-500 to-teal-600",
   "from-red-500 to-red-600",
   "from-indigo-500 to-indigo-600",
-  "from-cyan-500 to-cyan-600",
-  "from-amber-500 to-amber-600",
-  "from-rose-500 to-rose-600",
-  "from-violet-500 to-violet-600",
 ];
-
-function getBrandInitial(name: string): string {
-  return name.charAt(0).toUpperCase();
-}
 
 export default function BrandCarousel({ brands, itemsPerPage = 6 }: BrandCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -56,10 +52,6 @@ export default function BrandCarousel({ brands, itemsPerPage = 6 }: BrandCarouse
     window.addEventListener("resize", updateVisibleCount);
     return () => window.removeEventListener("resize", updateVisibleCount);
   }, [itemsPerPage]);
-
-  const goToSlide = (index: number) => {
-    setCurrentIndex(Math.max(0, Math.min(index, totalSlides - 1)));
-  };
 
   const nextSlide = () => {
     if (currentIndex < totalSlides - 1) {
@@ -91,8 +83,8 @@ export default function BrandCarousel({ brands, itemsPerPage = 6 }: BrandCarouse
 
   return (
     <div className="relative group touch-pan-y">
-      <div 
-        ref={containerRef} 
+      <div
+        ref={containerRef}
         className="overflow-hidden -mx-4 px-4 md:mx-0 md:px-0"
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
@@ -105,15 +97,15 @@ export default function BrandCarousel({ brands, itemsPerPage = 6 }: BrandCarouse
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
         >
           {displayedBrands.map((brand, index) => {
-            const colorIndex = Math.abs(brand.id - 1) % BRAND_COLORS.length;
-            const colorClass = BRAND_COLORS[colorIndex];
+            const colorIndex = Math.abs(brand.id - 1) % INITIAL_COLORS.length;
+            const gradientClass = INITIAL_COLORS[colorIndex];
 
             return (
               <motion.div
                 key={brand.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1, duration: 0.3 }}
+                transition={{ delay: index * 0.05, duration: 0.3 }}
                 className="flex-shrink-0"
                 style={{ width: `calc(${100 / visibleCount}% - ${(visibleCount - 1) * 16 / visibleCount}px)` }}
               >
@@ -121,29 +113,28 @@ export default function BrandCarousel({ brands, itemsPerPage = 6 }: BrandCarouse
                   to={`/products?brand=${brand.slug}`}
                   className="group/card block"
                 >
-                  <div className={`relative aspect-[4/3] rounded-xl overflow-hidden shadow-md group-hover/card:shadow-xl transition-all duration-300 group-hover/card:-translate-y-1 bg-gradient-to-br ${colorClass}`}>
-                    {brand.logo ? (
-                      <img
-                        src={brand.logo}
-                        alt={brand.name}
-                        className="w-full h-full object-contain p-3 bg-white"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = "none";
-                        }}
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-white">
-                        <span className="text-3xl font-bold text-gray-600">
-                          {getBrandInitial(brand.name)}
-                        </span>
-                      </div>
-                    )}
-
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-
-                    <div className="absolute inset-0 flex flex-col justify-end p-4">
-                      <h3 className="text-white font-semibold text-sm leading-tight line-clamp-2 drop-shadow-md">
+                  <div className="relative bg-white rounded-2xl border border-gray-200 overflow-hidden transition-all duration-300 group-hover/card:shadow-lg group-hover/card:border-primary-200 group-hover/card:-translate-y-1">
+                    <div className="aspect-square flex items-center justify-center p-4 bg-gray-50/50">
+                      {brand.logo ? (
+                        <img
+                          src={brand.logo}
+                          alt={brand.name}
+                          className="w-full h-full object-contain transition-transform duration-300 group-hover/card:scale-110"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = "none";
+                          }}
+                        />
+                      ) : (
+                        <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${gradientClass} flex items-center justify-center shadow-md`}>
+                          <span className="text-2xl font-bold text-white">
+                            {getBrandInitial(brand.name)}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="px-3 pb-3 text-center border-t border-gray-100">
+                      <h3 className="font-semibold text-sm text-gray-700 leading-tight line-clamp-2 mt-2 group-hover/card:text-primary-600 transition-colors">
                         {brand.name}
                       </h3>
                     </div>
@@ -159,35 +150,17 @@ export default function BrandCarousel({ brands, itemsPerPage = 6 }: BrandCarouse
         <>
           <button
             onClick={prevSlide}
-            className="absolute left-2 top-[40%] -translate-y-1/2 bg-white border rounded-full p-2 shadow-md hover:bg-gray-50 transition-all z-10 disabled:opacity-50 opacity-0 group-hover:opacity-100"
-            disabled={totalSlides <= 1}
+            className="absolute left-0 top-1/2 -translate-y-1/2 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-full p-2.5 shadow-md hover:bg-white hover:shadow-lg transition-all z-10 opacity-0 group-hover:opacity-100"
           >
-            <ChevronLeft className="w-5 h-5 text-gray-600" />
+            <ChevronLeft className="w-4 h-4 text-gray-600" />
           </button>
           <button
             onClick={nextSlide}
-            className="absolute right-2 top-[40%] -translate-y-1/2 bg-white border rounded-full p-2 shadow-md hover:bg-gray-50 transition-all z-10 disabled:opacity-50 opacity-0 group-hover:opacity-100"
-            disabled={totalSlides <= 1}
+            className="absolute right-0 top-1/2 -translate-y-1/2 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-full p-2.5 shadow-md hover:bg-white hover:shadow-lg transition-all z-10 opacity-0 group-hover:opacity-100"
           >
-            <ChevronRight className="w-5 h-5 text-gray-600" />
+            <ChevronRight className="w-4 h-4 text-gray-600" />
           </button>
         </>
-      )}
-
-      {totalSlides > 1 && (
-        <div className="flex justify-center gap-2 mt-4 md:mt-6">
-          {Array.from({ length: totalSlides }).map((_, index) => (
-            <button
-              key={index}
-              onClick={() => goToSlide(index)}
-              className={`h-2 rounded-full transition-all touch-manipulation ${
-                index === currentIndex
-                  ? "bg-primary-600 w-6"
-                  : "bg-gray-300 hover:bg-gray-400 w-2"
-              }`}
-            />
-          ))}
-        </div>
       )}
     </div>
   );
