@@ -6,6 +6,7 @@ import api, { reviewsApi } from "@/api";
 import { useAuthStore } from "@/stores/authStore";
 import { useCartStore } from "@/stores/cartStore";
 import { useWishlistStore } from "@/stores/wishlistStore";
+import { useRecentlyViewedStore } from "@/stores/recentlyViewedStore";
 import {
   Package, ShoppingCart, Star, ChevronLeft, ChevronRight, Heart,
   Minus, Plus, X, ArrowRight, Layers, Share2
@@ -24,6 +25,7 @@ export default function ProductDetail() {
   const { isAuthenticated } = useAuthStore();
   const { addItem } = useCartStore();
   const { items: wishlistItems, addItem: addToWishlist, removeItem: removeFromWishlist } = useWishlistStore();
+  const { addItem: addToRecentlyViewed } = useRecentlyViewedStore();
   const queryClient = useQueryClient();
   const [quantity, setQuantity] = useState(1);
   const [productError, setProductError] = useState(false);
@@ -133,6 +135,20 @@ export default function ProductDetail() {
   useEffect(() => {
     setActiveTab("description");
   }, []);
+
+  useEffect(() => {
+    if (product) {
+      addToRecentlyViewed({
+        id: String(product.id),
+        name: product.name,
+        slug: product.slug,
+        images: product.images || [],
+        sellingPrice: product.sellingPrice || 0,
+        mrp: product.mrp || 0,
+        unit: product.unit || "unit",
+      });
+    }
+  }, [product?.id]);
 
   const displayPrice = hasVariants
     ? Math.min(...activeVariants.map(v => v.sellingPrice).filter(p => p > 0))

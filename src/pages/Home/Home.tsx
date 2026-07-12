@@ -6,7 +6,7 @@ import api from "@/api";
 import {
   Package, Shield, Truck, CreditCard, ChevronRight, Star,
   Sparkles, LayoutGrid, Store, Stethoscope,
-  Flame, Quote, Trophy, BadgeCheck, Award, Stamp, ShieldCheck
+  Flame, Quote, Trophy, BadgeCheck, Award, Stamp, ShieldCheck, History
 } from "lucide-react";
 import ProductCarousel from "@/components/common/ProductCarousel";
 import CategoryCarousel from "@/components/common/CategoryCarousel";
@@ -16,10 +16,14 @@ import HeroCarousel from "@/components/common/HeroCarousel";
 import CartDrawer from "@/components/common/CartDrawer";
 import NewsSection from "@/components/common/NewsSection";
 import GalleryPreview from "@/pages/Gallery/GalleryPreview";
+import { useAuthStore } from "@/stores/authStore";
+import { useRecentlyViewedStore } from "@/stores/recentlyViewedStore";
 
 export default function Home() {
   const [cartDrawerProduct, setCartDrawerProduct] = useState<any>(null);
   const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false);
+  const { isAuthenticated } = useAuthStore();
+  const { items: recentlyViewed, clearItems: clearRecentlyViewed } = useRecentlyViewedStore();
 
   const { data: productsData } = useQuery({
     queryKey: ["products", "featured"],
@@ -255,6 +259,32 @@ export default function Home() {
           )}
         </div>
       </section>
+
+      {/* Recently Viewed Products */}
+      {isAuthenticated && recentlyViewed.length > 0 && (
+        <section className="py-6 md:py-8 lg:py-10">
+          <div className="container mx-auto px-4">
+            <div className="flex items-end justify-between mb-4 md:mb-6">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                  <History className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-primary-600 uppercase tracking-widest mb-1">Your History</p>
+                  <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-gray-900 tracking-tight">Recently Viewed</h2>
+                </div>
+              </div>
+              <button
+                onClick={clearRecentlyViewed}
+                className="text-sm font-medium text-gray-500 hover:text-red-500 transition-colors"
+              >
+                Clear History
+              </button>
+            </div>
+            <ProductCarousel products={recentlyViewed} onOpenCartDrawer={handleOpenCartDrawer} />
+          </div>
+        </section>
+      )}
 
       {/* Categories Section */}
       {categories.length > 0 && (
