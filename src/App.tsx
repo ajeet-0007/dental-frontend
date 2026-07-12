@@ -17,6 +17,7 @@ import HelpSupport from "./pages/HelpSupport/HelpSupport";
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
 import AuthCallback from "./pages/Auth/AuthCallback";
+import ForgotPassword from "./pages/Auth/ForgotPassword";
 import Departments from "./pages/Departments/Departments";
 import Brands from "./pages/Brands/Brands";
 import Categories from "./pages/Categories/Categories";
@@ -101,6 +102,7 @@ function App() {
           </Route>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminLayout />}>

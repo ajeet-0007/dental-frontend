@@ -3,7 +3,9 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
 import api from '@/api'
 import { useAuthStore } from '@/stores/authStore'
-import { Mail, Lock, Eye, EyeOff, ArrowRight, Loader2 } from 'lucide-react'
+import { Mail, Lock, Eye, EyeOff, ArrowRight, Loader2, KeyRound } from 'lucide-react'
+import ReCaptchaWidget from '@/components/common/ReCaptchaWidget'
+import OtpInput from '@/components/common/OtpInput'
 
 declare global {
   interface Window {
@@ -18,10 +20,19 @@ declare global {
   }
 }
 
+type LoginMode = 'password' | 'otp'
+type OtpStep = 'email' | 'otp'
+
 export default function Login() {
   const navigate = useNavigate()
   const { setAuth } = useAuthStore()
   const [searchParams] = useSearchParams()
+  const [loginMode, setLoginMode] = useState<LoginMode>('password')
+  const [otpStep, setOtpStep] = useState<OtpStep>('email')
+  const [email, setEmail] = useState('')
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null)
+  const [countdown, setCountdown] = useState(0)
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -42,6 +53,13 @@ export default function Login() {
     }
   }, [searchParams])
 
+  useEffect(() => {
+    if (countdown > 0) {
+      const timer = setTimeout(() => setCountdown(countdown - 1), 1000)
+      return () => clearTimeout(timer)
+    }
+  }, [countdown])
+
   const handleGoogleLogin = () => {
     window.location.href = import.meta.env.VITE_API_URL + '/api/auth/google'
   }
@@ -55,7 +73,10 @@ export default function Login() {
   }
 
   const loginMutation = useMutation({
-    mutationFn: (data: typeof formData) => api.post('/auth/login', data),
+    mutationFn: (data: typeof formData) =>
+      api.post('/auth/login', data, {
+        headers: { Recaptcha: captchaToken },
+      }),
     onSuccess: (response) => {
       const { user, accessToken, refreshToken } = response.data
       setAuth(user, accessToken, refreshToken)
@@ -66,10 +87,57 @@ export default function Login() {
     },
   })
 
+  const sendOtpMutation = useMutation({
+    mutationFn: (data: { email: string; type: string }) =>
+      api.post('/auth/send-otp', data, {
+        headers: { Recaptcha: captchaToken },
+      }),
+    onSuccess: () => {
+      setOtpStep('otp')
+      setCountdown(60)
+    },
+    onError: (error: any) => {
+      setError(error.response?.data?.message || 'Failed to send OTP')
+    },
+  })
+
+  const verifyOtpMutation = useMutation({
+    mutationFn: (data: { email: string; code: string; type: string }) =>
+      api.post('/auth/verify-otp', data),
+    onSuccess: (response) => {
+      const { user, accessToken, refreshToken } = response.data
+      setAuth(user, accessToken, refreshToken)
+      navigate('/')
+    },
+    onError: (error: any) => {
+      setError(error.response?.data?.message || 'Invalid OTP')
+    },
+  })
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
     loginMutation.mutate(formData)
+  }
+
+  const handleSendOtp = () => {
+    setError('')
+    if (!email) {
+      setError('Please enter your email')
+      return
+    }
+    sendOtpMutation.mutate({ email, type: 'login' })
+  }
+
+  const handleVerifyOtp = (code: string) => {
+    setError('')
+    verifyOtpMutation.mutate({ email, code, type: 'login' })
+  }
+
+  const handleResendOtp = () => {
+    setError('')
+    setOtpStep('email')
+    handleSendOtp()
   }
 
   return (
@@ -154,101 +222,240 @@ export default function Login() {
               <p className="text-gray-500 mt-1 text-sm">Sign in to continue shopping</p>
             </div>
 
+            {/* Login Mode Toggle */}
+            <div className="flex bg-gray-100 rounded-lg p-1 mb-6">
+              <button
+                type="button"
+                onClick={() => {
+                  setLoginMode('password')
+                  setError('')
+                }}
+                className={`flex-1 py-2 text-sm font-medium rounded-md transition-all flex items-center justify-center gap-2 ${
+                  loginMode === 'password'
+                    ? 'bg-white shadow text-primary-600'
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                <Lock className="h-4 w-4" />
+                Password
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setLoginMode('otp')
+                  setError('')
+                  setOtpStep('email')
+                }}
+                className={`flex-1 py-2 text-sm font-medium rounded-md transition-all flex items-center justify-center gap-2 ${
+                  loginMode === 'otp'
+                    ? 'bg-white shadow text-primary-600'
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                <KeyRound className="h-4 w-4" />
+                OTP
+              </button>
+            </div>
+
             {error && (
               <div className="bg-red-50 border border-red-100 text-red-600 p-3 rounded-xl text-sm animate-shake mb-4">
                 {error}
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {error && (
-                <div className="bg-red-50 border border-red-100 text-red-600 p-3 rounded-xl text-sm animate-shake">
-                  {error}
-                </div>
-              )}
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Email Address
-                </label>
-                <div className="relative group">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                    <Mail className="h-4 w-4 text-gray-400 group-focus-within:text-primary-600 transition-colors" />
+            {/* Password Login Mode */}
+            {loginMode === 'password' && (
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                    Email Address
+                  </label>
+                  <div className="relative group">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                      <Mail className="h-4 w-4 text-gray-400 group-focus-within:text-primary-600 transition-colors" />
+                    </div>
+                    <input
+                      type="email"
+                      required
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      placeholder="Enter your email"
+                      className="w-full pl-11 pr-4 py-3 border-2 border-gray-100 rounded-xl focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/10 transition-all bg-gray-50/50 text-gray-900 placeholder:text-gray-400 text-sm"
+                    />
                   </div>
-                  <input
-                    type="email"
-                    required
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    placeholder="Enter your email"
-                    className="w-full pl-11 pr-4 py-3 border-2 border-gray-100 rounded-xl focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/10 transition-all bg-gray-50/50 text-gray-900 placeholder:text-gray-400 text-sm"
-                  />
                 </div>
-              </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Password
-                </label>
-                <div className="relative group">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                    <Lock className="h-4 w-4 text-gray-400 group-focus-within:text-primary-600 transition-colors" />
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                    Password
+                  </label>
+                  <div className="relative group">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                      <Lock className="h-4 w-4 text-gray-400 group-focus-within:text-primary-600 transition-colors" />
+                    </div>
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      required
+                      value={formData.password}
+                      onChange={(e) =>
+                        setFormData({ ...formData, password: e.target.value })
+                      }
+                      placeholder="Enter your password"
+                      className="w-full pl-11 pr-11 py-3 border-2 border-gray-100 rounded-xl focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/10 transition-all bg-gray-50/50 text-gray-900 placeholder:text-gray-400 text-sm"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </button>
                   </div>
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    required
-                    value={formData.password}
-                    onChange={(e) =>
-                      setFormData({ ...formData, password: e.target.value })
-                    }
-                    placeholder="Enter your password"
-                    className="w-full pl-11 pr-11 py-3 border-2 border-gray-100 rounded-xl focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/10 transition-all bg-gray-50/50 text-gray-900 placeholder:text-gray-400 text-sm"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </button>
                 </div>
-              </div>
 
-              <div className="flex items-center justify-between">
-                <label className="flex items-center gap-2 cursor-pointer group">
-                  <input
-                    type="checkbox"
-                    className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
-                  />
-                  <span className="text-sm text-gray-600 group-hover:text-gray-900 transition-colors">Remember me</span>
-                </label>
-                <Link to="/forgot-password" className="text-sm text-primary-600 hover:text-primary-700 font-semibold hover:underline transition-colors">
-                  Forgot Password?
-                </Link>
-              </div>
+                <div className="flex items-center justify-between">
+                  <label className="flex items-center gap-2 cursor-pointer group">
+                    <input
+                      type="checkbox"
+                      className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+                    />
+                    <span className="text-sm text-gray-600 group-hover:text-gray-900 transition-colors">Remember me</span>
+                  </label>
+                  <Link to="/forgot-password" className="text-sm text-primary-600 hover:text-primary-700 font-semibold hover:underline transition-colors">
+                    Forgot Password?
+                  </Link>
+                </div>
 
-              <button
-                type="submit"
-                disabled={loginMutation.isPending}
-                className="w-full py-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl hover:from-primary-700 hover:to-primary-800 disabled:opacity-50 font-semibold transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-primary-500/25 active:scale-[0.98] text-sm"
-              >
-                {loginMutation.isPending ? (
+                <div className="flex justify-center">
+                  <ReCaptchaWidget onChange={setCaptchaToken} />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loginMutation.isPending}
+                  className="w-full py-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl hover:from-primary-700 hover:to-primary-800 disabled:opacity-50 font-semibold transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-primary-500/25 active:scale-[0.98] text-sm"
+                >
+                  {loginMutation.isPending ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span>Signing in...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Sign In</span>
+                      <ArrowRight className="h-4 w-4" />
+                    </>
+                  )}
+                </button>
+              </form>
+            )}
+
+            {/* OTP Login Mode */}
+            {loginMode === 'otp' && (
+              <div className="space-y-4">
+                {otpStep === 'email' && (
                   <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    <span>Signing in...</span>
-                  </>
-                ) : (
-                  <>
-                    <span>Sign In</span>
-                    <ArrowRight className="h-4 w-4" />
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                        Email Address
+                      </label>
+                      <div className="relative group">
+                        <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                          <Mail className="h-4 w-4 text-gray-400 group-focus-within:text-primary-600 transition-colors" />
+                        </div>
+                        <input
+                          type="email"
+                          required
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          placeholder="Enter your email"
+                          className="w-full pl-11 pr-4 py-3 border-2 border-gray-100 rounded-xl focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/10 transition-all bg-gray-50/50 text-gray-900 placeholder:text-gray-400 text-sm"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex justify-center">
+                      <ReCaptchaWidget onChange={setCaptchaToken} />
+                    </div>
+
+                    <button
+                      onClick={handleSendOtp}
+                      disabled={sendOtpMutation.isPending || !email}
+                      className="w-full py-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl hover:from-primary-700 hover:to-primary-800 disabled:opacity-50 font-semibold transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-primary-500/25 active:scale-[0.98] text-sm"
+                    >
+                      {sendOtpMutation.isPending ? (
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          <span>Sending OTP...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>Send OTP</span>
+                          <ArrowRight className="h-4 w-4" />
+                        </>
+                      )}
+                    </button>
                   </>
                 )}
-              </button>
-            </form>
+
+                {otpStep === 'otp' && (
+                  <>
+                    <div className="text-center mb-4">
+                      <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <KeyRound className="h-8 w-8 text-primary-600" />
+                      </div>
+                      <h3 className="text-lg font-semibold text-gray-900">Enter Verification Code</h3>
+                      <p className="text-gray-500 text-sm mt-1">
+                        We sent a 4-digit code to<br />
+                        <span className="font-medium text-gray-700">{email}</span>
+                      </p>
+                    </div>
+
+                    <OtpInput
+                      length={4}
+                      onComplete={handleVerifyOtp}
+                      isLoading={verifyOtpMutation.isPending}
+                    />
+
+                    {verifyOtpMutation.isPending && (
+                      <div className="flex items-center justify-center gap-2 text-primary-600">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <span className="text-sm">Verifying...</span>
+                      </div>
+                    )}
+
+                    <div className="text-center">
+                      {countdown > 0 ? (
+                        <p className="text-sm text-gray-500">
+                          Resend OTP in <span className="font-medium text-primary-600">{countdown}s</span>
+                        </p>
+                      ) : (
+                        <button
+                          onClick={handleResendOtp}
+                          className="text-sm text-primary-600 hover:text-primary-700 font-semibold"
+                        >
+                          Resend OTP
+                        </button>
+                      )}
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        setOtpStep('email')
+                        setError('')
+                      }}
+                      className="w-full py-2 text-sm text-gray-600 hover:text-gray-900 font-medium"
+                    >
+                      Change Email
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
 
             {/* Social Login */}
             <div className="mt-6">

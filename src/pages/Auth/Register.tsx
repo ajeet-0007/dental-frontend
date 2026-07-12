@@ -1,9 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
 import api from '@/api'
 import { useAuthStore } from '@/stores/authStore'
-import { Mail, Lock, Eye, EyeOff, ArrowRight, User, Phone, CheckCircle2 } from 'lucide-react'
+import { Mail, Lock, Eye, EyeOff, ArrowRight, User, Phone, CheckCircle2, KeyRound, Loader2, X } from 'lucide-react'
+import ReCaptchaWidget from '@/components/common/ReCaptchaWidget'
+import OtpInput from '@/components/common/OtpInput'
 
 export default function Register() {
   const navigate = useNavigate()
@@ -17,16 +19,57 @@ export default function Register() {
   })
   const [error, setError] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null)
+  const [showOtpModal, setShowOtpModal] = useState(false)
+  const [registeredEmail, setRegisteredEmail] = useState('')
+  const [countdown, setCountdown] = useState(0)
+
+  useEffect(() => {
+    if (countdown > 0) {
+      const timer = setTimeout(() => setCountdown(countdown - 1), 1000)
+      return () => clearTimeout(timer)
+    }
+  }, [countdown])
 
   const registerMutation = useMutation({
-    mutationFn: (data: typeof formData) => api.post('/auth/register', data),
+    mutationFn: (data: typeof formData) =>
+      api.post('/auth/register', data, {
+        headers: { Recaptcha: captchaToken },
+      }),
+    onSuccess: (response) => {
+      if (response.data.requiresVerification) {
+        setRegisteredEmail(response.data.email)
+        setShowOtpModal(true)
+        setCountdown(60)
+      }
+    },
+    onError: (error: any) => {
+      setError(error.response?.data?.message || 'Registration failed. Please try again.')
+    },
+  })
+
+  const verifyOtpMutation = useMutation({
+    mutationFn: (data: { email: string; code: string; type: string }) =>
+      api.post('/auth/verify-otp', data),
     onSuccess: (response) => {
       const { user, accessToken, refreshToken } = response.data
       setAuth(user, accessToken, refreshToken)
+      setShowOtpModal(false)
       navigate('/')
     },
-    onError: () => {
-      setError('Registration failed. Please try again.')
+    onError: (error: any) => {
+      setError(error.response?.data?.message || 'Invalid OTP')
+    },
+  })
+
+  const resendOtpMutation = useMutation({
+    mutationFn: (data: { email: string; type: string }) =>
+      api.post('/auth/send-otp', data),
+    onSuccess: () => {
+      setCountdown(60)
+    },
+    onError: (error: any) => {
+      setError(error.response?.data?.message || 'Failed to resend OTP')
     },
   })
 
@@ -34,6 +77,16 @@ export default function Register() {
     e.preventDefault()
     setError('')
     registerMutation.mutate(formData)
+  }
+
+  const handleVerifyOtp = (code: string) => {
+    setError('')
+    verifyOtpMutation.mutate({ email: registeredEmail, code, type: 'register' })
+  }
+
+  const handleResendOtp = () => {
+    setError('')
+    resendOtpMutation.mutate({ email: registeredEmail, type: 'register' })
   }
 
   return (
@@ -224,6 +277,10 @@ export default function Register() {
                 <p className="mt-2 text-xs text-gray-500">Minimum 6 characters</p>
               </div>
 
+              <div className="flex justify-center">
+                <ReCaptchaWidget onChange={setCaptchaToken} />
+              </div>
+
               <div className="flex items-start gap-2 pt-2">
                 <input
                   type="checkbox"
@@ -244,7 +301,10 @@ export default function Register() {
                 className="w-full py-4 bg-primary-600 text-white rounded-xl hover:bg-primary-700 disabled:opacity-50 font-semibold transition-all flex items-center justify-center gap-2 group"
               >
                 {registerMutation.isPending ? (
-                  <span>Creating Account...</span>
+                  <>
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    <span>Creating Account...</span>
+                  </>
                 ) : (
                   <>
                     <span>Create Account</span>
@@ -274,6 +334,70 @@ export default function Register() {
           </div>
         </div>
       </div>
+
+      {/* OTP Verification Modal */}
+      {showOtpModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full relative">
+            <button
+              onClick={() => setShowOtpModal(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+            >
+              <X className="h-6 w-6" />
+            </button>
+
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <KeyRound className="h-8 w-8 text-primary-600" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900">Verify Your Email</h3>
+              <p className="text-gray-500 mt-2 text-sm">
+                We sent a 4-digit code to<br />
+                <span className="font-medium text-gray-700">{registeredEmail}</span>
+              </p>
+            </div>
+
+            {error && (
+              <div className="bg-red-50 border border-red-100 text-red-600 p-3 rounded-xl text-sm mb-4">
+                {error}
+              </div>
+            )}
+
+            <OtpInput
+              length={4}
+              onComplete={handleVerifyOtp}
+              isLoading={verifyOtpMutation.isPending}
+            />
+
+            {verifyOtpMutation.isPending && (
+              <div className="flex items-center justify-center gap-2 text-primary-600 mt-4">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span className="text-sm">Verifying...</span>
+              </div>
+            )}
+
+            <div className="text-center mt-6">
+              {countdown > 0 ? (
+                <p className="text-sm text-gray-500">
+                  Resend OTP in <span className="font-medium text-primary-600">{countdown}s</span>
+                </p>
+              ) : (
+                <button
+                  onClick={handleResendOtp}
+                  disabled={resendOtpMutation.isPending}
+                  className="text-sm text-primary-600 hover:text-primary-700 font-semibold disabled:opacity-50"
+                >
+                  {resendOtpMutation.isPending ? 'Sending...' : 'Resend OTP'}
+                </button>
+              )}
+            </div>
+
+            <p className="text-xs text-gray-500 text-center mt-4">
+              Didn't receive the code? Check your spam folder or try again.
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

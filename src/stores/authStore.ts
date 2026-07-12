@@ -11,6 +11,7 @@ interface User {
   isProfessionalVerified?: boolean
   dentalRegistrationId?: string
   stateDentalCouncil?: string
+  isEmailVerified?: boolean
 }
 
 interface AuthState {
