@@ -15,6 +15,7 @@ import BrandCarousel from "@/components/common/BrandCarousel";
 import HeroCarousel from "@/components/common/HeroCarousel";
 import CartDrawer from "@/components/common/CartDrawer";
 import NewsSection from "@/components/common/NewsSection";
+import GalleryPreview from "@/pages/Gallery/GalleryPreview";
 
 export default function Home() {
   const [cartDrawerProduct, setCartDrawerProduct] = useState<any>(null);
@@ -418,6 +419,9 @@ export default function Home() {
 
       {/* Latest Dental News Section */}
       <NewsSection />
+
+      {/* Gallery Preview Section */}
+      <GalleryPreview />
 
       {/* Awards & Recognition Section */}
       <section className="py-12 md:py-16 lg:py-20 bg-white">

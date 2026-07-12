@@ -28,6 +28,7 @@ const adminNavItems = [
   { label: "Departments", path: "/admin/departments", icon: Layers },
   { label: "Brands", path: "/admin/brands", icon: Award },
   { label: "Banners", path: "/admin/banners", icon: Image },
+  { label: "Gallery", path: "/admin/gallery", icon: Image },
   { label: "Orders", path: "/admin/orders", icon: ShoppingCart },
   { label: "Shipping", path: "/admin/shipping", icon: Truck },
   { label: "Payments", path: "/admin/payments", icon: DollarSign },

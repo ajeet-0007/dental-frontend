@@ -8,7 +8,7 @@ import { useCartStore } from "@/stores/cartStore";
 import { useWishlistStore } from "@/stores/wishlistStore";
 import {
   Package, ShoppingCart, Star, ChevronLeft, ChevronRight, Heart,
-  Minus, Plus, X, ArrowRight, Layers
+  Minus, Plus, X, ArrowRight, Layers, Share2
 } from "lucide-react";
 import type { ProductVariant } from "@/components/common/VariantSelector";
 import HtmlRenderer from "@/components/common/HtmlRenderer";
@@ -291,6 +291,29 @@ export default function ProductDetail() {
 
   const isInWishlist = wishlistItems.some((item) => item.id === `wishlist-${product?.id}`);
 
+  const handleShare = async () => {
+    const shareUrl = window.location.href;
+    const shareData = {
+      title: product?.name || "Check out this product",
+      text: `Check out ${product?.name} on Dentalkart`,
+      url: shareUrl,
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (error) {
+        if ((error as Error).name !== "AbortError") {
+          await navigator.clipboard.writeText(shareUrl);
+          toast.success("Link copied to clipboard!");
+        }
+      }
+    } else {
+      await navigator.clipboard.writeText(shareUrl);
+      toast.success("Link copied to clipboard!");
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -425,9 +448,17 @@ export default function ProductDetail() {
             <div className="lg:col-span-3 p-4 md:p-6 lg:p-10 lg:border-l lg:border-gray-100">
               {/* Header */}
               <div className="mb-4 md:mb-6 lg:mb-8">
-                <h1 className="text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-gray-900 mb-2 md:mb-4 leading-tight">
-                  {product.name}
-                </h1>
+                <div className="flex items-start justify-between gap-2">
+                  <h1 className="text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-gray-900 mb-2 md:mb-4 leading-tight">
+                    {product.name}
+                  </h1>
+                  <button
+                    onClick={handleShare}
+                    className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors flex-shrink-0 mt-0.5"
+                  >
+                    <Share2 className="h-4 w-4 md:h-5 md:w-5 text-gray-600" />
+                  </button>
+                </div>
 
                 {/* Rating */}
                 {reviewStatsData?.averageRating ? (
@@ -614,6 +645,13 @@ export default function ProductDetail() {
                         isInWishlist ? "text-red-500 fill-red-500" : "text-gray-600"
                       }`}
                     />
+                  </button>
+
+                  <button
+                    onClick={handleShare}
+                    className="p-2 md:p-3 rounded-lg md:rounded-xl bg-gray-100 hover:bg-gray-200 transition-colors"
+                  >
+                    <Share2 className="h-4 w-4 md:h-5 md:w-5 text-gray-600" />
                   </button>
                 </div>
               )}
