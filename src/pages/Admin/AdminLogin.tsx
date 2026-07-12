@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useAuthStore } from "@/stores/authStore";
 import api from "@/api";
+import ReCaptchaWidget from "@/components/common/ReCaptchaWidget";
 
 export default function AdminLogin() {
   const navigate = useNavigate();
@@ -10,13 +11,16 @@ export default function AdminLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const response = await api.post("/auth/login", { email, password });
+      const response = await api.post("/auth/login", { email, password }, {
+        headers: { Recaptcha: captchaToken },
+      });
       const { user, accessToken, refreshToken } = response.data;
 
       if (user.role !== "admin") {
@@ -75,9 +79,11 @@ export default function AdminLogin() {
             />
           </div>
 
+          <ReCaptchaWidget onChange={setCaptchaToken} />
+
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !captchaToken}
             className="w-full py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 font-medium"
           >
             {loading ? "Signing in..." : "Sign In"}
