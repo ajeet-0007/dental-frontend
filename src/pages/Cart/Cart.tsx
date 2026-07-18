@@ -71,7 +71,8 @@ export default function Cart() {
     0,
   );
 
-  const tax = Math.round(subtotal * 0.18);
+  const taxRate = Number(import.meta.env.VITE_TAX_RATE || 18) / 100;
+  const tax = Math.round(subtotal * taxRate);
   const total = subtotal + tax;
 
   // Get unique categories from cart items
@@ -252,7 +253,7 @@ export default function Cart() {
                 <span className="font-medium">₹{subtotal.toLocaleString()}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Tax (18% GST)</span>
+                    <span className="text-gray-600">Tax ({taxRate * 100}% GST)</span>
                 <span className="font-medium">₹{tax.toLocaleString()}</span>
               </div>
 

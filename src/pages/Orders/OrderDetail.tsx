@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
+import api from '@/api'
 import { ArrowLeft, Package, MapPin, CheckCircle, Loader2, RefreshCw, Clock, Truck, XCircle, AlertCircle, ShieldCheck, RotateCw, Undo2, Calendar, ChevronRight } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -24,62 +25,30 @@ export default function OrderDetail() {
   const [isCancelling, setIsCancelling] = useState(false)
 
   const fetchOrder = useCallback(async () => {
-    console.log('[OrderDetail] fetchOrder called with id:', id)
     try {
       setLoading(true)
-      const token = localStorage.getItem('accessToken')
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/orders/${id}`, {
-        headers: {
-          'Authorization': token ? `Bearer ${token}` : '',
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include'
-      })
-      
-      console.log('[OrderDetail] Response status:', res.status)
-      
-      if (!res.ok) {
-        console.error('[OrderDetail] Error response:', res.status, res.statusText)
-        const errorData = await res.json().catch(() => ({}))
-        console.error('[OrderDetail] Error data:', errorData)
-        toast.error(errorData.message || 'Failed to load order')
-        setOrder(null)
-        return
-      }
-      
-      const data = await res.json()
-      console.log('[OrderDetail] Full response:', JSON.stringify(data, null, 2))
-      
-      // Handle both wrapped and unwrapped responses
-      // API might return { data: order } or just order directly
+      const res = await api.get(`/orders/${id}`)
+      const data = res.data
+
       let orderData = null
-      
+
       if (data && typeof data === 'object') {
-        // Check if it's wrapped in { data: {...} }
         if (data.data && typeof data.data === 'object' && data.data.id) {
           orderData = data.data
-        }
-        // Check if it's a direct order object with id
-        else if (data.id) {
+        } else if (data.id) {
           orderData = data
-        }
-        // Check if it has orderNumber (another possible format)
-        else if (data.orderNumber) {
+        } else if (data.orderNumber) {
           orderData = data
         }
       }
-      
-      console.log('[OrderDetail] Parsed orderData:', orderData)
-      
+
       if (orderData) {
         setOrder(orderData)
       } else {
-        console.error('[OrderDetail] No valid order data, response was:', data)
         toast.error('Order not found')
         setOrder(null)
       }
     } catch (error) {
-      console.error('[OrderDetail] Error fetching order:', error)
       toast.error('Failed to load order')
       setOrder(null)
     } finally {
@@ -89,44 +58,29 @@ export default function OrderDetail() {
 
   const verifyPayment = useCallback(async (sid: string) => {
     if (verifying || verificationRef.current) {
-      console.log('[OrderDetail] Already verifying, skipping')
       return
     }
 
     setVerifying(true)
-    console.log('[OrderDetail] Starting verification with sessionId:', sid)
     try {
-      const token = localStorage.getItem('accessToken')
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/payments/verify-session`, {
-        method: 'POST',
-        headers: {
-          'Authorization': token ? `Bearer ${token}` : '',
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include',
-        body: JSON.stringify({ sessionId: sid })
-      })
-      const data = await res.json()
-      console.log('[OrderDetail] Verification result:', data)
+      const res = await api.post('/payments/verify-session', { sessionId: sid })
+      const data = res.data
 
       if (data.success) {
         toast.success('Payment verified! Order confirmed.')
         await fetchOrder()
         queryClient.invalidateQueries({ queryKey: ['orders'] })
         
-        // Clear URL params after successful verification
         const url = new URL(window.location.href)
         if (url.searchParams.has('session_id') || url.searchParams.has('payment')) {
           url.searchParams.delete('session_id')
           url.searchParams.delete('payment')
           window.history.replaceState({}, '', url.toString())
-          console.log('[OrderDetail] Cleared URL params')
         }
       } else {
         toast.error(data.error || 'Verification failed')
       }
     } catch (error) {
-      console.error('Verification error:', error)
       toast.error('Could not verify payment')
     } finally {
       setVerifying(false)
@@ -140,34 +94,20 @@ export default function OrderDetail() {
     }
     
     try {
-      const token = localStorage.getItem('accessToken')
       const tomorrow = new Date()
       tomorrow.setDate(tomorrow.getDate() + 1)
       
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/shipping/shipments/${order.shipmentId}/reschedule`,
-        {
-          method: 'POST',
-          headers: {
-            'Authorization': token ? `Bearer ${token}` : '',
-            'Content-Type': 'application/json'
-          },
-          credentials: 'include',
-          body: JSON.stringify({ 
-            newDeliveryDate: tomorrow.toISOString().split('T')[0]
-          })
-        }
-      )
-      const data = await res.json()
+      const res = await api.post(`/shipping/shipments/${order.shipmentId}/reschedule`, {
+        newDeliveryDate: tomorrow.toISOString().split('T')[0]
+      })
       
-      if (data.success) {
+      if (res.data.success) {
         toast.success('Delivery rescheduled successfully')
         fetchOrder()
       } else {
-        toast.error(data.message || 'Failed to reschedule delivery')
+        toast.error(res.data.message || 'Failed to reschedule delivery')
       }
     } catch (error) {
-      console.error('Reschedule error:', error)
       toast.error('Could not reschedule delivery')
     }
   }, [order?.shipmentId, fetchOrder])
@@ -176,7 +116,6 @@ export default function OrderDetail() {
     const params = new URLSearchParams(window.location.search)
     const sid = params.get('session_id')
     const paymentStatus = params.get('payment')
-    console.log('[OrderDetail] URL params - sessionId:', sid, 'payment:', paymentStatus)
     
     setSessionId(sid)
     fetchOrder()
@@ -195,20 +134,11 @@ export default function OrderDetail() {
     if (!id) return
     setTrackingLoading(true)
     try {
-      const token = localStorage.getItem('accessToken')
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/orders/${id}/tracking`, {
-        headers: {
-          'Authorization': token ? `Bearer ${token}` : '',
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include'
-      })
-      const data = await res.json()
-      if (data.data) {
-        setTracking(data.data)
+      const res = await api.get(`/orders/${id}/tracking`)
+      if (res.data.data) {
+        setTracking(res.data.data)
       }
     } catch (error) {
-      console.error('Error fetching tracking:', error)
     } finally {
       setTrackingLoading(false)
     }
@@ -241,27 +171,16 @@ export default function OrderDetail() {
   const handleCancelOrder = async () => {
     setIsCancelling(true)
     try {
-      const token = localStorage.getItem('accessToken')
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/orders/${id}/cancel`, {
-        method: 'POST',
-        headers: {
-          'Authorization': token ? `Bearer ${token}` : '',
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include',
-        body: JSON.stringify({})
-      })
-      const data = await res.json()
-      if (data.success) {
+      const res = await api.post(`/orders/${id}/cancel`, {})
+      if (res.data.success) {
         toast.success('Order cancelled successfully')
         setShowCancelModal(false)
         await fetchOrder()
         queryClient.invalidateQueries({ queryKey: ['orders'] })
       } else {
-        toast.error(data.message || 'Failed to cancel order')
+        toast.error(res.data.message || 'Failed to cancel order')
       }
     } catch (error) {
-      console.error('Cancel error:', error)
       toast.error('Failed to cancel order')
     } finally {
       setIsCancelling(false)

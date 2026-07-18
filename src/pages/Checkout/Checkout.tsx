@@ -138,7 +138,8 @@ export default function Checkout() {
                     const price = item.variant?.sellingPrice || item.product.sellingPrice;
     return sum + price * item.quantity;
   }, 0);
-  const tax = Math.round(subtotal * 0.18);
+  const taxRate = Number(import.meta.env.VITE_TAX_RATE || 18) / 100;
+  const tax = Math.round(subtotal * taxRate);
   const total = subtotal + tax;
 
   const createAddressMutation = useMutation({
@@ -748,7 +749,7 @@ export default function Checkout() {
                     <span className="font-medium">₹{subtotal.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Tax (18% GST)</span>
+                    <span className="text-gray-600">Tax ({taxRate * 100}% GST)</span>
                     <span className="font-medium">₹{tax.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between pt-2 border-t">
