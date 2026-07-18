@@ -114,12 +114,12 @@ export default function BrandCarousel({ brands, itemsPerPage = 6 }: BrandCarouse
                   className="group/card block"
                 >
                   <div className="relative bg-white rounded-2xl border border-gray-200 overflow-hidden transition-all duration-300 group-hover/card:shadow-lg group-hover/card:border-primary-200 group-hover/card:-translate-y-1">
-                    <div className="aspect-square flex items-center justify-center p-4 bg-gray-50/50">
+                    <div className="aspect-square bg-gray-50/50 overflow-hidden p-2">
                       {brand.logo ? (
                         <img
                           src={brand.logo}
                           alt={brand.name}
-                          className="w-full h-full object-contain transition-transform duration-300 group-hover/card:scale-110"
+                          className="w-full h-full object-contain rounded-xl transition-transform duration-300 group-hover/card:scale-110"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement;
                             target.style.display = "none";
@@ -133,7 +133,7 @@ export default function BrandCarousel({ brands, itemsPerPage = 6 }: BrandCarouse
                         </div>
                       )}
                     </div>
-                    <div className="px-3 pb-3 text-center border-t border-gray-100">
+                    <div className="px-3 pb-3 text-center border-t border-gray-100 h-14 flex flex-col items-center justify-center">
                       <h3 className="font-semibold text-sm text-gray-700 leading-tight line-clamp-2 mt-2 group-hover/card:text-primary-600 transition-colors">
                         {brand.name}
                       </h3>

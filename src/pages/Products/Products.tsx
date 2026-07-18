@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import api from "@/api";
 import { useCartStore } from "@/stores/cartStore";
 import { useWishlistStore } from "@/stores/wishlistStore";
-import { Package, ChevronDown, ChevronUp, X, SlidersHorizontal, ShoppingCart, Check, Heart, ArrowUpDown, Tag, Layers, Store, DollarSign, PackageCheck } from "lucide-react";
+import { Package, ChevronDown, ChevronUp, X, SlidersHorizontal, ShoppingCart, Heart, ArrowUpDown, Tag, Layers, Store, DollarSign, PackageCheck } from "lucide-react";
 import CartDrawer from "@/components/common/CartDrawer";
 import { PriceRangeSlider } from "@/components/common/PriceRangeSlider";
 
@@ -999,14 +999,29 @@ export default function Products() {
                             )}
                           </div>
                           
-                          <div className="flex items-center gap-2">
-                            <span className="text-base font-bold text-primary-600">
-                              {showPriceRange ? `From ₹${minPrice.toLocaleString()}` : `₹${minPrice.toLocaleString()}`}
-                            </span>
-                            {product.mrp > minPrice && (
-                              <span className="text-xs text-gray-400 line-through">
-                                ₹{product.mrp.toLocaleString()}
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <span className="text-base font-bold text-primary-600">
+                                {showPriceRange ? `From ₹${minPrice.toLocaleString()}` : `₹${minPrice.toLocaleString()}`}
                               </span>
+                              {product.mrp > minPrice && (
+                                <span className="text-xs text-gray-400 line-through">
+                                  ₹{product.mrp.toLocaleString()}
+                                </span>
+                              )}
+                            </div>
+                            {!isOutOfStock && (
+                              <button
+                                onClick={(e) => handleOpenCartDrawer(e, product)}
+                                className={`p-2 rounded-full transition-colors touch-manipulation ${
+                                  inCart
+                                    ? "bg-green-100 text-green-600"
+                                    : "bg-primary-50 text-primary-600 hover:bg-primary-100"
+                                }`}
+                                title={inCart ? "Update cart" : "Add to cart"}
+                              >
+                                <ShoppingCart className="w-4 h-4" />
+                              </button>
                             )}
                           </div>
                         </div>
@@ -1014,7 +1029,7 @@ export default function Products() {
                       
                       <button
                         onClick={(e) => handleToggleWishlist(e, product)}
-                        className={`absolute top-3 left-3 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 active:scale-90 ${
+                        className={`absolute top-3 right-3 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 active:scale-90 ${
                           inWishlist
                             ? "bg-red-500 text-white hover:bg-red-600"
                             : "bg-white/90 text-gray-600 hover:text-red-500 shadow-md"
@@ -1023,32 +1038,6 @@ export default function Products() {
                       >
                         <Heart className={`h-4 w-4 ${inWishlist ? "fill-white" : ""}`} />
                       </button>
-                      
-                      {isOutOfStock ? (
-                        <button
-                          disabled
-                          className="absolute bottom-3 right-3 w-10 h-10 rounded-full flex items-center justify-center shadow-lg bg-gray-400 text-white cursor-not-allowed"
-                          title="Out of Stock"
-                        >
-                          <X className="h-5 w-5" />
-                        </button>
-                      ) : (
-                        <button
-                          onClick={(e) => handleOpenCartDrawer(e, product)}
-                          className={`absolute bottom-3 right-3 w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-all duration-200 active:scale-90 ${
-                            inCart
-                              ? "bg-green-500 text-white hover:bg-green-600"
-                              : "bg-primary-600 text-white hover:bg-primary-700"
-                          }`}
-                          title={inCart ? "Update cart" : "Add to cart"}
-                        >
-                          {inCart ? (
-                            <Check className="h-5 w-5" />
-                          ) : (
-                            <ShoppingCart className="h-5 w-5" />
-                          )}
-                        </button>
-                      )}
                     </div>
                   );
                 })}

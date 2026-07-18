@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import api from "@/api";
 import { useAuthStore } from "@/stores/authStore";
@@ -23,11 +23,32 @@ export default function CartDrawer({ isOpen, onClose, product }: CartDrawerProps
   const activeVariants = variants.filter((v: any) => v.isActive);
   const hasVariants = activeVariants.length > 0;
 
+  const { data: fullProduct } = useQuery({
+    queryKey: ["cartDrawerProduct", product?.slug],
+    queryFn: async () => {
+      const res = await api.get(`/products/slug/${product.slug}`);
+      return res.data;
+    },
+    enabled: isOpen && !!product?.slug && !hasVariants,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const effectiveProduct = fullProduct || product;
+  const resolvedVariants = effectiveProduct?.variants || [];
+  const activeResolvedVariants = resolvedVariants.filter((v: any) => v.isActive);
+  const resolvedHasVariants = activeResolvedVariants.length > 0;
+
+  const [addingVariantId, setAddingVariantId] = useState<string | null>(null);
+
   const addToCartMutation = useMutation({
     mutationFn: (payload: { productId: string; productVariantId?: string; quantity: number }) =>
       api.post("/cart/add", payload),
     onSuccess: () => {
+      setAddingVariantId(null);
       queryClient.invalidateQueries({ queryKey: ["cart"] });
+    },
+    onError: () => {
+      setAddingVariantId(null);
     },
   });
 
@@ -39,6 +60,7 @@ export default function CartDrawer({ isOpen, onClose, product }: CartDrawerProps
       return;
     }
 
+    setAddingVariantId(variant.id);
     try {
       await addToCartMutation.mutateAsync({
         productId: product.id,
@@ -82,12 +104,12 @@ export default function CartDrawer({ isOpen, onClose, product }: CartDrawerProps
 
   if (!isOpen || !product) return null;
 
-  const displayPrice = hasVariants
-    ? Math.min(...activeVariants.map((v: any) => v.sellingPrice || 0))
-    : product.sellingPrice || 0;
-  const displayMrp = hasVariants
-    ? Math.max(...activeVariants.map((v: any) => v.mrp || 0))
-    : product.mrp || 0;
+  const displayPrice = resolvedHasVariants
+    ? Math.min(...activeResolvedVariants.map((v: any) => v.sellingPrice || 0))
+    : effectiveProduct.sellingPrice || 0;
+  const displayMrp = resolvedHasVariants
+    ? Math.max(...activeResolvedVariants.map((v: any) => v.mrp || 0))
+    : effectiveProduct.mrp || 0;
   const discountPercent = displayMrp > displayPrice
     ? Math.round((1 - displayPrice / displayMrp) * 100)
     : 0;
@@ -101,7 +123,7 @@ export default function CartDrawer({ isOpen, onClose, product }: CartDrawerProps
   };
 
   const highestStockByVariant = (variant: any) => {
-    const inventories = product?.inventories || [];
+    const inventories = effectiveProduct?.inventories || [];
     const inv = inventories.find((i: any) => i.productVariantId === variant.id);
     if (!inv) return 0;
     return inv.quantity - inv.reservedQuantity;
@@ -146,9 +168,12 @@ export default function CartDrawer({ isOpen, onClose, product }: CartDrawerProps
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-sm font-medium text-gray-900 line-clamp-2 mb-2">
+              <h3 className="text-sm font-medium text-gray-900 line-clamp-2 mb-1">
                 {product.name}
               </h3>
+              {effectiveProduct.shortDescription && (
+                <p className="text-xs text-gray-400 line-clamp-1 mb-1.5">{effectiveProduct.shortDescription}</p>
+              )}
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-lg font-bold text-primary-600">
                   ₹{displayPrice.toLocaleString()}
@@ -168,9 +193,9 @@ export default function CartDrawer({ isOpen, onClose, product }: CartDrawerProps
           </div>
 
           {/* Variant Rows */}
-          {hasVariants ? (
+          {resolvedHasVariants ? (
             <div className="space-y-3 mb-4">
-              {activeVariants.map((variant: any) => {
+              {activeResolvedVariants.map((variant: any) => {
                 const variantImage = getVariantImage(variant);
                 const stock = highestStockByVariant(variant);
                 const isOutOfStock = stock <= 0;
@@ -234,14 +259,14 @@ export default function CartDrawer({ isOpen, onClose, product }: CartDrawerProps
                     {/* Add Button */}
                     <button
                       onClick={() => handleVariantAddToCart(variant)}
-                      disabled={addToCartMutation.isPending || isOutOfStock}
+                      disabled={addingVariantId === variant.id || isOutOfStock}
                       className={`px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
                         variantInCart
                           ? "bg-green-100 text-green-700 border border-green-300"
                           : "bg-primary-600 text-white hover:bg-primary-700"
                       } disabled:opacity-50 disabled:cursor-not-allowed`}
                     >
-                      {addToCartMutation.isPending ? "..." : variantInCart ? "In Cart" : "Add"}
+                      {addingVariantId === variant.id ? "Adding..." : variantInCart ? "In Cart" : "Add to Cart"}
                     </button>
                   </div>
                 );
@@ -253,13 +278,6 @@ export default function CartDrawer({ isOpen, onClose, product }: CartDrawerProps
               product={product}
               onClose={onClose}
             />
-          )}
-
-          {/* Short Description */}
-          {product.shortDescription && (
-            <div className="mb-4">
-              <p className="text-sm text-gray-500 line-clamp-3">{product.shortDescription}</p>
-            </div>
           )}
         </div>
 

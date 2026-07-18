@@ -117,7 +117,7 @@ export default function DepartmentCarousel({ departments, itemsPerPage = 6 }: De
                   className="group/card block"
                 >
                   <div className="relative bg-white rounded-2xl border border-gray-200 overflow-hidden transition-all duration-300 group-hover/card:shadow-lg group-hover/card:border-primary-200 group-hover/card:-translate-y-1">
-                    <div className="aspect-square flex items-center justify-center p-4 bg-gray-50/50">
+                    <div className="aspect-square bg-gray-50/50 overflow-hidden p-2">
                       <img
                         src={imageUrl}
                         alt={department.name}
@@ -128,7 +128,7 @@ export default function DepartmentCarousel({ departments, itemsPerPage = 6 }: De
                         }}
                       />
                     </div>
-                    <div className="px-3 pb-3 text-center border-t border-gray-100">
+                    <div className="px-3 pb-3 text-center border-t border-gray-100 h-14 flex flex-col items-center justify-center">
                       <h3 className="font-semibold text-sm text-gray-700 leading-tight line-clamp-2 mt-2 group-hover/card:text-primary-600 transition-colors">
                         {department.name}
                       </h3>

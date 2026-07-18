@@ -36,6 +36,7 @@ export default function ProductDetail() {
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false);
   const [selectedProductForDrawer, setSelectedProductForDrawer] = useState<any>(null);
+  const [addingVariantId, setAddingVariantId] = useState<string | null>(null);
   const imageContainerRef = useRef<HTMLDivElement>(null);
 
   const minSwipeDistance = 50;
@@ -178,10 +179,12 @@ export default function ProductDetail() {
       quantity: number;
     }) => api.post("/cart/add", payload),
     onSuccess: () => {
+      setAddingVariantId(null);
       queryClient.invalidateQueries({ queryKey: ["cart"] });
       toast.success("Added to cart!");
     },
     onError: () => {
+      setAddingVariantId(null);
       toast.error("Failed to add to cart");
     },
   });
@@ -243,6 +246,7 @@ export default function ProductDetail() {
       return;
     }
 
+    setAddingVariantId(variant.id);
     addToCartMutation.mutate({
       productId: String(product.id),
       productVariantId: variant.id,
@@ -593,7 +597,7 @@ export default function ProductDetail() {
 
                           <button
                             onClick={() => handleVariantAddToCart(variant)}
-                            disabled={addToCartMutation.isPending || isOutOfStock}
+                            disabled={addingVariantId === variant.id || isOutOfStock}
                             className={`flex items-center gap-1 px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-xs md:text-sm font-medium transition-all flex-shrink-0 ${
                               isOutOfStock
                                 ? "bg-gray-200 text-gray-400 cursor-not-allowed"
@@ -601,7 +605,7 @@ export default function ProductDetail() {
                             }`}
                           >
                             <ShoppingCart className="w-3.5 h-3.5" />
-                            {addToCartMutation.isPending ? "Adding..." : "Add"}
+                            {addingVariantId === variant.id ? "Adding..." : "Add"}
                           </button>
                         </div>
                       );
