@@ -251,6 +251,7 @@ export default function Cart() {
                         </span>
                       )}
 
+                      {/* Price */}
                       <div className="flex items-center gap-2 mt-2 flex-wrap">
                         <span className="text-base font-bold text-gray-900">
                           ₹{itemTotal.toLocaleString()}
