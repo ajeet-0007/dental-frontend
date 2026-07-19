@@ -151,12 +151,14 @@ export default function DepartmentCarousel({ departments, itemsPerPage = 6 }: De
           <button
             onClick={prevSlide}
             className="absolute left-0 top-1/2 -translate-y-1/2 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-full p-2.5 shadow-md hover:bg-white hover:shadow-lg transition-all z-10 opacity-0 group-hover:opacity-100"
+            title="Previous"
           >
             <ChevronLeft className="w-4 h-4 text-gray-600" />
           </button>
           <button
             onClick={nextSlide}
             className="absolute right-0 top-1/2 -translate-y-1/2 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-full p-2.5 shadow-md hover:bg-white hover:shadow-lg transition-all z-10 opacity-0 group-hover:opacity-100"
+            title="Next"
           >
             <ChevronRight className="w-4 h-4 text-gray-600" />
           </button>

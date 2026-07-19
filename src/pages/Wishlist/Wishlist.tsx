@@ -6,6 +6,7 @@ import { useAuthStore } from '@/stores/authStore'
 import api from '@/api'
 import toast from 'react-hot-toast'
 
+
 export default function Wishlist() {
   const { items, removeItem } = useWishlistStore()
   const { addItem: addToCart } = useCartStore()
@@ -102,11 +103,12 @@ export default function Wishlist() {
                 Add to Cart
               </button>
               <button
-                onClick={() => removeItem(item.id)}
-                className="p-2 border border-gray-200 rounded-lg hover:bg-red-50 hover:border-red-200 transition-colors"
-              >
-                <Trash2 className="h-4 w-4 text-gray-400 hover:text-red-500" />
-              </button>
+                  onClick={() => removeItem(item.id)}
+                  className="p-2 border border-gray-200 rounded-lg hover:bg-red-50 hover:border-red-200 transition-colors"
+                  title="Remove from wishlist"
+                >
+                  <Trash2 className="h-4 w-4 text-gray-400 hover:text-red-500" />
+                </button>
             </div>
           </div>
         ))}

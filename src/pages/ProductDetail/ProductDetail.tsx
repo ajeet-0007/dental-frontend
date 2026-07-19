@@ -413,6 +413,7 @@ export default function ProductDetail() {
                           prevImage();
                         }}
                         className="absolute left-2 md:left-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white shadow-lg rounded-full p-1.5 md:p-2.5 transition-all"
+                        title="Previous image"
                       >
                         <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
                       </button>
@@ -422,6 +423,7 @@ export default function ProductDetail() {
                           nextImage();
                         }}
                         className="absolute right-2 md:right-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white shadow-lg rounded-full p-1.5 md:p-2.5 transition-all"
+                        title="Next image"
                       >
                         <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
                       </button>
@@ -475,6 +477,7 @@ export default function ProductDetail() {
                   <button
                     onClick={handleShare}
                     className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors flex-shrink-0 mt-0.5"
+                    title="Share"
                   >
                     <Share2 className="h-4 w-4 md:h-5 md:w-5 text-gray-600" />
                   </button>
@@ -621,6 +624,7 @@ export default function ProductDetail() {
                     <button
                       onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                       className="p-2 md:p-3 hover:bg-gray-200 rounded-l-lg md:rounded-l-xl transition-colors"
+                      title="Decrease quantity"
                     >
                       <Minus className="h-3.5 w-3.5 md:h-4 md:w-4" />
                     </button>
@@ -630,6 +634,7 @@ export default function ProductDetail() {
                     <button
                       onClick={() => setQuantity((q) => q + 1)}
                       className="p-2 md:p-3 hover:bg-gray-200 rounded-r-lg md:rounded-r-xl transition-colors"
+                      title="Increase quantity"
                     >
                       <Plus className="h-3.5 w-3.5 md:h-4 md:w-4" />
                     </button>
@@ -659,6 +664,7 @@ export default function ProductDetail() {
                         ? "bg-red-50 hover:bg-red-100"
                         : "bg-gray-100 hover:bg-gray-200"
                     }`}
+                    title={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
                   >
                     <Heart
                       className={`h-4 w-4 md:h-5 md:w-5 ${
@@ -670,6 +676,7 @@ export default function ProductDetail() {
                   <button
                     onClick={handleShare}
                     className="p-2 md:p-3 rounded-lg md:rounded-xl bg-gray-100 hover:bg-gray-200 transition-colors"
+                    title="Share"
                   >
                     <Share2 className="h-4 w-4 md:h-5 md:w-5 text-gray-600" />
                   </button>
@@ -840,6 +847,7 @@ export default function ProductDetail() {
           <button
             onClick={() => setShowLightbox(false)}
             className="absolute top-4 right-4 md:top-6 md:right-6 text-white/70 hover:text-white p-2"
+            title="Close"
           >
             <X className="w-6 h-6 md:w-8 md:h-8" />
           </button>
@@ -850,6 +858,7 @@ export default function ProductDetail() {
               prevImage();
             }}
             className="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 text-white/70 hover:text-white p-2 md:p-3 bg-white/10 rounded-full"
+            title="Previous image"
           >
             <ChevronLeft className="w-6 h-6 md:w-8 md:h-8" />
           </button>
@@ -867,6 +876,7 @@ export default function ProductDetail() {
               nextImage();
             }}
             className="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 text-white/70 hover:text-white p-2 md:p-3 bg-white/10 rounded-full"
+            title="Next image"
           >
             <ChevronRight className="w-6 h-6 md:w-8 md:h-8" />
           </button>

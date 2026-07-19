@@ -131,12 +131,14 @@ export default function HeroCarousel({ banners }: HeroCarouselProps) {
           <button
             onClick={prevSlide}
             className="absolute left-2 md:left-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white border rounded-full p-1.5 md:p-2 shadow-md transition-all z-10 opacity-0 group-hover:opacity-100"
+            title="Previous"
           >
             <ChevronLeft className="w-4 h-4 md:w-5 md:h-5 text-gray-800" />
           </button>
           <button
             onClick={nextSlide}
             className="absolute right-2 md:right-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white border rounded-full p-1.5 md:p-2 shadow-md transition-all z-10 opacity-0 group-hover:opacity-100"
+            title="Next"
           >
             <ChevronRight className="w-4 h-4 md:w-5 md:h-5 text-gray-800" />
           </button>

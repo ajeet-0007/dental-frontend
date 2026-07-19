@@ -83,6 +83,7 @@ export default function WishlistDrawer({ isOpen, onClose }: WishlistDrawerProps)
           <button
             onClick={onClose}
             className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            title="Close"
           >
             <X className="h-5 w-5 text-gray-500" />
           </button>
@@ -161,6 +162,7 @@ export default function WishlistDrawer({ isOpen, onClose }: WishlistDrawerProps)
                       <button
                         onClick={() => handleRemove(item.id, parseInt(item.product.id))}
                         className="p-2 text-gray-400 hover:text-red-500 transition-colors"
+                        title="Remove from wishlist"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>

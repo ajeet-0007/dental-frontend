@@ -1,14 +1,15 @@
-import { useState, useEffect, memo } from "react";
+import { useState, useEffect, useRef, useCallback, memo } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 import api from "@/api";
 import { useCartStore } from "@/stores/cartStore";
 import { useWishlistStore } from "@/stores/wishlistStore";
-import { Package, ChevronDown, ChevronUp, X, SlidersHorizontal, ShoppingCart, Heart, ArrowUpDown, Tag, Layers, Store, DollarSign, PackageCheck } from "lucide-react";
+import { Package, ChevronDown, ChevronUp, X, SlidersHorizontal, ShoppingCart, Heart, ArrowUpDown, Tag, Layers, Store, DollarSign, PackageCheck, Loader2 } from "lucide-react";
 import CartDrawer from "@/components/common/CartDrawer";
 import { PriceRangeSlider } from "@/components/common/PriceRangeSlider";
+
 
 const DEFAULT_IMAGE =
   "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=400&h=400&fit=crop";
@@ -32,7 +33,6 @@ interface ExpandedSections {
 
 export default function Products() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [page, setPage] = useState(1);
   const [showFilters, setShowFilters] = useState(false);
   const [expandedSections, setExpandedSections] = useState<ExpandedSections>({
     categories: true,
@@ -55,6 +55,7 @@ export default function Products() {
 
   const [sortBy, setSortBy] = useState("newest");
   const [showSortMenu, setShowSortMenu] = useState(false);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   const sortOptions = [
     { value: "newest", label: "Newest First" },
@@ -110,30 +111,49 @@ export default function Products() {
       maxPrice: urlMaxPrice || "",
       inStock: urlInStock === "true",
     }));
-    setPage(1);
   }, [searchParams]);
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["products", searchQuery, filters, page, sortBy],
-    queryFn: () =>
-      api.get("/products", {
-        params: {
-          search: searchQuery || undefined,
-          categories: filters.categories.length > 0 ? filters.categories.join(',') : undefined,
-          departments: filters.departments.length > 0 ? filters.departments.join(',') : undefined,
-          brand: filters.brands.length > 0 ? filters.brands.join(',') : undefined,
-          minPrice: filters.minPrice || undefined,
-          maxPrice: filters.maxPrice || undefined,
-          inStock: filters.inStock || undefined,
-          page,
-          limit: 12,
-          sortBy,
-        },
-      }),
+  const buildParams = useCallback((p: number) => ({
+    search: searchQuery || undefined,
+    categories: filters.categories.length > 0 ? filters.categories.join(',') : undefined,
+    departments: filters.departments.length > 0 ? filters.departments.join(',') : undefined,
+    brand: filters.brands.length > 0 ? filters.brands.join(',') : undefined,
+    minPrice: filters.minPrice || undefined,
+    maxPrice: filters.maxPrice || undefined,
+    inStock: filters.inStock || undefined,
+    page: p,
+    limit: 20,
+    sortBy,
+  }), [searchQuery, filters, sortBy]);
+
+  const { data, isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } = useInfiniteQuery({
+    queryKey: ["products", searchQuery, filters, sortBy],
+    queryFn: ({ pageParam = 1 }) =>
+      api.get("/products", { params: buildParams(pageParam) }).then((res) => res.data),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage: any) =>
+      lastPage.page < lastPage.totalPages ? lastPage.page + 1 : undefined,
   });
 
-  const products = data?.data?.products || [];
-  const totalPages = data?.data?.totalPages || 0;
+  const products = data?.pages.flatMap((p: any) => p.products) ?? [];
+  const total = data?.pages[0]?.total ?? 0;
+
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      { rootMargin: "200px" }
+    );
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const updateURLParams = (newFilters: Filters) => {
     const params = new URLSearchParams();
@@ -174,7 +194,6 @@ export default function Products() {
       updateURLParams(newFilters);
       return newFilters;
     });
-    setPage(1);
   };
 
   const toggleDepartment = (slug: string) => {
@@ -188,7 +207,6 @@ export default function Products() {
       updateURLParams(newFilters);
       return newFilters;
     });
-    setPage(1);
   };
 
   const toggleBrand = (slug: string) => {
@@ -202,7 +220,6 @@ export default function Products() {
       updateURLParams(newFilters);
       return newFilters;
     });
-    setPage(1);
   };
 
   const hasActiveFilters = 
@@ -236,7 +253,6 @@ export default function Products() {
     };
     setFilters(emptyFilters);
     updateURLParams(emptyFilters);
-    setPage(1);
   };
 
   const isInCart = (productId: string) => {
@@ -599,7 +615,6 @@ export default function Products() {
                 updateURLParams(newFilters);
                 return newFilters;
               });
-              setPage(1);
             }}
             className={`flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-full border transition-all whitespace-nowrap ${
               filters.inStock
@@ -639,7 +654,6 @@ export default function Products() {
                   updateURLParams(newFilters);
                   return newFilters;
                 });
-                setPage(1);
               }}
               onInStockChange={(checked) => {
                 setFilters((prev) => {
@@ -647,7 +661,6 @@ export default function Products() {
                   updateURLParams(newFilters);
                   return newFilters;
                 });
-                setPage(1);
               }}
             />
           </div>
@@ -701,7 +714,6 @@ export default function Products() {
                     updateURLParams(newFilters);
                     return newFilters;
                   });
-                  setPage(1);
                 }}
                 onInStockChange={(checked) => {
                   setFilters((prev) => {
@@ -709,14 +721,10 @@ export default function Products() {
                     updateURLParams(newFilters);
                     return newFilters;
                   });
-                  setPage(1);
                 }}
               />
               <button
-                onClick={() => {
-                  setPage(1);
-                  setShowFilters(false);
-                }}
+                onClick={() => setShowFilters(false)}
                 className="w-full mt-6 py-3 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 active:bg-primary-800 transition-colors"
               >
                 Show Results
@@ -831,12 +839,13 @@ export default function Products() {
           {/* Sort and Results Count */}
           <div className="flex items-center justify-between mb-4 gap-2">
             <p className="text-sm text-gray-600 truncate">
-              {data?.data?.total || 0} products
+              {total} products
             </p>
             <div className="relative">
               <button
                 onClick={() => setShowSortMenu(!showSortMenu)}
                 className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-full border border-gray-200 hover:border-primary-500 hover:bg-primary-50 transition-colors"
+                title="Sort"
               >
                 <ArrowUpDown className="h-4 w-4" />
                 <span className="hidden sm:inline">
@@ -859,7 +868,6 @@ export default function Products() {
                         onClick={() => {
                           setSortBy(option.value);
                           setShowSortMenu(false);
-                          setPage(1);
                         }}
                         className={`w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 active:bg-gray-100 transition-colors ${
                           sortBy === option.value ? "text-primary-600 font-medium" : "text-gray-700"
@@ -1043,27 +1051,14 @@ export default function Products() {
                 })}
               </div>
 
-              {totalPages > 1 && (
-                <div className="flex justify-center items-center gap-2 mt-8">
-                  <button
-                    onClick={() => setPage((p) => Math.max(1, p - 1))}
-                    disabled={page === 1}
-                    className="px-4 py-2.5 text-sm border rounded-lg disabled:opacity-50 hover:bg-gray-50 active:bg-gray-100 transition-colors"
-                  >
-                    Previous
-                  </button>
-                  <span className="px-4 py-2 text-sm text-gray-600">
-                    Page {page} of {totalPages}
-                  </span>
-                  <button
-                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                    disabled={page === totalPages}
-                    className="px-4 py-2.5 text-sm border rounded-lg disabled:opacity-50 hover:bg-gray-50 active:bg-gray-100 transition-colors"
-                  >
-                    Next
-                  </button>
-                </div>
-              )}
+              <div ref={sentinelRef} className="h-10 flex items-center justify-center mt-4">
+                {isFetchingNextPage && (
+                  <Loader2 className="h-5 w-5 animate-spin text-primary-600" />
+                )}
+                {!hasNextPage && products.length > 0 && (
+                  <p className="text-xs text-gray-400">You've reached the end</p>
+                )}
+              </div>
             </>
           ) : (
             <div className="text-center py-16 bg-gray-50 rounded-lg">

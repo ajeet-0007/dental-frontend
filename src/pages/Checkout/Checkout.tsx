@@ -471,15 +471,15 @@ export default function Checkout() {
                           </button>
                         )}
                         <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setShowDeleteModal(address.id);
-                          }}
-                          className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                          title="Delete address"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setShowDeleteModal(address.id);
+                            }}
+                            className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                            title="Delete address"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
                       </div>
                     </div>
                   </div>

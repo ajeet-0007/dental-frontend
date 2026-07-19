@@ -107,7 +107,7 @@ export default function InitiateReturn() {
       <div className="min-h-screen bg-gray-50">
         <div className="bg-white sticky top-0 z-20 shadow-sm">
           <div className="flex items-center px-4 py-4">
-            <button onClick={() => navigate(-1)} className="p-2 -ml-2 hover:bg-gray-100 rounded-lg">
+            <button onClick={() => navigate(-1)} className="p-2 -ml-2 hover:bg-gray-100 rounded-lg" title="Back">
               <ArrowLeft className="h-5 w-5 text-gray-600" />
             </button>
             <h1 className="text-lg font-semibold text-gray-900 ml-2">Initiate Return</h1>
@@ -144,7 +144,7 @@ export default function InitiateReturn() {
     <div className="min-h-screen bg-gray-50 pb-24">
       <div className="bg-white sticky top-0 z-20 shadow-sm">
         <div className="flex items-center px-4 py-4">
-          <button onClick={() => navigate(-1)} className="p-2 -ml-2 hover:bg-gray-100 rounded-lg">
+          <button onClick={() => navigate(-1)} className="p-2 -ml-2 hover:bg-gray-100 rounded-lg" title="Back">
             <ArrowLeft className="h-5 w-5 text-gray-600" />
           </button>
           <h1 className="text-lg font-semibold text-gray-900 ml-2">Initiate Return</h1>

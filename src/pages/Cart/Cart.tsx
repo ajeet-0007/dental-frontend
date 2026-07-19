@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import ProductCarousel from "@/components/common/ProductCarousel";
 import CartDrawer from "@/components/common/CartDrawer";
 
+
 const DEFAULT_IMAGE =
   "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=400&h=400&fit=crop";
 
@@ -137,7 +138,7 @@ export default function Cart() {
             </p>
             <Link
               to="/products"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 text-white rounded-xl font-semibold text-sm hover:bg-primary-700 transition-all shadow-md shadow-primary-600/20 hover:shadow-lg hover:shadow-primary-600/30"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 text-whitem rounded-xl font-semibold text-sm hover:bg-primary-700 transition-all shadow-md shadow-primary-600/20 hover:shadow-lg hover:shadow-primary-600/30"
             >
               Start Shopping
               <ArrowRight className="h-4 w-4" />
@@ -159,7 +160,7 @@ export default function Cart() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <div className="lg:col-span-8 space-y-4">
               {[...Array(3)].map((_, i) => (
-                <div key={i} className="bg-white rounded-2xl border border-gray-100 p-4 animate-pulse">
+                <div key={i} className="bg-whitem rounded-2xl border border-gray-100 p-4 animate-pulse">
                   <div className="flex gap-4">
                     <div className="w-24 h-24 bg-gray-200 rounded-xl" />
                     <div className="flex-1 space-y-3">
@@ -172,7 +173,7 @@ export default function Cart() {
               ))}
             </div>
             <div className="lg:col-span-4">
-              <div className="bg-white rounded-2xl border border-gray-100 p-5 animate-pulse">
+              <div className="bg-whitem rounded-2xl border border-gray-100 p-5 animate-pulse">
                 <div className="h-5 bg-gray-200 rounded w-1/2 mb-4" />
                 <div className="space-y-3">
                   <div className="h-4 bg-gray-100 rounded" />
@@ -190,7 +191,7 @@ export default function Cart() {
   return (
     <div className="min-h-screen bg-gray-50 pb-20 lg:pb-0">
       {/* Header */}
-      <div className="bg-white border-b border-gray-100">
+      <div className="bg-whitem border-b border-gray-100">
         <div className="container mx-auto px-4 py-6 md:py-8">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -217,7 +218,7 @@ export default function Cart() {
               const itemDiscount = unitMrp > unitPrice ? Math.round((1 - unitPrice / unitMrp) * 100) : 0;
 
               return (
-                <div key={item.id} className="bg-white rounded-2xl border border-gray-100 p-4 hover:shadow-md transition-all duration-200">
+                <div key={item.id} className="bg-whitem rounded-2xl border border-gray-100 p-4 hover:shadow-md transition-all duration-200">
                   <div className="flex gap-4">
                     {/* Product Image */}
                     <Link to={`/products/${item.product.slug}`} className="w-24 h-24 bg-gray-50 rounded-xl overflow-hidden flex-shrink-0 p-1">
@@ -237,11 +238,11 @@ export default function Cart() {
                           </h3>
                         </Link>
                         <button
-                          onClick={() => handleRemove(item.id)}
-                          className="p-1.5 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all flex-shrink-0"
-                          title="Remove item"
+                            onClick={() => handleRemove(item.id)}
+                            className="p-1.5 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all flex-shrink-0"
+                            title="Remove item"
                         >
-                          <Trash2 className="h-4 w-4" />
+                            <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
 
@@ -274,19 +275,21 @@ export default function Cart() {
                       <div className="flex items-center justify-between mt-3">
                         <div className="flex items-center bg-gray-100 rounded-full">
                           <button
-                            onClick={() => handleQuantityChange(item.id, Math.max(1, item.quantity - 1))}
-                            className="w-8 h-8 flex items-center justify-center hover:bg-gray-200 rounded-full transition-colors"
-                            disabled={item.quantity <= 1}
-                          >
-                            <Minus className="h-3 w-3 text-gray-600" />
-                          </button>
+                              onClick={() => handleQuantityChange(item.id, Math.max(1, item.quantity - 1))}
+                              className="w-8 h-8 flex items-center justify-center hover:bg-gray-200 rounded-full transition-colors"
+                              disabled={item.quantity <= 1}
+                              title="Decrease quantity"
+                            >
+                              <Minus className="h-3 w-3 text-gray-600" />
+                            </button>
                           <span className="w-8 text-center font-semibold text-sm text-gray-900">{item.quantity}</span>
                           <button
-                            onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
-                            className="w-8 h-8 flex items-center justify-center hover:bg-gray-200 rounded-full transition-colors"
-                          >
-                            <Plus className="h-3 w-3 text-gray-600" />
-                          </button>
+                              onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
+                              className="w-8 h-8 flex items-center justify-center hover:bg-gray-200 rounded-full transition-colors"
+                              title="Increase quantity"
+                            >
+                              <Plus className="h-3 w-3 text-gray-600" />
+                            </button>
                         </div>
                         {item.quantity > 1 && (
                           <span className="text-[10px] text-gray-400">
@@ -303,10 +306,10 @@ export default function Cart() {
 
           {/* Order Summary */}
           <div className="lg:col-span-4">
-            <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden sticky top-20">
+            <div className="bg-whitem rounded-2xl border border-gray-100 overflow-hidden sticky top-20">
               {/* Summary Header */}
               <div className="bg-gradient-to-r from-primary-500 to-blue-600 px-5 py-4">
-                <h3 className="font-semibold text-white">Order Summary</h3>
+                <h3 className="font-semibold text-whitem">Order Summary</h3>
               </div>
 
               <div className="p-5">
@@ -376,7 +379,7 @@ export default function Cart() {
                       navigate('/profile?section=verification');
                     }
                   }}
-                  className="w-full py-3.5 bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl font-semibold text-sm hover:from-primary-700 hover:to-primary-800 transition-all shadow-md shadow-primary-600/20 hover:shadow-lg hover:shadow-primary-600/30 flex items-center justify-center gap-2"
+                  className="w-full py-3.5 bg-gradient-to-r from-primary-600 to-primary-700 text-whitem rounded-xl font-semibold text-sm hover:from-primary-700 hover:to-primary-800 transition-all shadow-md shadow-primary-600/20 hover:shadow-lg hover:shadow-primary-600/30 flex items-center justify-center gap-2"
                 >
                   Proceed to Checkout
                   <ArrowRight className="h-4 w-4" />
@@ -442,7 +445,7 @@ export default function Cart() {
           <div className="flex items-end justify-between mb-6">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/20">
-                <ShoppingBag className="h-5 w-5 text-white" />
+                <ShoppingBag className="h-5 w-5 text-whitem" />
               </div>
               <div>
                 <p className="text-xs font-semibold text-primary-600 uppercase tracking-widest">You May Also Like</p>
@@ -468,7 +471,7 @@ export default function Cart() {
       )}
 
       {/* Mobile Sticky Checkout Bar */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 z-40">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-whitem border-t border-gray-200 px-4 py-3 z-40">
         <div className="flex items-center justify-between gap-4">
           <div>
             <p className="text-[10px] text-gray-400 uppercase tracking-wider">Total</p>
@@ -483,7 +486,7 @@ export default function Cart() {
                 navigate('/profile?section=verification');
               }
             }}
-            className="flex-1 max-w-[200px] py-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl font-semibold text-sm flex items-center justify-center gap-2 shadow-md"
+            className="flex-1 max-w-[200px] py-3 bg-gradient-to-r from-primary-600 to-primary-700 text-whitem rounded-xl font-semibold text-sm flex items-center justify-center gap-2 shadow-md"
           >
             Checkout
             <ArrowRight className="h-4 w-4" />

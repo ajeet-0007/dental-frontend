@@ -145,6 +145,7 @@ export default function CartDrawer({ isOpen, onClose, product }: CartDrawerProps
           <button
             onClick={handleClose}
             className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            title="Close"
           >
             <X className="h-5 w-5 text-gray-500" />
           </button>
@@ -374,6 +375,7 @@ function SingleProductAdd({ product, onClose }: { product: any; onClose: () => v
             onClick={() => setQuantity((q) => Math.max(1, q - 1))}
             className="p-3 hover:bg-gray-50 transition-colors disabled:opacity-30"
             disabled={quantity <= 1}
+            title="Decrease quantity"
           >
             <Minus className="h-4 w-4 text-gray-600" />
           </button>
@@ -384,6 +386,7 @@ function SingleProductAdd({ product, onClose }: { product: any; onClose: () => v
             onClick={() => setQuantity((q) => Math.min(q + 1, 99))}
             className="p-3 hover:bg-gray-50 transition-colors disabled:opacity-30"
             disabled={quantity >= 99}
+            title="Increase quantity"
           >
             <Plus className="h-4 w-4 text-gray-600" />
           </button>

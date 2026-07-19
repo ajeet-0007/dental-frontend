@@ -153,26 +153,29 @@ export default function GalleryPage() {
               onClick={closeLightbox}
             >
               <button
-                onClick={closeLightbox}
-                className="absolute top-4 right-4 text-white/70 hover:text-white z-10 p-2"
-              >
-                <X className="w-6 h-6" />
-              </button>
+                  onClick={closeLightbox}
+                  className="absolute top-4 right-4 text-white/70 hover:text-white z-10 p-2"
+                  title="Close"
+                >
+                  <X className="w-6 h-6" />
+                </button>
 
               {images.length > 1 && (
                 <>
                   <button
-                    onClick={(e) => { e.stopPropagation(); goPrev(); }}
-                    className="absolute left-4 text-white/70 hover:text-white z-10 p-2 bg-white/10 rounded-full"
-                  >
-                    <ChevronLeft className="w-6 h-6" />
-                  </button>
+                      onClick={(e) => { e.stopPropagation(); goPrev(); }}
+                      className="absolute left-4 text-white/70 hover:text-white z-10 p-2 bg-white/10 rounded-full"
+                      title="Previous image"
+                    >
+                      <ChevronLeft className="w-6 h-6" />
+                    </button>
                   <button
-                    onClick={(e) => { e.stopPropagation(); goNext(); }}
-                    className="absolute right-4 text-white/70 hover:text-white z-10 p-2 bg-white/10 rounded-full"
-                  >
-                    <ChevronRight className="w-6 h-6" />
-                  </button>
+                      onClick={(e) => { e.stopPropagation(); goNext(); }}
+                      className="absolute right-4 text-white/70 hover:text-white z-10 p-2 bg-white/10 rounded-full"
+                      title="Next image"
+                    >
+                      <ChevronRight className="w-6 h-6" />
+                    </button>
                 </>
               )}
 

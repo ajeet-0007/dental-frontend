@@ -172,11 +172,12 @@ export default function ReviewCard({ review, onEdit, onDelete }: ReviewCardProps
           onClick={() => setSelectedImage(null)}
         >
           <button
-            className="absolute top-4 right-4 text-white p-2 hover:bg-white/10 rounded-full transition-colors"
-            onClick={() => setSelectedImage(null)}
-          >
-            <X className="w-6 h-6" />
-          </button>
+              className="absolute top-4 right-4 text-white p-2 hover:bg-white/10 rounded-full transition-colors"
+              onClick={() => setSelectedImage(null)}
+              title="Close"
+            >
+              <X className="w-6 h-6" />
+            </button>
           <motion.img
             initial={{ scale: 0.9 }}
             animate={{ scale: 1 }}

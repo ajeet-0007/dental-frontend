@@ -96,7 +96,7 @@ export default function ReturnDetail() {
     <div className="min-h-screen bg-gray-50 pb-20">
       <div className="bg-white sticky top-0 z-20 shadow-sm">
         <div className="flex items-center px-4 py-4">
-          <button onClick={() => navigate('/returns')} className="p-2 -ml-2 hover:bg-gray-100 rounded-lg">
+          <button onClick={() => navigate('/returns')} className="p-2 -ml-2 hover:bg-gray-100 rounded-lg" title="Back to returns">
             <ArrowLeft className="h-5 w-5 text-gray-600" />
           </button>
           <h1 className="text-lg font-semibold text-gray-900 ml-2">Return Details</h1>

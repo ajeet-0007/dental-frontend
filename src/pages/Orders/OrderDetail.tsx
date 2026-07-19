@@ -406,6 +406,7 @@ export default function OrderDetail() {
                     <button
                       onClick={() => setTrackingExpanded(!trackingExpanded)}
                       className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
+                      title="Tracking details"
                     >
                       <div className="flex items-center gap-2.5">
                         <div className={`w-7 h-7 rounded-full flex items-center justify-center ${statusConfig.bg} ${statusConfig.text}`}>

@@ -194,6 +194,7 @@ export default function ProductCarousel({ products, onOpenCartDrawer }: ProductC
                             ? "bg-red-500 text-white"
                             : "bg-white text-gray-600 hover:bg-red-50 hover:text-red-500"
                         }`}
+                        title={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
                       >
                         <Heart className={`w-4 h-4 ${isInWishlist ? "fill-white" : ""}`} />
                       </button>
@@ -226,6 +227,7 @@ export default function ProductCarousel({ products, onOpenCartDrawer }: ProductC
                             ? "bg-green-100 text-green-600"
                             : "bg-primary-50 text-primary-600 hover:bg-primary-100"
                         }`}
+                        title={isInCart ? "Update cart" : "Add to cart"}
                       >
                         <ShoppingCart className="w-4 h-4" />
                       </button>
@@ -244,6 +246,7 @@ export default function ProductCarousel({ products, onOpenCartDrawer }: ProductC
             onClick={prevSlide}
             className="absolute left-0 top-[40%] -translate-y-1/2 -translate-x-2 bg-white border rounded-full p-2 shadow-md hover:bg-gray-50 transition-all z-10 disabled:opacity-50 opacity-0 group-hover:opacity-100"
             disabled={totalSlides <= 1}
+            title="Previous"
           >
             <ChevronLeft className="w-5 h-5 text-gray-600" />
           </button>
@@ -251,6 +254,7 @@ export default function ProductCarousel({ products, onOpenCartDrawer }: ProductC
             onClick={nextSlide}
             className="absolute right-0 top-[40%] -translate-y-1/2 translate-x-2 bg-white border rounded-full p-2 shadow-md hover:bg-gray-50 transition-all z-10 disabled:opacity-50 opacity-0 group-hover:opacity-100"
             disabled={totalSlides <= 1}
+            title="Next"
           >
             <ChevronRight className="w-5 h-5 text-gray-600" />
           </button>

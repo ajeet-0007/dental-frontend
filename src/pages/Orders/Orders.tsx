@@ -374,6 +374,7 @@ export default function Orders() {
                 <button
                   onClick={() => setSearchTerm('')}
                   className="absolute right-3 top-1/2 -translate-y-1/2"
+                  title="Clear search"
                 >
                   <X className="w-4 h-4 text-gray-400 hover:text-gray-600" />
                 </button>
@@ -505,6 +506,7 @@ export default function Orders() {
                   onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                   disabled={currentPage === 1 || isFetching}
                   className="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  title="Previous page"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
@@ -541,6 +543,7 @@ export default function Orders() {
                   onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                   disabled={currentPage === totalPages || isFetching}
                   className="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  title="Next page"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>
