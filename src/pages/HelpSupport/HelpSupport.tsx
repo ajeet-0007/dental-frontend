@@ -108,7 +108,7 @@ export default function HelpSupport() {
             </a>
             <div className="flex items-center gap-3 p-3 border rounded-lg">
               <Phone className="h-5 w-5 text-gray-500" />
-              <span className="text-gray-700">+91 98765 43210</span>
+              <span className="text-gray-700">+91 8979353136</span>
             </div>
           </div>
 

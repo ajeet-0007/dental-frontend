@@ -722,8 +722,8 @@ export default function Layout() {
               </p>
               <div className="flex items-center gap-3">
                 {[
-                  { icon: Instagram, href: '#', label: 'Instagram' },
-                  { icon: Facebook, href: '#', label: 'Facebook' },
+                  { icon: Instagram, href: 'https://www.instagram.com/dent.zoo?igsh=MTY4eHJzdzhrZ2hlaA%3D%3D', label: 'Instagram' },
+                  { icon: Facebook, href: 'https://www.facebook.com/profile.php?id=61592577323923', label: 'Facebook' },
                   { icon: Twitter, href: '#', label: 'Twitter' },
                   { icon: Youtube, href: '#', label: 'YouTube' },
                   { icon: Linkedin, href: '#', label: 'LinkedIn' },
@@ -731,6 +731,8 @@ export default function Layout() {
                   <a
                     key={label}
                     href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     aria-label={label}
                     className="w-10 h-10 bg-white/10 hover:bg-primary-500 border border-white/10 hover:border-primary-500 rounded-lg flex items-center justify-center transition-all duration-300"
                   >
@@ -791,12 +793,12 @@ export default function Layout() {
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
                   <MapPin className="w-5 h-5 text-primary-400 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-300 text-sm">Mumbai, Maharashtra, India</span>
+                  <span className="text-gray-300 text-sm">Bareilly, UP, India</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <Phone className="w-4 h-4 text-primary-400 flex-shrink-0" />
-                  <a href="tel:+911234567890" className="text-gray-300 hover:text-white text-sm transition-colors">
-                    +91 1234567890
+                  <a href="tel:+918979353136" className="text-gray-300 hover:text-white text-sm transition-colors">
+                    +91 8979353136
                   </a>
                 </li>
                 <li className="flex items-center gap-3">
@@ -824,7 +826,7 @@ export default function Layout() {
                 ))}
               </div>
               <p className="text-sm text-gray-500">
-                © 2024 Dentzoo. All rights reserved.
+                © 2026 Dentzoo. All rights reserved.
               </p>
             </div>
           </div>
