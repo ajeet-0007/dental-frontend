@@ -75,7 +75,7 @@ export default function AdminLayout() {
       >
         <div className="flex items-center justify-between p-4 border-b border-gray-800 shrink-0">
           <Link to="/admin" className="flex items-center gap-2">
-            <img src="/DentZoo_Logo.svg" alt="Dentzoo" className="h-8 w-auto" />
+            <img src="/Gemini_Generated_Image_r3bztgr3bztgr3bz.png" alt="Dentzoo" className="h-12 w-auto" />
           </Link>
           <button
             className="lg:hidden text-gray-400 hover:text-white"

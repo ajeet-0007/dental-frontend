@@ -67,9 +67,12 @@ export default function Layout() {
       <header className="bg-white shadow-sm sticky top-0 z-50">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16 gap-4">
-            <Link to="/" className="flex items-center space-x-2">
-              <img src="/DentZoo_Logo.svg" alt="Dentzoo" className="h-12 w-auto" />
-              <span className="text-xl font-bold text-gray-900">Dentzoo</span>
+            <Link to="/" className="flex items-center gap-1 leading-none">
+              <img src="/Gemini_Generated_Image_r3bztgr3bztgr3bz.png" alt="Dentzoo" className="h-16 w-auto" />
+              <div className="flex flex-col leading-none gap-0">
+                <span className="text-3xl font-bold tracking-tight leading-none"><span className="text-blue-900">Dent</span><span className="text-blue-400">zoo</span></span>
+                <span className="text-gray-500 text-xs tracking-wider text-right leading-none -mt-0.5 font-semibold">.<span className="text-blue-900">co</span><span className="text-blue-400">m</span></span>
+              </div>
             </Link>
 
             {/* Mobile Search */}
@@ -712,7 +715,7 @@ export default function Layout() {
           <div className="grid grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
             <div className="col-span-2 lg:col-span-2">
               <Link to="/" className="flex items-center gap-2 mb-4">
-                <img src="/DentZoo_Logo.svg" alt="Dentzoo" className="h-10 w-auto" />
+                <img src="/Gemini_Generated_Image_r3bztgr3bztgr3bz.png" alt="Dentzoo" className="h-12 w-auto" />
               </Link>
               <p className="text-gray-300 text-sm leading-relaxed mb-6">
                 India's most trusted dental e-commerce platform. Quality products, competitive prices, and reliable delivery for dental professionals nationwide.

@@ -94,7 +94,7 @@ export default function Register() {
       {/* Left Side - Branding */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 p-12 flex-col justify-between">
         <div>
-          <img src="/DentZoo_Logo.svg" alt="Dentzoo" className="h-10 w-auto" />
+          <img src="/Gemini_Generated_Image_r3bztgr3bztgr3bz.png" alt="Dentzoo" className="h-12 w-auto" />
           <p className="text-primary-100 mt-2">Your Trusted Dental Partner</p>
         </div>
         
@@ -153,7 +153,7 @@ export default function Register() {
         <div className="w-full max-w-md">
           {/* Mobile Logo */}
           <div className="lg:hidden text-center mb-8">
-            <img src="/DentZoo_Logo.svg" alt="Dentzoo" className="h-8 w-auto mx-auto" />
+            <img src="/Gemini_Generated_Image_r3bztgr3bztgr3bz.png" alt="Dentzoo" className="h-12 w-auto mx-auto" />
           </div>
 
           <div className="bg-white rounded-2xl shadow-xl shadow-gray-200/50 p-8 lg:p-10">
