@@ -47,7 +47,7 @@ export default function AdminLogin() {
             <span className="text-white font-bold text-2xl">DK</span>
           </div>
           <h1 className="text-2xl font-bold text-gray-900">Admin Login</h1>
-          <p className="text-gray-500 mt-1">Sign in to Dentalkart Admin</p>
+          <p className="text-gray-500 mt-1">Sign in to Dentzoo Admin</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -60,7 +60,7 @@ export default function AdminLogin() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-              placeholder="admin@dentalkart.com"
+              placeholder="support@dentzoo.com"
               required
             />
           </div>

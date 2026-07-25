@@ -36,7 +36,7 @@ export const useRecentlyViewedStore = create<RecentlyViewedState>()(
       clearItems: () => set({ items: [] }),
     }),
     {
-      name: "dentalkart-recently-viewed",
+      name: "dentzoo-recently-viewed",
     },
   ),
 );

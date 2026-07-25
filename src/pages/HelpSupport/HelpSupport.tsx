@@ -27,7 +27,7 @@ const faqs = [
   },
   {
     question: 'How do I contact customer support?',
-    answer: 'You can reach us through this support form, email us at support@dentalkart.com, or call us during business hours.'
+    answer: 'You can reach us through this support form, email us at support@dentzoo.com, or call us during business hours.'
   },
 ]
 
@@ -100,11 +100,11 @@ export default function HelpSupport() {
           
           <div className="flex flex-col gap-3 mb-6">
             <a
-              href="mailto:support@dentalkart.com"
+              href="mailto:support@dentzoo.com"
               className="flex items-center gap-3 p-3 border rounded-lg hover:bg-gray-50 transition-colors"
             >
               <Mail className="h-5 w-5 text-gray-500" />
-              <span className="text-gray-700">support@dentalkart.com</span>
+              <span className="text-gray-700">support@dentzoo.com</span>
             </a>
             <div className="flex items-center gap-3 p-3 border rounded-lg">
               <Phone className="h-5 w-5 text-gray-500" />

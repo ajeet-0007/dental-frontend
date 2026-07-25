@@ -94,7 +94,7 @@ export default function Register() {
       {/* Left Side - Branding */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 p-12 flex-col justify-between">
         <div>
-          <h1 className="text-4xl font-bold text-white">Dentalkart</h1>
+          <img src="/DentZoo_Logo.svg" alt="Dentzoo" className="h-10 w-auto" />
           <p className="text-primary-100 mt-2">Your Trusted Dental Partner</p>
         </div>
         
@@ -144,7 +144,7 @@ export default function Register() {
         </div>
 
         <p className="text-primary-200 text-sm">
-          © 2024 Dentalkart. All rights reserved.
+          © 2024 Dentzoo. All rights reserved.
         </p>
       </div>
 
@@ -153,13 +153,13 @@ export default function Register() {
         <div className="w-full max-w-md">
           {/* Mobile Logo */}
           <div className="lg:hidden text-center mb-8">
-            <h1 className="text-3xl font-bold text-primary-600">Dentalkart</h1>
+            <img src="/DentZoo_Logo.svg" alt="Dentzoo" className="h-8 w-auto mx-auto" />
           </div>
 
           <div className="bg-white rounded-2xl shadow-xl shadow-gray-200/50 p-8 lg:p-10">
             <div className="mb-8">
               <h2 className="text-2xl font-bold text-gray-900">Create Account</h2>
-              <p className="text-gray-500 mt-2">Join Dentalkart today</p>
+              <p className="text-gray-500 mt-2">Join Dentzoo today</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-5">

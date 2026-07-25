@@ -80,9 +80,7 @@ export default function Cart() {
 
   const totalSavings = totalMrp - subtotal;
 
-  const taxRate = Number(import.meta.env.VITE_TAX_RATE || 18) / 100;
-  const tax = Math.round(subtotal * taxRate);
-  const total = subtotal + tax;
+  const total = subtotal;
 
   const cartCategories = [...new Set(
     allItems
@@ -332,10 +330,6 @@ export default function Cart() {
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500">Subtotal ({allItems.length} items)</span>
                     <span className="font-medium text-gray-900">₹{subtotal.toLocaleString()}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">Tax ({taxRate * 100}% GST)</span>
-                    <span className="font-medium text-gray-900">₹{tax.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500">Delivery</span>

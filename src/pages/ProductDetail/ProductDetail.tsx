@@ -315,7 +315,7 @@ export default function ProductDetail() {
     const shareUrl = window.location.href;
     const shareData = {
       title: product?.name || "Check out this product",
-      text: `Check out ${product?.name} on Dentalkart`,
+      text: `Check out ${product?.name} on Dentzoo`,
       url: shareUrl,
     };
 

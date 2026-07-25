@@ -123,15 +123,8 @@ export default function ForgotPassword() {
         <div className="relative z-10 p-8 flex flex-col justify-between w-full">
           <div>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center">
-                <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l4.59-4.58L18 11l-6 6z"/>
-                </svg>
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-white">Dentalkart</h1>
-                <p className="text-primary-200 text-xs">Your Trusted Dental Partner</p>
-              </div>
+              <img src="/DentZoo_Logo.svg" alt="Dentzoo" className="h-10 w-auto" />
+              <p className="text-primary-200 text-xs">Your Trusted Dental Partner</p>
             </div>
           </div>
           
@@ -152,14 +145,9 @@ export default function ForgotPassword() {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6">
         <div className="w-full max-w-md">
           {/* Mobile Logo */}
-          <div className="lg:hidden text-center mb-8">
-            <div className="inline-flex items-center gap-2 bg-primary-100 text-primary-700 px-4 py-2 rounded-full">
-              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l4.59-4.58L18 11l-6 6z"/>
-              </svg>
-              <span className="font-bold">Dentalkart</span>
+            <div className="lg:hidden text-center mb-8">
+              <img src="/DentZoo_Logo.svg" alt="Dentzoo" className="h-8 w-auto mx-auto" />
             </div>
-          </div>
 
           <div className="bg-white rounded-2xl shadow-xl shadow-gray-200/50 p-6 lg:p-8">
             {/* Step: Email */}

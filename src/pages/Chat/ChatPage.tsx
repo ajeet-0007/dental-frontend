@@ -86,7 +86,7 @@ const ChatPage = () => {
                   <Bot className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-semibold text-white">Dentalkart Assistant</h1>
+                  <h1 className="text-xl font-semibold text-white">Dentzoo Assistant</h1>
                   <p className="text-sm text-blue-100">AI-powered product help</p>
                 </div>
               </div>
@@ -112,7 +112,7 @@ const ChatPage = () => {
                     {messages.length === 0 && (
                       <div className="flex flex-col items-center justify-center h-full text-gray-500">
                         <Bot className="w-16 h-16 mb-4 text-blue-200" />
-                        <p className="text-lg font-medium mb-2">Welcome to Dentalkart Assistant!</p>
+                        <p className="text-lg font-medium mb-2">Welcome to Dentzoo Assistant!</p>
                         <p className="text-sm text-center max-w-md">
                           Ask me about dental products, recommendations, specifications, or any questions about our catalog.
                         </p>

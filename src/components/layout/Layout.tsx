@@ -68,8 +68,8 @@ export default function Layout() {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16 gap-4">
             <Link to="/" className="flex items-center space-x-2">
-              <Package className="h-8 w-8 text-primary-600" />
-              <span className="text-xl font-bold text-gray-900">Dentalkart</span>
+              <img src="/DentZoo_Logo.svg" alt="Dentzoo" className="h-12 w-auto" />
+              <span className="text-xl font-bold text-gray-900">Dentzoo</span>
             </Link>
 
             {/* Mobile Search */}
@@ -702,7 +702,7 @@ export default function Layout() {
 
       <BottomNav />
 
-      <footer className="bg-gradient-to-b from-slate-800 via-slate-800 to-slate-900 text-white pt-16 pb-8 relative overflow-hidden">
+      <footer className="hidden md:block bg-gradient-to-b from-slate-800 via-slate-800 to-slate-900 text-white pt-16 pb-8 relative overflow-hidden">
         <div className="absolute inset-0 opacity-5">
           <div className="absolute top-0 right-0 w-96 h-96 bg-slate-500 rounded-full blur-[128px]" />
           <div className="absolute bottom-0 left-0 w-72 h-72 bg-slate-600 rounded-full blur-[128px]" />
@@ -712,10 +712,7 @@ export default function Layout() {
           <div className="grid grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
             <div className="col-span-2 lg:col-span-2">
               <Link to="/" className="flex items-center gap-2 mb-4">
-                <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-blue-500 rounded-lg flex items-center justify-center shadow-lg shadow-primary-500/30">
-                  <Package className="w-5 h-5 text-white" />
-                </div>
-                <span className="text-xl font-bold">Dentalkart</span>
+                <img src="/DentZoo_Logo.svg" alt="Dentzoo" className="h-10 w-auto" />
               </Link>
               <p className="text-gray-300 text-sm leading-relaxed mb-6">
                 India's most trusted dental e-commerce platform. Quality products, competitive prices, and reliable delivery for dental professionals nationwide.
@@ -801,9 +798,9 @@ export default function Layout() {
                 </li>
                 <li className="flex items-center gap-3">
                   <Mail className="w-4 h-4 text-primary-400 flex-shrink-0" />
-                  <a href="mailto:support@dentalkart.com" className="text-gray-300 hover:text-white text-sm transition-colors">
-                    support@dentalkart.com
-                  </a>
+                    <a href="mailto:support@dentzoo.com" className="text-gray-300 hover:text-white text-sm transition-colors">
+                      support@dentzoo.com
+                    </a>
                 </li>
               </ul>
             </div>
@@ -824,7 +821,7 @@ export default function Layout() {
                 ))}
               </div>
               <p className="text-sm text-gray-500">
-                © 2024 Dentalkart. All rights reserved.
+                © 2024 Dentzoo. All rights reserved.
               </p>
             </div>
           </div>

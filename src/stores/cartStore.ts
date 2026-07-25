@@ -70,7 +70,7 @@ export const useCartStore = create<CartState>()(
       clearCart: () => set({ items: [], total: 0 }),
     }),
     {
-      name: "dentalkart-cart",
+      name: "dentzoo-cart",
     },
   ),
 );

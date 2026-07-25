@@ -37,7 +37,7 @@ const ChatWidget = () => {
         const welcomeMessage: Message = {
           id: 'welcome',
           role: 'assistant',
-          content: 'Hi! I\'m your Dentalkart assistant. How can I help you today?',
+          content: 'Hi! I\'m your Dentzoo assistant. How can I help you today?',
           timestamp: new Date(),
         };
         setMessages([welcomeMessage]);
@@ -126,7 +126,7 @@ const ChatWidget = () => {
             <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-3">
               <div className="flex items-center gap-2">
                 <Bot className="w-5 h-5 text-white" />
-                <span className="text-white font-medium">Dentalkart Assistant</span>
+                <span className="text-white font-medium">Dentzoo Assistant</span>
               </div>
             </div>
 

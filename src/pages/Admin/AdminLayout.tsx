@@ -75,10 +75,7 @@ export default function AdminLayout() {
       >
         <div className="flex items-center justify-between p-4 border-b border-gray-800 shrink-0">
           <Link to="/admin" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-              <span className="font-bold text-sm">DK</span>
-            </div>
-            <span className="font-bold text-lg">Dentalkart</span>
+            <img src="/DentZoo_Logo.svg" alt="Dentzoo" className="h-8 w-auto" />
           </Link>
           <button
             className="lg:hidden text-gray-400 hover:text-white"

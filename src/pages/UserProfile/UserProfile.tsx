@@ -222,7 +222,7 @@ export default function UserProfile() {
           >
             <User className="h-10 w-10 text-white" />
           </motion.div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome to Dentalkart</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome to Dentzoo</h2>
           <p className="text-gray-500 mb-6">Login to view your profile, track orders, and manage your account</p>
           <button
             onClick={() => navigate('/login')}
