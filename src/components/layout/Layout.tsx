@@ -68,7 +68,7 @@ export default function Layout() {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16 gap-4">
             <Link to="/" className="flex items-center gap-1 leading-none">
-              <img src="/Gemini_Generated_Image_r3bztgr3bztgr3bz.png" alt="Dentzoo" className="h-16 w-auto" />
+              <img src="/Gemini_Generated_Image_r3bztgr3bztgr3bz.png" alt="Dentzoo" className="h-12 w-auto" />
               <div className="flex flex-col leading-none gap-0">
                 <span className="text-3xl font-bold tracking-tight leading-none"><span className="text-blue-900">Dent</span><span className="text-blue-400">zoo</span></span>
                 <span className="text-gray-500 text-xs tracking-wider text-right leading-none -mt-0.5 font-semibold">.<span className="text-blue-900">co</span><span className="text-blue-400">m</span></span>
