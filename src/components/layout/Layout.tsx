@@ -724,9 +724,9 @@ export default function Layout() {
                 {[
                   { icon: Instagram, href: 'https://www.instagram.com/dent.zoo?igsh=MTY4eHJzdzhrZ2hlaA%3D%3D', label: 'Instagram' },
                   { icon: Facebook, href: 'https://www.facebook.com/profile.php?id=61592577323923', label: 'Facebook' },
-                  { icon: Twitter, href: '#', label: 'Twitter' },
-                  { icon: Youtube, href: '#', label: 'YouTube' },
-                  { icon: Linkedin, href: '#', label: 'LinkedIn' },
+                  { icon: Twitter, href: 'https://x.com/Dentzooo', label: 'Twitter' },
+                  { icon: Youtube, href: 'https://www.youtube.com/@Dentzoo', label: 'YouTube' },
+                  { icon: Linkedin, href: 'https://www.linkedin.com/in/dentzoo-india-b18a66424/', label: 'LinkedIn' },
                 ].map(({ icon: Icon, href, label }) => (
                   <a
                     key={label}
