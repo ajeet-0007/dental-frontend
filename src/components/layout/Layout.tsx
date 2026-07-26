@@ -70,7 +70,7 @@ export default function Layout() {
             <Link to="/" className="flex items-center gap-1 leading-none">
               <img src="/Gemini_Generated_Image_r3bztgr3bztgr3bz.png" alt="Dentzoo" className="h-12 w-auto" />
               <div className="flex flex-col leading-none gap-0">
-                <span className="text-3xl font-bold tracking-tight leading-none"><span className="text-blue-900">Dent</span><span className="text-blue-400">zoo</span></span>
+                <span className="text-xl md:text-3xl font-bold tracking-tight leading-none"><span className="text-blue-900">Dent</span><span className="text-blue-400">zoo</span></span>
                 <span className="text-gray-500 text-xs tracking-wider text-right leading-none -mt-0.5 font-semibold">.<span className="text-blue-900">co</span><span className="text-blue-400">m</span></span>
               </div>
             </Link>
@@ -715,7 +715,7 @@ export default function Layout() {
           <div className="grid grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
             <div className="col-span-2 lg:col-span-2">
               <Link to="/" className="flex items-center gap-2 mb-4">
-                <img src="/Gemini_Generated_Image_r3bztgr3bztgr3bz.png" alt="Dentzoo" className="h-12 w-auto" />
+              <img src="/Gemini_Generated_Image_r3bztgr3bztgr3bz.png" alt="Dentzoo" className="h-8 w-auto md:h-12" />
               </Link>
               <p className="text-gray-300 text-sm leading-relaxed mb-6">
                 India's most trusted dental e-commerce platform. Quality products, competitive prices, and reliable delivery for dental professionals nationwide.
