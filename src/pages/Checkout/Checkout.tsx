@@ -20,7 +20,7 @@ export default function Checkout() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { isAuthenticated, user } = useAuthStore();
-  const { items: cartItems, setCart } = useCartStore();
+  const { items: cartItems, setCart, clearCart } = useCartStore();
   const [useNewAddress, setUseNewAddress] = useState(false);
   const [selectedAddressId, setSelectedAddressId] = useState<number | null>(null);
   const [paymentMethod, setPaymentMethod] = useState("card");
@@ -215,6 +215,8 @@ export default function Checkout() {
     onSuccess: (result) => {
       if (result.isCOD) {
         toast.success("Order placed successfully!");
+        clearCart();
+        queryClient.invalidateQueries({ queryKey: ["cart"] });
         navigate(`/orders/${result.order.id}`);
       } else {
         toast.success("Redirecting to payment...");

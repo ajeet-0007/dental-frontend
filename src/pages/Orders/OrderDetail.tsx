@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import api from '@/api'
+import { useCartStore } from '@/stores/cartStore'
 import { ArrowLeft, Package, MapPin, CheckCircle, Loader2, RefreshCw, Clock, Truck, XCircle, AlertCircle, ShieldCheck, RotateCw, Undo2, Calendar, ChevronRight } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -11,6 +12,7 @@ const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1606811841689-23dfddce3
 export default function OrderDetail() {
   const { id } = useParams()
   const queryClient = useQueryClient()
+  const { clearCart } = useCartStore()
   
   const [order, setOrder] = useState<any>(null)
   const [loading, setLoading] = useState(true)
@@ -67,6 +69,8 @@ export default function OrderDetail() {
       const data = res.data
 
       if (data.success) {
+        clearCart()
+        queryClient.invalidateQueries({ queryKey: ['cart'] })
         toast.success('Payment verified! Order confirmed.')
         await fetchOrder()
         queryClient.invalidateQueries({ queryKey: ['orders'] })
@@ -85,7 +89,7 @@ export default function OrderDetail() {
     } finally {
       setVerifying(false)
     }
-  }, [verifying, fetchOrder, queryClient])
+  }, [verifying, fetchOrder, queryClient, clearCart])
 
   const handleRescheduleDelivery = useCallback(async () => {
     if (!order?.shipmentId) {

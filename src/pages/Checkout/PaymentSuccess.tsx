@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import api from "@/api";
+import { useCartStore } from "@/stores/cartStore";
 import { Loader2, CheckCircle, XCircle } from "lucide-react";
 
 export default function PaymentSuccess() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { clearCart } = useCartStore();
   const sessionId = searchParams.get("session_id");
   const [verifying, setVerifying] = useState(true);
   const [orderId, setOrderId] = useState<string | null>(null);
@@ -28,6 +31,8 @@ export default function PaymentSuccess() {
     if (isSuccess && data?.success) {
       setOrderId(data.orderId);
       setVerifying(false);
+      clearCart();
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
       toast.success("Payment successful!");
       // Navigate to order details after short delay
       setTimeout(() => {
@@ -35,9 +40,11 @@ export default function PaymentSuccess() {
       }, 2000);
     } else if (error) {
       setVerifying(false);
+      clearCart();
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
       toast.error("Payment verification failed");
     }
-  }, [isSuccess, data, error, navigate]);
+  }, [isSuccess, data, error, navigate, clearCart, queryClient]);
 
   if (!sessionId) {
     return (

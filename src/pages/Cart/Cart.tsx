@@ -59,7 +59,7 @@ export default function Cart() {
   });
 
   const serverItems = data?.data || [];
-  const allItems = items.length > 0 ? items : serverItems;
+  const allItems = !isLoading && data ? serverItems : (items.length > 0 ? items : serverItems);
 
   const isStudentOnlyCart = allItems.length > 0 && allItems.every(
     (item: any) => item.product.category?.slug === 'student-section'
