@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Heart, Trash2, ShoppingBag, ArrowRight } from 'lucide-react'
+import { Heart, Trash2, ShoppingBag } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useWishlistStore } from '@/stores/wishlistStore'
 import { useCartStore } from '@/stores/cartStore'

@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import api from "@/api";
 import { useCartStore } from "@/stores/cartStore";
 import { useWishlistStore } from "@/stores/wishlistStore";
-import { Package, ChevronDown, ChevronUp, X, SlidersHorizontal, ShoppingCart, Heart, ArrowUpDown, Tag, Layers, Store, DollarSign, PackageCheck, Loader2 } from "lucide-react";
+import { Package, ChevronDown, ChevronUp, ChevronRight, X, SlidersHorizontal, ShoppingCart, Heart, ArrowUpDown, Tag, Layers, Store, DollarSign, PackageCheck, Loader2, Search, Home } from "lucide-react";
 import CartDrawer from "@/components/common/CartDrawer";
 import { PriceRangeSlider } from "@/components/common/PriceRangeSlider";
 
@@ -506,19 +506,50 @@ export default function Products() {
   ));
 
   return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
     <div className="container mx-auto px-3 py-4 md:px-4 md:py-6">
+      {/* Page Header */}
+      <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/20">
+            <Package className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <div className="flex items-center gap-1.5 text-xs text-gray-400 mb-0.5">
+              <Home className="w-3 h-3" />
+              <ChevronRight className="w-3 h-3" />
+              <span>Products</span>
+              {searchQuery && (
+                <>
+                  <ChevronRight className="w-3 h-3" />
+                  <span className="text-primary-600 font-medium">"{searchQuery}"</span>
+                </>
+              )}
+            </div>
+            <h1 className="text-lg md:text-xl font-bold text-gray-900 tracking-tight">
+              {searchQuery ? `Results for "${searchQuery}"` : "All Products"}
+            </h1>
+          </div>
+        </div>
+        {total > 0 && (
+          <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-primary-50 text-primary-700 text-sm font-medium rounded-full">
+            <span className="w-2 h-2 bg-primary-500 rounded-full animate-pulse" />
+            {total} items
+          </div>
+        )}
+      </div>
       {/* Horizontal Filter Chips Bar */}
-      <div className="mb-4">
-        <div className="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-hide">
+      <div className="mb-5">
+        <div className="flex items-center gap-2.5 overflow-x-auto pb-2 scrollbar-hide">
           {/* Filter Button */}
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-full border border-gray-200 hover:border-primary-500 hover:bg-primary-50 transition-colors whitespace-nowrap"
+            className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-full border border-gray-200 bg-white shadow-sm hover:shadow-md hover:border-primary-400 hover:bg-primary-50 transition-all duration-200 whitespace-nowrap"
           >
             <SlidersHorizontal className="h-4 w-4" />
             Filters
             {hasActiveFilters && (
-              <span className="w-5 h-5 bg-primary-600 text-white text-xs rounded-full flex items-center justify-center">
+              <span className="w-5 h-5 bg-gradient-to-br from-primary-500 to-blue-600 text-white text-xs rounded-full flex items-center justify-center shadow-sm">
                 {filters.categories.length + filters.departments.length + filters.brands.length + (filters.inStock ? 1 : 0) + (filters.minPrice || filters.maxPrice ? 1 : 0)}
               </span>
             )}
@@ -528,7 +559,7 @@ export default function Products() {
           {hasActiveFilters && (
             <button
               onClick={clearFilters}
-              className="text-sm text-primary-600 hover:text-primary-700 font-medium whitespace-nowrap"
+              className="text-sm text-red-500 hover:text-red-600 font-semibold whitespace-nowrap px-2"
             >
               Clear All
             </button>
@@ -541,10 +572,10 @@ export default function Products() {
               <button
                 key={cat.slug}
                 onClick={() => toggleCategory(cat.slug)}
-                className={`flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-full border transition-all whitespace-nowrap ${
+                className={`flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium rounded-full border transition-all duration-200 whitespace-nowrap ${
                   isSelected
-                    ? "bg-primary-600 text-white border-primary-600"
-                    : "bg-white text-gray-600 border-gray-200 hover:border-primary-500 hover:bg-primary-50"
+                    ? "bg-gradient-to-r from-primary-500 to-blue-600 text-white border-transparent shadow-md shadow-primary-500/25"
+                    : "bg-white text-gray-600 border-gray-200 shadow-sm hover:shadow-md hover:border-primary-400 hover:bg-primary-50"
                 }`}
               >
                 <Tag className="h-3.5 w-3.5" />
@@ -561,10 +592,10 @@ export default function Products() {
               <button
                 key={dept.slug}
                 onClick={() => toggleDepartment(dept.slug)}
-                className={`flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-full border transition-all whitespace-nowrap ${
+                className={`flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium rounded-full border transition-all duration-200 whitespace-nowrap ${
                   isSelected
-                    ? "bg-green-600 text-white border-green-600"
-                    : "bg-white text-gray-600 border-gray-200 hover:border-green-500 hover:bg-green-50"
+                    ? "bg-gradient-to-r from-green-500 to-emerald-600 text-white border-transparent shadow-md shadow-green-500/25"
+                    : "bg-white text-gray-600 border-gray-200 shadow-sm hover:shadow-md hover:border-green-400 hover:bg-green-50"
                 }`}
               >
                 <Layers className="h-3.5 w-3.5" />
@@ -581,10 +612,10 @@ export default function Products() {
               <button
                 key={brand.slug}
                 onClick={() => toggleBrand(brand.slug)}
-                className={`flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-full border transition-all whitespace-nowrap ${
+                className={`flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium rounded-full border transition-all duration-200 whitespace-nowrap ${
                   isSelected
-                    ? "bg-amber-600 text-white border-amber-600"
-                    : "bg-white text-gray-600 border-gray-200 hover:border-amber-500 hover:bg-amber-50"
+                    ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white border-transparent shadow-md shadow-amber-500/25"
+                    : "bg-white text-gray-600 border-gray-200 shadow-sm hover:shadow-md hover:border-amber-400 hover:bg-amber-50"
                 }`}
               >
                 <Store className="h-3.5 w-3.5" />
@@ -597,10 +628,10 @@ export default function Products() {
           {/* Price Filter Chip */}
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className={`flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-full border transition-all whitespace-nowrap ${
+            className={`flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium rounded-full border transition-all duration-200 whitespace-nowrap ${
               filters.minPrice || filters.maxPrice
-                ? "bg-blue-600 text-white border-blue-600"
-                : "bg-white text-gray-600 border-gray-200 hover:border-blue-500 hover:bg-blue-50"
+                ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white border-transparent shadow-md shadow-blue-500/25"
+                : "bg-white text-gray-600 border-gray-200 shadow-sm hover:shadow-md hover:border-blue-400 hover:bg-blue-50"
             }`}
           >
             <DollarSign className="h-3.5 w-3.5" />
@@ -616,10 +647,10 @@ export default function Products() {
                 return newFilters;
               });
             }}
-            className={`flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-full border transition-all whitespace-nowrap ${
+            className={`flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium rounded-full border transition-all duration-200 whitespace-nowrap ${
               filters.inStock
-                ? "bg-emerald-600 text-white border-emerald-600"
-                : "bg-white text-gray-600 border-gray-200 hover:border-emerald-500 hover:bg-emerald-50"
+                ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-transparent shadow-md shadow-emerald-500/25"
+                : "bg-white text-gray-600 border-gray-200 shadow-sm hover:shadow-md hover:border-emerald-400 hover:bg-emerald-50"
             }`}
           >
             <PackageCheck className="h-3.5 w-3.5" />
@@ -631,7 +662,7 @@ export default function Products() {
       <div className="flex gap-6">
         {/* Desktop Sidebar */}
         <aside className="hidden lg:block w-64 flex-shrink-0">
-          <div className="sticky top-20 bg-white border rounded-xl p-5 h-[calc(100vh-6rem)] overflow-y-auto">
+          <div className="sticky top-20 bg-white border border-gray-100 rounded-2xl p-5 h-[calc(100vh-6rem)] overflow-y-auto shadow-sm">
             <FilterSidebar 
               filters={filters}
               categories={categories}
@@ -675,7 +706,7 @@ export default function Products() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
-                className="lg:hidden fixed inset-0 z-50 bg-black/50"
+                className="lg:hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
                 onClick={() => setShowFilters(false)}
               />
               <motion.div
@@ -683,7 +714,7 @@ export default function Products() {
                 animate={{ x: 0 }}
                 exit={{ x: "100%" }}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                className="lg:hidden fixed right-0 top-0 bottom-0 w-[85%] max-w-[320px] bg-white z-50 overflow-y-auto"
+                className="lg:hidden fixed right-0 top-0 bottom-0 w-[85%] max-w-[320px] bg-white z-50 overflow-y-auto shadow-2xl"
               >
                 <div className="flex items-center justify-between p-4 border-b">
                   <h3 className="font-semibold text-lg text-gray-800">Filters</h3>
@@ -739,13 +770,13 @@ export default function Products() {
         <div className="flex-1">
           {/* Active Filters Tags */}
           {hasActiveFilters && (
-            <div className="flex flex-wrap gap-2 mb-4">
+            <div className="flex flex-wrap gap-2 mb-5">
               {filters.categories.map((slug) => {
                 const cat = categories.find((c: any) => c.slug === slug);
                 return (
                   <span
                     key={slug}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-primary-50 text-primary-700 text-xs font-medium rounded-md"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-primary-50 to-blue-50 text-primary-700 text-xs font-semibold rounded-full border border-primary-200"
                   >
                     {cat?.name}
                     <button
@@ -762,7 +793,7 @@ export default function Products() {
                 return (
                   <span
                     key={slug}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-green-50 text-green-700 text-xs font-medium rounded-md"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-green-50 to-emerald-50 text-green-700 text-xs font-semibold rounded-full border border-green-200"
                   >
                     {dept?.name}
                     <button
@@ -779,7 +810,7 @@ export default function Products() {
                 return (
                   <span
                     key={slug}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-50 text-amber-700 text-xs font-medium rounded-md"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-amber-50 to-orange-50 text-amber-700 text-xs font-semibold rounded-full border border-amber-200"
                   >
                     {brand?.name}
                     <button
@@ -792,7 +823,7 @@ export default function Products() {
                 );
               })}
               {filters.minPrice && (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-primary-50 text-primary-700 text-xs font-medium rounded-md">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 text-xs font-semibold rounded-full border border-blue-200">
                   Min: ₹{filters.minPrice}
                   <button onClick={() => {
                     setFilters((p) => {
@@ -806,7 +837,7 @@ export default function Products() {
                 </span>
               )}
               {filters.maxPrice && (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-primary-50 text-primary-700 text-xs font-medium rounded-md">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 text-xs font-semibold rounded-full border border-blue-200">
                   Max: ₹{filters.maxPrice}
                   <button onClick={() => {
                     setFilters((p) => {
@@ -820,7 +851,7 @@ export default function Products() {
                 </span>
               )}
               {filters.inStock && (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-primary-50 text-primary-700 text-xs font-medium rounded-md">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-emerald-50 to-teal-50 text-emerald-700 text-xs font-semibold rounded-full border border-emerald-200">
                   In Stock
                   <button onClick={() => {
                     setFilters((p) => {
@@ -837,30 +868,30 @@ export default function Products() {
           )}
 
           {/* Sort and Results Count */}
-          <div className="flex items-center justify-between mb-4 gap-2">
-            <p className="text-sm text-gray-600 truncate">
-              {total} products
+          <div className="flex items-center justify-between mb-5 gap-2">
+            <p className="text-sm text-gray-500 font-medium">
+              Showing <span className="text-gray-900 font-semibold">{total}</span> products
             </p>
             <div className="relative">
               <button
                 onClick={() => setShowSortMenu(!showSortMenu)}
-                className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-full border border-gray-200 hover:border-primary-500 hover:bg-primary-50 transition-colors"
+                className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-full border border-gray-200 bg-white shadow-sm hover:shadow-md hover:border-primary-400 transition-all duration-200"
                 title="Sort"
               >
-                <ArrowUpDown className="h-4 w-4" />
-                <span className="hidden sm:inline">
+                <ArrowUpDown className="h-4 w-4 text-gray-500" />
+                <span className="hidden sm:inline text-gray-700">
                   {sortOptions.find((o) => o.value === sortBy)?.label || "Sort"}
                 </span>
-                <ChevronDown className="h-4 w-4" />
+                <ChevronDown className="h-4 w-4 text-gray-400" />
               </button>
               <AnimatePresence>
                 {showSortMenu && (
                   <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
+                    initial={{ opacity: 0, y: -8, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -8, scale: 0.95 }}
                     transition={{ duration: 0.15 }}
-                    className="absolute right-0 mt-1 w-48 bg-white border rounded-lg shadow-lg z-20 py-1"
+                    className="absolute right-0 mt-2 w-52 bg-white/95 backdrop-blur-sm border border-gray-100 rounded-2xl shadow-xl z-20 py-1.5 overflow-hidden"
                   >
                     {sortOptions.map((option) => (
                       <button
@@ -869,8 +900,10 @@ export default function Products() {
                           setSortBy(option.value);
                           setShowSortMenu(false);
                         }}
-                        className={`w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 active:bg-gray-100 transition-colors ${
-                          sortBy === option.value ? "text-primary-600 font-medium" : "text-gray-700"
+                        className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${
+                          sortBy === option.value
+                            ? "text-primary-600 font-semibold bg-primary-50"
+                            : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                         }`}
                       >
                         {option.label}
@@ -887,13 +920,16 @@ export default function Products() {
               {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
                 <div
                   key={i}
-                  className="bg-white border rounded-xl overflow-hidden animate-pulse"
+                  className="bg-white border border-gray-100 rounded-2xl overflow-hidden"
                 >
-                  <div className="aspect-square bg-gray-100"></div>
-                  <div className="p-3 md:p-4 space-y-2">
-                    <div className="h-4 bg-gray-100 rounded w-3/4"></div>
-                    <div className="h-3 bg-gray-100 rounded w-1/2"></div>
-                    <div className="h-5 bg-gray-100 rounded w-1/3 mt-3"></div>
+                  <div className="aspect-square animate-shimmer"></div>
+                  <div className="p-4 space-y-3">
+                    <div className="h-4 animate-shimmer rounded-lg w-3/4"></div>
+                    <div className="h-3 animate-shimmer rounded-lg w-1/2"></div>
+                    <div className="flex items-center gap-2 mt-4">
+                      <div className="h-5 animate-shimmer rounded-lg w-1/3"></div>
+                      <div className="h-3 animate-shimmer rounded-lg w-1/4"></div>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -901,7 +937,7 @@ export default function Products() {
           ) : products.length > 0 ? (
             <>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
-                {products.map((product: any) => {
+                {products.map((product: any, index: number) => {
                   const inCart = isInCart(product.id.toString());
                   const inWishlist = isInWishlist(product.id.toString());
                   const variants = product.variants || [];
@@ -941,12 +977,18 @@ export default function Products() {
                   }
                   
                   const colors = [...new Set(activeVariants.filter((v: any) => v.color).map((v: any) => v.color as string))] as string[];
+                  const discount = product.mrp > minPrice ? Math.round(((product.mrp - minPrice) / product.mrp) * 100) : 0;
                   
                   return (
-                    <div
+                    <motion.div
                       key={product.id}
-                      className={`relative bg-white border rounded-xl overflow-hidden transition-all duration-200 active:scale-[0.98] ${
-                        isOutOfStock ? 'opacity-60' : 'hover:shadow-lg'
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: Math.min(index * 0.04, 0.3) }}
+                      className={`group relative bg-white border border-gray-100 rounded-2xl overflow-hidden transition-all duration-300 ${
+                        isOutOfStock
+                          ? 'opacity-60'
+                          : 'hover:-translate-y-1 hover:shadow-xl hover:shadow-gray-200/50'
                       }`}
                     >
                       <Link
@@ -959,24 +1001,31 @@ export default function Products() {
                             <img
                               src={product.images[0]}
                               alt={product.name}
-                              className={`w-full h-full object-cover ${isOutOfStock ? 'opacity-60' : ''}`}
+                              className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${isOutOfStock ? 'opacity-60 grayscale-[30%]' : ''}`}
+                              loading="lazy"
                             />
                           ) : (
                             <img
                               src={DEFAULT_IMAGE}
                               alt={product.name}
-                              className={`w-full h-full object-cover ${isOutOfStock ? 'opacity-60' : ''}`}
+                              className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${isOutOfStock ? 'opacity-60 grayscale-[30%]' : ''}`}
+                              loading="lazy"
                             />
                           )}
+                          {discount > 0 && !isOutOfStock && (
+                            <div className="absolute top-2.5 left-2.5 bg-gradient-to-r from-red-500 to-rose-500 text-white text-[11px] font-bold px-2 py-1 rounded-lg shadow-md shadow-red-500/30">
+                              {discount}% OFF
+                            </div>
+                          )}
                           {isOutOfStock && (
-                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                              <span className="bg-red-600 text-white px-3 py-1 text-sm font-medium rounded-full">
+                            <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px] flex items-center justify-center">
+                              <span className="bg-gray-900/80 text-white px-4 py-1.5 text-sm font-semibold rounded-full backdrop-blur-sm">
                                 Out of Stock
                               </span>
                             </div>
                           )}
                           {colors.length > 0 && !isOutOfStock && (
-                            <div className="absolute bottom-2 left-2 flex -space-x-1">
+                            <div className="absolute bottom-2.5 left-2.5 flex -space-x-1.5">
                               {colors.slice(0, 4).map((color: string, i: number) => (
                                 <div
                                   key={i}
@@ -995,12 +1044,12 @@ export default function Products() {
                           )}
                         </div>
                         <div className="p-3 md:p-4">
-                          <div className="flex items-start justify-between gap-2 mb-1">
-                            <h3 className="text-sm font-medium text-gray-900 line-clamp-2 flex-1">
+                          <div className="flex items-start justify-between gap-2 mb-1.5">
+                            <h3 className="text-sm font-medium text-gray-900 line-clamp-2 flex-1 leading-snug">
                               {product.name}
                             </h3>
                             {hasVariants && (
-                              <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-full whitespace-nowrap">
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-gray-100 text-gray-500 text-[11px] font-medium rounded-full whitespace-nowrap shrink-0">
                                 <Package className="w-3 h-3" />
                                 {activeVariants.length}
                               </span>
@@ -1008,7 +1057,7 @@ export default function Products() {
                           </div>
                           
                           <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-baseline gap-2">
                               <span className="text-base font-bold text-primary-600">
                                 {showPriceRange ? `From ₹${minPrice.toLocaleString()}` : `₹${minPrice.toLocaleString()}`}
                               </span>
@@ -1021,10 +1070,10 @@ export default function Products() {
                             {!isOutOfStock && (
                               <button
                                 onClick={(e) => handleOpenCartDrawer(e, product)}
-                                className={`p-2 rounded-full transition-colors touch-manipulation ${
+                                className={`p-2 rounded-xl transition-all duration-200 active:scale-90 ${
                                   inCart
-                                    ? "bg-green-100 text-green-600"
-                                    : "bg-primary-50 text-primary-600 hover:bg-primary-100"
+                                    ? "bg-gradient-to-br from-green-500 to-emerald-500 text-white shadow-md shadow-green-500/25"
+                                    : "bg-primary-50 text-primary-600 hover:bg-primary-100 hover:shadow-md"
                                 }`}
                                 title={inCart ? "Update cart" : "Add to cart"}
                               >
@@ -1037,39 +1086,57 @@ export default function Products() {
                       
                       <button
                         onClick={(e) => handleToggleWishlist(e, product)}
-                        className={`absolute top-3 right-3 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 active:scale-90 ${
+                        className={`absolute top-2.5 right-2.5 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 active:scale-90 ${
                           inWishlist
-                            ? "bg-red-500 text-white hover:bg-red-600"
-                            : "bg-white/90 text-gray-600 hover:text-red-500 shadow-md"
+                            ? "bg-gradient-to-br from-red-500 to-rose-500 text-white shadow-lg shadow-red-500/30"
+                            : "bg-white/80 backdrop-blur-sm text-gray-400 opacity-0 group-hover:opacity-100 hover:text-red-500 shadow-md"
                         }`}
                         title={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
                       >
                         <Heart className={`h-4 w-4 ${inWishlist ? "fill-white" : ""}`} />
                       </button>
-                    </div>
+                    </motion.div>
                   );
                 })}
               </div>
 
-              <div ref={sentinelRef} className="h-10 flex items-center justify-center mt-4">
+              <div ref={sentinelRef} className="h-12 flex items-center justify-center mt-6">
                 {isFetchingNextPage && (
-                  <Loader2 className="h-5 w-5 animate-spin text-primary-600" />
+                  <div className="flex items-center gap-2 text-primary-600">
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    <span className="text-sm font-medium">Loading more...</span>
+                  </div>
                 )}
                 {!hasNextPage && products.length > 0 && (
-                  <p className="text-xs text-gray-400">You've reached the end</p>
+                  <div className="flex items-center gap-3">
+                    <div className="h-px w-12 bg-gradient-to-r from-transparent to-gray-300" />
+                    <p className="text-xs text-gray-400 font-medium">You&apos;ve seen it all</p>
+                    <div className="h-px w-12 bg-gradient-to-l from-transparent to-gray-300" />
+                  </div>
                 )}
               </div>
             </>
           ) : (
-            <div className="text-center py-16 bg-gray-50 rounded-lg">
-              <Package className="h-12 w-12 mx-auto text-gray-300 mb-3" />
-              <p className="text-gray-500 mb-3">No products found</p>
+            <div className="text-center py-20">
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.4, type: "spring" }}
+                className="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl flex items-center justify-center mx-auto mb-5 shadow-lg"
+              >
+                <Search className="h-10 w-10 text-gray-400" />
+              </motion.div>
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">No products found</h3>
+              <p className="text-gray-500 text-sm mb-6 max-w-sm mx-auto">
+                We couldn't find any products matching your criteria. Try adjusting your filters or search terms.
+              </p>
               {hasActiveFilters && (
                 <button
                   onClick={clearFilters}
-                  className="text-sm text-primary-600 hover:text-primary-700 font-medium"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-500 to-blue-600 text-white font-semibold text-sm rounded-full shadow-lg shadow-primary-500/25 hover:shadow-xl hover:shadow-primary-500/30 transition-all duration-300 active:scale-95"
                 >
-                  Clear filters
+                  <X className="h-4 w-4" />
+                  Clear all filters
                 </button>
               )}
             </div>
@@ -1083,6 +1150,7 @@ export default function Products() {
         onClose={handleCloseCartDrawer}
         product={selectedProduct}
       />
+    </div>
     </div>
   );
 }
