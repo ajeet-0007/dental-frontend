@@ -625,19 +625,6 @@ export default function Products() {
             );
           })}
 
-          {/* Price Filter Chip */}
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className={`flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium rounded-full border transition-all duration-200 whitespace-nowrap ${
-              filters.minPrice || filters.maxPrice
-                ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white border-transparent shadow-md shadow-blue-500/25"
-                : "bg-white text-gray-600 border-gray-200 shadow-sm hover:shadow-md hover:border-blue-400 hover:bg-blue-50"
-            }`}
-          >
-            <DollarSign className="h-3.5 w-3.5" />
-            {filters.minPrice || filters.maxPrice ? `₹${filters.minPrice || 0} - ₹${filters.maxPrice || 100000}` : "Price"}
-          </button>
-
           {/* In Stock Filter Chip */}
           <button
             onClick={() => {
