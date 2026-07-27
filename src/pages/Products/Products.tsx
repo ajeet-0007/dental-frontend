@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import api from "@/api";
 import { useCartStore } from "@/stores/cartStore";
 import { useWishlistStore } from "@/stores/wishlistStore";
-import { Package, ChevronDown, ChevronUp, ChevronRight, X, SlidersHorizontal, ShoppingCart, Heart, ArrowUpDown, Tag, Layers, Store, DollarSign, PackageCheck, Loader2, Search, Home } from "lucide-react";
+import { Package, ChevronDown, ChevronUp, ChevronRight, X, SlidersHorizontal, ShoppingCart, Heart, ArrowUpDown, Tag, Layers, Store, PackageCheck, Loader2, Search, Home } from "lucide-react";
 import CartDrawer from "@/components/common/CartDrawer";
 import { PriceRangeSlider } from "@/components/common/PriceRangeSlider";
 
