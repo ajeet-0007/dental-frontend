@@ -59,7 +59,7 @@ export default function Cart() {
   });
 
   const serverItems = data?.data || [];
-  const allItems = !isLoading && data ? serverItems : (items.length > 0 ? items : serverItems);
+  const allItems = items.length > 0 ? items : serverItems;
 
   const isStudentOnlyCart = allItems.length > 0 && allItems.every(
     (item: any) => item.product.category?.slug === 'student-section'
@@ -111,14 +111,10 @@ export default function Cart() {
     }
   };
 
-  const handleQuantityChange = async (id: string, quantity: number) => {
+  const handleQuantityChange = (id: string, quantity: number) => {
     updateQuantity(id, quantity);
     if (isAuthenticated) {
-      try {
-        await updateMutation.mutateAsync({ id, quantity });
-      } catch {
-        queryClient.invalidateQueries({ queryKey: ["cart"] });
-      }
+      updateMutation.mutate({ id, quantity });
     }
   };
 
