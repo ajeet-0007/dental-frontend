@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Mail, Phone, ChevronDown, ChevronUp } from 'lucide-react'
 import toast from 'react-hot-toast'
 import api from '@/api'
@@ -37,24 +37,34 @@ export default function HelpSupport() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    phone: '',
     subject: '',
     message: '',
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  useEffect(() => {
+    if (isAuthenticated && user?.phone) {
+      setFormData(prev => ({ ...prev, phone: user.phone }))
+    }
+  }, [isAuthenticated, user?.phone])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
     
     try {
-      if (isAuthenticated) {
-        await api.post('/support', {
-          ...formData,
-          userId: user?.id,
-        })
+      const payload = {
+        name: isAuthenticated ? `${user?.firstName} ${user?.lastName}`.trim() : formData.name,
+        email: isAuthenticated ? user?.email || '' : formData.email,
+        phone: formData.phone,
+        subject: formData.subject,
+        message: formData.message,
+        ...(isAuthenticated && { userId: user?.id }),
       }
+      await api.post('/support', payload)
       toast.success('Message sent! We will get back to you soon.')
-      setFormData({ name: '', email: '', subject: '', message: '' })
+      setFormData({ name: '', email: '', phone: '', subject: '', message: '' })
     } catch (error) {
       toast.error('Failed to send message. Please try again.')
     } finally {
@@ -133,6 +143,15 @@ export default function HelpSupport() {
                 disabled={isAuthenticated}
                 className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                 required
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-gray-600 mb-1">Phone</label>
+              <input
+                type="tel"
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
               />
             </div>
             <div>
