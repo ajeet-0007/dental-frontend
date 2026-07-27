@@ -344,11 +344,13 @@ export default function Orders() {
           animate={{ opacity: 1, y: 0 }}
           className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8"
         >
-          <div>
-            <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">My Orders</h1>
-            {/* {orders.length > 0 && (
-              <p className="text-gray-500 mt-1">{orders.length} order{orders.length !== 1 ? 's' : ''} placed</p>
-            )} */}
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/20">
+              <ShoppingBag className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-gray-900 tracking-tight">My Orders</h2>
+            </div>
           </div>
         </motion.div>
 

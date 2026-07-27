@@ -5,7 +5,8 @@ import api from "@/api";
 import { useAuthStore } from "@/stores/authStore";
 import { useWishlistStore } from "@/stores/wishlistStore";
 import { useCartStore } from "@/stores/cartStore";
-import { X, Heart, ShoppingCart, Trash2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { X, Heart, ShoppingCart, Trash2, ShoppingBag, ArrowRight } from "lucide-react";
 
 interface WishlistDrawerProps {
   isOpen: boolean;
@@ -60,147 +61,173 @@ export default function WishlistDrawer({ isOpen, onClose }: WishlistDrawerProps)
     }
   }
 
-  if (!isOpen) return null;
+  const getDiscount = (mrp: number, selling: number) => {
+    if (mrp > selling) {
+      return Math.round(((mrp - selling) / mrp) * 100)
+    }
+    return 0
+  }
 
   return (
-    <>
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 bg-black/50 z-50 transition-opacity"
-        onClick={onClose}
-      />
-
-      {/* Drawer */}
-      <div className="fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl z-50 flex flex-col animate-slide-in">
-        {/* Header */}
-        <div className="flex items-center justify-between p-5 border-b border-gray-100">
-          <div className="flex items-center gap-3">
-            <Heart className="h-5 w-5 text-primary-600" />
-            <h2 className="text-lg font-semibold text-gray-900">
-              Wishlist ({items.length})
-            </h2>
-          </div>
-          <button
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-            title="Close"
-          >
-            <X className="h-5 w-5 text-gray-500" />
-          </button>
-        </div>
+          />
 
-        {/* Content */}
-        <div className="flex-1 overflow-y-auto">
-          {items.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full p-8 text-center">
-              <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                <Heart className="h-10 w-10 text-gray-300" />
-              </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
-                Your wishlist is empty
-              </h3>
-              <p className="text-gray-500 mb-6">
-                Save items you love by clicking the heart icon
-              </p>
-              <button
-                onClick={onClose}
-                className="px-6 py-2.5 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors"
-              >
-                Start Shopping
-              </button>
-            </div>
-          ) : (
-            <div className="p-4 space-y-3">
-              {items.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex gap-3 bg-gray-50 rounded-xl p-3"
-                >
-                  <Link
-                    to={`/products/${item.product.slug}`}
-                    onClick={onClose}
-                    className="w-20 h-20 bg-white rounded-lg overflow-hidden flex-shrink-0"
-                  >
-                    {item.product.images?.[0] ? (
-                      <img
-                        src={item.product.images[0]}
-                        alt={item.product.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <Heart className="h-6 w-6 text-gray-300" />
-                      </div>
-                    )}
-                  </Link>
-                  <div className="flex-1 min-w-0">
-                    <Link
-                      to={`/products/${item.product.slug}`}
-                      onClick={onClose}
-                      className="text-sm font-medium text-gray-900 line-clamp-2 hover:text-primary-600 transition-colors"
-                    >
-                      {item.product.name}
-                    </Link>
-                    <div className="mt-1">
-                      <span className="text-base font-bold text-primary-600">
-                        ₹{item.product.sellingPrice}
-                      </span>
-                      {item.product.mrp > item.product.sellingPrice && (
-                        <span className="ml-2 text-xs text-gray-400 line-through">
-                          ₹{item.product.mrp}
-                        </span>
-                      )}
-                    </div>
-                    <div className="flex gap-2 mt-2">
-                      <button
-                        onClick={() => handleAddToCart(item)}
-                        className="flex-1 flex items-center justify-center gap-1.5 py-2 bg-primary-600 text-white text-xs font-medium rounded-lg hover:bg-primary-700 transition-colors"
-                      >
-                        <ShoppingCart className="h-3.5 w-3.5" />
-                        Add to Cart
-                      </button>
-                      <button
-                        onClick={() => handleRemove(item.id, parseInt(item.product.id))}
-                        className="p-2 text-gray-400 hover:text-red-500 transition-colors"
-                        title="Remove from wishlist"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </div>
+          {/* Drawer */}
+          <motion.div
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            className="fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl z-50 flex flex-col"
+          >
+            {/* Header */}
+            <div className="p-5 bg-gradient-to-r from-primary-600 to-blue-600 text-white">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                    <Heart className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-white/70 uppercase tracking-wider mb-0.5">Saved items</p>
+                    <h2 className="text-lg font-bold">Wishlist ({items.length})</h2>
                   </div>
                 </div>
-              ))}
+                <button
+                  onClick={onClose}
+                  className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center hover:bg-white/30 transition-colors"
+                  title="Close"
+                >
+                  <X className="h-5 w-5 text-white" />
+                </button>
+              </div>
             </div>
-          )}
-        </div>
 
-        {/* Footer */}
-        {items.length > 0 && (
-          <div className="p-5 border-t border-gray-100 bg-white">
-            <Link
-              to="/wishlist"
-              onClick={onClose}
-              className="block w-full py-3 text-center text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors"
-            >
-              View All ({items.length} items)
-            </Link>
-          </div>
-        )}
-      </div>
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto">
+              {items.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-full p-8 text-center">
+                  <motion.div 
+                    className="w-24 h-24 bg-gradient-to-br from-blue-100 to-primary-100 rounded-3xl flex items-center justify-center mb-6"
+                    animate={{ y: [0, -10, 0] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                  >
+                    <Heart className="h-12 w-12 text-primary-400" />
+                  </motion.div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">
+                    Your wishlist is empty
+                  </h3>
+                  <p className="text-gray-500 mb-8 max-w-xs">
+                    Save items you love by clicking the heart icon on any product
+                  </p>
+                  <button
+                    onClick={onClose}
+                    className="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-semibold rounded-xl hover:from-primary-700 hover:to-primary-800 transition-all shadow-lg shadow-primary-500/25"
+                  >
+                    <ShoppingBag className="h-4 w-4" />
+                    Start Shopping
+                  </button>
+                </div>
+              ) : (
+                <div className="p-4 space-y-3">
+                  {items.map((item, index) => {
+                    const discount = getDiscount(item.product.mrp, item.product.sellingPrice)
+                    return (
+                      <motion.div
+                        key={item.id}
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                        className="flex gap-3 bg-gray-50 rounded-2xl p-3 border border-gray-100 hover:shadow-md transition-all duration-300 group"
+                      >
+                        <Link
+                          to={`/products/${item.product.slug}`}
+                          onClick={onClose}
+                          className="w-20 h-20 bg-white rounded-xl overflow-hidden flex-shrink-0 relative"
+                        >
+                          {item.product.images?.[0] ? (
+                            <img
+                              src={item.product.images[0]}
+                              alt={item.product.name}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <Heart className="h-6 w-6 text-gray-300" />
+                            </div>
+                          )}
+                          {discount > 0 && (
+                            <div className="absolute top-1 left-1 px-1.5 py-0.5 bg-gradient-to-r from-emerald-500 to-green-500 text-white text-[8px] font-bold rounded-full shadow-sm">
+                              {discount}% OFF
+                            </div>
+                          )}
+                        </Link>
+                        <div className="flex-1 min-w-0">
+                          <Link
+                            to={`/products/${item.product.slug}`}
+                            onClick={onClose}
+                            className="text-sm font-medium text-gray-900 line-clamp-2 hover:text-primary-600 transition-colors leading-snug"
+                          >
+                            {item.product.name}
+                          </Link>
+                          <div className="mt-1.5 flex items-center gap-2">
+                            <span className="text-base font-bold text-gray-900">
+                              ₹{item.product.sellingPrice}
+                            </span>
+                            {item.product.mrp > item.product.sellingPrice && (
+                              <span className="text-xs text-gray-400 line-through">
+                                ₹{item.product.mrp}
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex gap-2 mt-2">
+                            <button
+                              onClick={() => handleAddToCart(item)}
+                              className="flex-1 flex items-center justify-center gap-1.5 py-2 bg-gradient-to-r from-primary-600 to-primary-700 text-white text-xs font-medium rounded-xl hover:from-primary-700 hover:to-primary-800 transition-all shadow-md shadow-primary-500/20"
+                            >
+                              <ShoppingCart className="h-3.5 w-3.5" />
+                              Add to Cart
+                            </button>
+                            <button
+                              onClick={() => handleRemove(item.id, parseInt(item.product.id))}
+                              className="w-9 h-9 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                              title="Remove from wishlist"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
 
-      <style>{`
-        @keyframes slide-in {
-          from {
-            transform: translateX(100%);
-          }
-          to {
-            transform: translateX(0);
-          }
-        }
-        .animate-slide-in {
-          animation: slide-in 0.3s ease-out;
-        }
-      `}</style>
-    </>
+            {/* Footer */}
+            {items.length > 0 && (
+              <div className="p-5 border-t border-gray-100 bg-white">
+                <Link
+                  to="/wishlist"
+                  onClick={onClose}
+                  className="flex items-center justify-center gap-2 w-full py-3 bg-gradient-to-r from-primary-600 to-blue-600 text-white font-semibold rounded-xl hover:from-primary-700 hover:to-blue-700 transition-all shadow-lg shadow-primary-500/25"
+                >
+                  View All Wishlist
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            )}
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
   );
 }
