@@ -4,7 +4,7 @@ import api from "@/api";
 import { Trash2, Plus, Minus, ShoppingCart, ArrowRight, Package, Tag, ShoppingBag, Shield, Check, Truck } from "lucide-react";
 import { useAuthStore } from "@/stores/authStore";
 import { useCartStore } from "@/stores/cartStore";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ProductCarousel from "@/components/common/ProductCarousel";
 import CartDrawer from "@/components/common/CartDrawer";
 
@@ -27,11 +27,20 @@ export default function Cart() {
 
   const isVerified = verificationData?.data?.verified ?? user?.isProfessionalVerified;
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isFetching } = useQuery({
     queryKey: ["cart"],
     queryFn: () => api.get("/cart"),
     enabled: isAuthenticated,
   });
+
+  const initialSyncDone = useRef(false);
+
+  useEffect(() => {
+    if (isAuthenticated && data?.data && !initialSyncDone.current && !isFetching) {
+      setCart(data.data, data.data.length);
+      initialSyncDone.current = true;
+    }
+  }, [data, isAuthenticated, setCart, isFetching]);
 
   const removeMutation = useMutation({
     mutationFn: (id: string) => api.delete(`/cart/${id}`),
@@ -79,8 +88,7 @@ export default function Cart() {
     },
   });
 
-  const serverItems = data?.data || [];
-  const allItems = items.length > 0 ? items : serverItems;
+  const allItems = items;
 
   const isStudentOnlyCart = allItems.length > 0 && allItems.every(
     (item: any) => item.product.category?.slug === 'student-section'
