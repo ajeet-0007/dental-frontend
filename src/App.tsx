@@ -66,7 +66,7 @@ function App() {
       api
         .get("/cart")
         .then((res) => {
-          setCart(res.data.items || [], res.data.total || 0);
+          setCart(Array.isArray(res.data) ? res.data : (res.data?.items || []), res.data.length || 0);
         })
         .catch(() => {
           setCart([], 0);

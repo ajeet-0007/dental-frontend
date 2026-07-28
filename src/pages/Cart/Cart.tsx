@@ -4,7 +4,7 @@ import api from "@/api";
 import { Trash2, Plus, Minus, ShoppingCart, ArrowRight, Package, Tag, ShoppingBag, Shield, Check, Truck } from "lucide-react";
 import { useAuthStore } from "@/stores/authStore";
 import { useCartStore } from "@/stores/cartStore";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ProductCarousel from "@/components/common/ProductCarousel";
 import CartDrawer from "@/components/common/CartDrawer";
 
@@ -33,28 +33,49 @@ export default function Cart() {
     enabled: isAuthenticated,
   });
 
-  useEffect(() => {
-    if (isAuthenticated && data?.data) {
-      setCart(data.data, data.data.length);
-    }
-  }, [data, isAuthenticated, setCart]);
-
   const removeMutation = useMutation({
     mutationFn: (id: string) => api.delete(`/cart/${id}`),
     onSuccess: (_, deletedId) => {
       removeItem(deletedId);
+      queryClient.setQueryData(["cart"], (old: any) => {
+        if (!old?.data) return old;
+        return {
+          ...old,
+          data: old.data.filter((item: any) => item.id !== deletedId),
+        };
+      });
+    },
+    onError: async () => {
       queryClient.invalidateQueries({ queryKey: ["cart"] });
+      try {
+        const res = await api.get("/cart");
+        const data = Array.isArray(res.data) ? res.data : [];
+        setCart(data, data.length);
+      } catch {}
     },
   });
 
   const updateMutation = useMutation({
     mutationFn: ({ id, quantity }: { id: string; quantity: number }) =>
       api.put(`/cart/${id}`, { quantity }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["cart"] });
+    onSuccess: (_, { id, quantity }) => {
+      queryClient.setQueryData(["cart"], (old: any) => {
+        if (!old?.data) return old;
+        return {
+          ...old,
+          data: old.data.map((item: any) =>
+            item.id === id ? { ...item, quantity } : item
+          ),
+        };
+      });
     },
-    onError: () => {
+    onError: async () => {
       queryClient.invalidateQueries({ queryKey: ["cart"] });
+      try {
+        const res = await api.get("/cart");
+        const data = Array.isArray(res.data) ? res.data : [];
+        setCart(data, data.length);
+      } catch {}
     },
   });
 
