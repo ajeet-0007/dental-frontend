@@ -12,7 +12,6 @@
   ],
   "rewrites": [
     { "source": "/(.*\\.(js|css|json|png|svg|ico|webmanifest))", "destination": "/$1" },
-    { "source": "/(sw\\.js|registerSW\\.js|workbox-.*\\.js)", "destination": "/$1" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
