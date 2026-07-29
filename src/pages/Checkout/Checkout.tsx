@@ -6,10 +6,12 @@ import api from "@/api";
 import { useAuthStore } from "@/stores/authStore";
 import { useCartStore } from "@/stores/cartStore";
 import { formatPrice } from "@/utils/format";
+import DeleteConfirmModal from "@/components/common/DeleteConfirmModal";
 import {
   Plus, Check, ShoppingCart, MapPin, Loader2,
   Trash2, Home, Phone, CreditCard, Banknote,
-  X, ArrowRight, Package, Star, CheckCircle, XCircle, Shield, ShieldCheck
+  X, ArrowRight, Package, Star, CheckCircle, Shield,
+  Truck, ShieldCheck
 } from "lucide-react";
 
 const PAYMENT_METHODS = [
@@ -66,7 +68,7 @@ export default function Checkout() {
             const road = address.road || "";
             const neighborhood = address.neighbourhood || address.suburb || "";
             const locality = address.locality || address.industrial || "";
-            
+
             setFormData((prev: any) => ({
               ...prev,
               addressLine1: `${houseNumber}${road}`.trim() || neighborhood || locality || "",
@@ -136,7 +138,7 @@ export default function Checkout() {
   const displayCartItems = serverCartItems.length > 0 ? serverCartItems : cartItems;
 
   const subtotal = displayCartItems.reduce((sum: number, item: any) => {
-                    const price = item.variant?.sellingPrice || item.product.sellingPrice;
+    const price = item.variant?.sellingPrice || item.product.sellingPrice;
     return sum + price * item.quantity;
   }, 0);
   const total = subtotal;
@@ -177,7 +179,6 @@ export default function Checkout() {
   useEffect(() => {
     if (paymentCancelled) {
       toast.error('Payment was cancelled. You can try again.');
-      // Clean URL
       window.history.replaceState({}, '', '/checkout');
     }
   }, [paymentCancelled]);
@@ -189,7 +190,6 @@ export default function Checkout() {
         return { order: orderRes.data, isCOD: true };
       }
 
-      // For card payment: send all order data to create checkout session (no order created yet)
       const paymentRes = await api.post("/payments/create-checkout-session", {
         ...data,
         items: displayCartItems.map((item: any) => ({
@@ -306,18 +306,19 @@ export default function Checkout() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <ShoppingCart className="w-10 h-10 text-gray-400" />
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 flex items-center justify-center">
+        <div className="text-center max-w-sm mx-auto px-4">
+          <div className="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-50 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-inner">
+            <ShoppingCart className="w-12 h-12 text-gray-300" />
           </div>
-          <h2 className="text-xl font-semibold mb-2">Login to checkout</h2>
-          <p className="text-gray-500 mb-4">Please login to place your order</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Login to Checkout</h2>
+          <p className="text-sm text-gray-500 mb-8">Please login to place your order</p>
           <button
             onClick={() => navigate("/login")}
-            className="px-6 py-2.5 bg-primary-600 text-white rounded-xl hover:bg-primary-700 font-medium"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-2xl font-semibold text-sm hover:from-primary-700 hover:to-primary-800 transition-all shadow-lg shadow-primary-600/30 hover:shadow-xl hover:shadow-primary-600/40"
           >
             Login
+            <ArrowRight className="h-4 w-4" />
           </button>
         </div>
       </div>
@@ -332,16 +333,16 @@ export default function Checkout() {
 
   if (isAuthenticated && !isVerified && !isStudentOnlyCart) {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 flex items-center justify-center">
         <div className="text-center max-w-md mx-auto px-4">
-          <div className="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Shield className="w-10 h-10 text-amber-600" />
+          <div className="w-24 h-24 bg-gradient-to-br from-amber-100 to-amber-50 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-inner">
+            <Shield className="w-12 h-12 text-amber-500" />
           </div>
-          <h2 className="text-xl font-semibold mb-2">Professional Verification Required</h2>
-          <p className="text-gray-500 mb-2">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Professional Verification Required</h2>
+          <p className="text-sm text-gray-500 mb-2">
             Only verified dental professionals can place orders.
           </p>
-          <p className="text-sm text-gray-400 mb-6">
+          <p className="text-xs text-gray-400 mb-8">
             Verify your dental credentials to unlock checkout and start ordering products.
           </p>
           <button
@@ -349,9 +350,9 @@ export default function Checkout() {
               sessionStorage.setItem('redirectAfterVerification', '/checkout');
               navigate('/profile?section=verification');
             }}
-            className="px-6 py-2.5 bg-amber-600 text-white rounded-xl hover:bg-amber-700 font-medium flex items-center gap-2 mx-auto"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-2xl font-semibold text-sm hover:from-amber-600 hover:to-orange-700 transition-all shadow-lg shadow-amber-500/30 hover:shadow-xl hover:shadow-amber-500/40"
           >
-            <ShieldCheck className="h-4 w-4" />
+            <ShieldCheck className="h-5 w-5" />
             Verify Now
           </button>
         </div>
@@ -361,17 +362,29 @@ export default function Checkout() {
 
   if (addressesLoading) {
     return (
-      <div className="container mx-auto px-4 py-6">
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 w-32 bg-gray-200 rounded"></div>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
+        <div className="container mx-auto px-4 py-6 md:py-8">
+          <div className="animate-pulse space-y-3 max-w-xl mb-8">
+            <div className="h-4 w-24 bg-gradient-to-r from-gray-200 to-gray-100 rounded-lg" />
+            <div className="h-8 w-48 bg-gradient-to-r from-gray-200 to-gray-100 rounded-xl" />
+          </div>
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <div className="lg:col-span-8 space-y-4">
               {[1, 2].map((i) => (
-                <div key={i} className="h-32 bg-gray-200 rounded-xl"></div>
+                <div key={i} className="bg-white rounded-3xl border border-gray-100 p-5 animate-pulse">
+                  <div className="h-24 bg-gradient-to-r from-gray-200 to-gray-100 rounded-2xl" />
+                </div>
               ))}
             </div>
             <div className="lg:col-span-4">
-              <div className="h-80 bg-gray-200 rounded-xl"></div>
+              <div className="bg-white rounded-3xl border border-gray-100 p-6 animate-pulse">
+                <div className="h-5 bg-gradient-to-r from-primary-200 to-primary-100 rounded-lg w-1/2 mb-4" />
+                <div className="space-y-3">
+                  <div className="h-4 bg-gradient-to-r from-gray-100 to-gray-50 rounded-lg" />
+                  <div className="h-4 bg-gradient-to-r from-gray-100 to-gray-50 rounded-lg" />
+                  <div className="h-6 bg-gradient-to-r from-primary-200 to-primary-100 rounded-lg mt-4" />
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -380,433 +393,538 @@ export default function Checkout() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-6">
-      {paymentCancelled && (
-        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3">
-          <XCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
-          <p className="text-red-700 text-sm">Payment was cancelled. Please try again or choose a different payment method.</p>
-        </div>
-      )}
-
-      <div className="flex items-center gap-3 mb-6">
-        <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
-          <ShoppingCart className="w-5 h-5 text-primary-600" />
-        </div>
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Checkout</h1>
-          <p className="text-sm text-gray-500">{displayCartItems.length} item{displayCartItems.length !== 1 ? "s" : ""} in cart</p>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
+      {/* Header */}
+      <div className="bg-white border-b border-gray-100">
+        <div className="container mx-auto px-4 py-6 md:py-8">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/20">
+              <ShoppingCart className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-primary-600 uppercase tracking-widest mb-0.5">Secure Checkout</p>
+              <h1 className="text-xl md:text-2xl font-bold text-gray-900">
+                Checkout ({displayCartItems.length} item{displayCartItems.length !== 1 ? "s" : ""})
+              </h1>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left Column - Address & Payment */}
-        <div className="lg:col-span-8 space-y-4">
-          
-          {/* Saved Addresses */}
-          <div className="bg-white rounded-2xl border border-gray-100 p-5">
-            <h2 className="font-semibold text-lg text-gray-900 mb-4 flex items-center gap-2">
-              <Home className="w-5 h-5 text-gray-400" />
-              Delivery Address
-            </h2>
-            
-            {addresses.length > 0 && !useNewAddress && (
-              <div className="space-y-3">
-                {addresses.map((address: any) => (
-                  <div
-                    key={address.id}
-                    className={`relative border rounded-xl p-4 cursor-pointer transition-all ${
-                      selectedAddressId === address.id
-                        ? "border-primary-500 bg-primary-50/50"
-                        : "border-gray-100 hover:border-gray-200 hover:shadow-sm"
-                    }`}
-                    onClick={() => {
-                      setSelectedAddressId(address.id);
-                      setUseNewAddress(false);
-                    }}
-                  >
-                    <div className="flex gap-4">
-                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-1 ${
+      {/* Payment Cancelled Banner */}
+      {paymentCancelled && (
+        <div className="container mx-auto px-4 pt-6">
+          <div className="p-4 bg-gradient-to-r from-red-50 to-rose-50 border border-red-200 rounded-2xl flex items-center gap-3">
+            <div className="w-8 h-8 bg-gradient-to-br from-red-400 to-rose-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md shadow-red-500/20">
+              <Shield className="h-4 w-4 text-white" />
+            </div>
+            <p className="text-sm text-red-700 font-medium">Payment was cancelled. Please try again or choose a different payment method.</p>
+          </div>
+        </div>
+      )}
+
+      <div className="container mx-auto px-4 py-6 md:py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Left Column - Address & Payment */}
+          <div className="lg:col-span-8 space-y-4">
+
+            {/* Saved Addresses */}
+            <div className="bg-white rounded-3xl border border-gray-100 p-5 md:p-6">
+              <div className="flex items-center gap-3 mb-5">
+                <div className="w-9 h-9 bg-gradient-to-br from-primary-500 to-blue-500 rounded-xl flex items-center justify-center shadow-md shadow-primary-500/20">
+                  <Home className="w-4 h-4 text-white" />
+                </div>
+                <h2 className="font-bold text-lg text-gray-900">Delivery Address</h2>
+              </div>
+
+              {addresses.length > 0 && !useNewAddress && (
+                <div className="space-y-3">
+                  {addresses.map((address: any) => (
+                    <div
+                      key={address.id}
+                      className={`relative rounded-3xl p-4 md:p-5 cursor-pointer transition-all duration-300 ${
                         selectedAddressId === address.id
-                          ? "border-primary-500 bg-primary-500"
-                          : "border-gray-300"
-                      }`}>
-                        {selectedAddressId === address.id && (
-                          <Check className="w-3 h-3 text-white" />
-                        )}
-                      </div>
-                      
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium text-gray-900">{address.name}</span>
-                          {address.isDefault && (
-                            <span className="text-xs bg-primary-100 text-primary-700 px-2 py-0.5 rounded-full flex items-center gap-1">
-                              <CheckCircle className="w-3 h-3" />
-                              Default
-                            </span>
+                          ? "border-2 border-primary-500 ring-2 ring-primary-500/20 bg-primary-50/50 shadow-md shadow-primary-500/10"
+                          : "border border-gray-100 hover:border-gray-200 hover:shadow-lg hover:shadow-gray-200/50 bg-white"
+                      }`}
+                      onClick={() => {
+                        setSelectedAddressId(address.id);
+                        setUseNewAddress(false);
+                      }}
+                    >
+                      <div className="flex gap-4">
+                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-all ${
+                          selectedAddressId === address.id
+                            ? "border-primary-500 bg-gradient-to-br from-primary-500 to-blue-500 shadow-md shadow-primary-500/20"
+                            : "border-gray-300"
+                        }`}>
+                          {selectedAddressId === address.id && (
+                            <Check className="w-3 h-3 text-white" />
                           )}
                         </div>
-                        <p className="text-sm text-gray-600 mt-1">
-                          {address.addressLine1}{address.addressLine2 && `, ${address.addressLine2}`}
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          {address.city}, {address.state} - {address.pincode}
-                        </p>
-                        <p className="text-sm text-gray-500 mt-1 flex items-center gap-1">
-                          <Phone className="w-3.5 h-3.5" />
-                          {address.phone}
-                        </p>
-                      </div>
-                      
-                      <div className="flex flex-col gap-1">
-                        {!address.isDefault && (
+
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="font-semibold text-gray-900">{address.name}</span>
+                            {address.isDefault && (
+                              <span className="text-[10px] font-bold px-2 py-0.5 bg-gradient-to-r from-emerald-500 to-green-500 text-white rounded-full shadow-md shadow-emerald-500/20 flex items-center gap-1">
+                                <CheckCircle className="w-2.5 h-2.5" />
+                                Default
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-sm text-gray-600 mt-1.5 leading-relaxed">
+                            {address.addressLine1}{address.addressLine2 && `, ${address.addressLine2}`}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            {address.city}, {address.state} - {address.pincode}
+                          </p>
+                          <p className="text-sm text-gray-500 mt-1.5 flex items-center gap-1.5">
+                            <Phone className="w-3.5 h-3.5" />
+                            {address.phone}
+                          </p>
+                        </div>
+
+                        <div className="flex flex-col gap-1 flex-shrink-0">
+                          {!address.isDefault && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setDefaultMutation.mutate(address.id);
+                              }}
+                              disabled={setDefaultMutation.isPending}
+                              className="p-2 text-gray-400 hover:text-primary-500 hover:bg-primary-50 rounded-xl transition-all"
+                              title="Set as default"
+                            >
+                              <Star className="w-4 h-4" />
+                            </button>
+                          )}
                           <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setDefaultMutation.mutate(address.id);
-                            }}
-                            disabled={setDefaultMutation.isPending}
-                            className="p-2 text-gray-400 hover:text-primary-500 hover:bg-primary-50 rounded-lg transition-colors"
-                            title="Set as default"
-                          >
-                            <Star className="w-4 h-4" />
-                          </button>
-                        )}
-                        <button
                             onClick={(e) => {
                               e.stopPropagation();
                               setShowDeleteModal(address.id);
                             }}
-                            className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                            className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
                             title="Delete address"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {addresses.length > 0 && (
-              <button
-                onClick={() => {
-                  setUseNewAddress(true);
-                  setSelectedAddressId(null);
-                  resetForm();
-                }}
-                className={`w-full mt-3 py-3 border-2 border-dashed rounded-xl flex items-center justify-center gap-2 transition-all ${
-                  useNewAddress
-                    ? "border-primary-500 bg-primary-50 text-primary-600"
-                    : "border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50"
-                }`}
-              >
-                <Plus className="w-4 h-4" />
-                Add New Address
-              </button>
-            )}
-          </div>
-
-          {/* New Address Form */}
-          {useNewAddress && (
-            <div className="bg-white rounded-2xl border border-gray-100 p-5">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="font-semibold text-lg text-gray-900">New Address</h2>
-                <button
-                  onClick={() => {
-                    setUseNewAddress(false);
-                    resetForm();
-                  }}
-                  className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                      placeholder="Enter full name"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Mobile *</label>
-                    <input
-                      type="tel"
-                      required
-                      value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                      placeholder="10-digit number"
-                      maxLength={10}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">House No. / Street *</label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.addressLine1}
-                    onChange={(e) => setFormData({ ...formData, addressLine1: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                    placeholder="e.g., 123 Main Road"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Area / Locality</label>
-                    <input
-                      type="text"
-                      value={formData.addressLine2}
-                      onChange={(e) => setFormData({ ...formData, addressLine2: e.target.value })}
-                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                      placeholder="e.g., Sector 15"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Landmark</label>
-                    <input
-                      type="text"
-                      value={formData.landmark}
-                      onChange={(e) => setFormData({ ...formData, landmark: e.target.value })}
-                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                      placeholder="e.g., Near Metro"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">City *</label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.city}
-                      onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                      placeholder="City"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">State *</label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.state}
-                      onChange={(e) => setFormData({ ...formData, state: e.target.value })}
-                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                      placeholder="State"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Pincode *</label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.pincode}
-                      onChange={(e) => setFormData({ ...formData, pincode: e.target.value })}
-                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                      placeholder="6-digit"
-                      maxLength={6}
-                    />
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={getCurrentLocation}
-                  disabled={gettingLocation}
-                  className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors disabled:opacity-50 text-sm font-medium"
-                >
-                  {gettingLocation ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <MapPin className="w-4 h-4" />
-                  )}
-                  {gettingLocation ? "Getting location..." : "Use Current Location"}
-                </button>
-
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={saveAddress}
-                    onChange={(e) => setSaveAddress(e.target.checked)}
-                    className="w-4 h-4 text-primary-600 rounded border-gray-300"
-                  />
-                  <span className="text-sm text-gray-700">Save this address for future orders</span>
-                </label>
-              </form>
-            </div>
-          )}
-
-          {/* No addresses state */}
-          {addresses.length === 0 && !useNewAddress && (
-            <div className="bg-white rounded-2xl border border-gray-100 p-8 text-center">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Home className="w-8 h-8 text-gray-400" />
-              </div>
-              <h3 className="font-medium text-gray-900 mb-1">No saved addresses</h3>
-              <p className="text-sm text-gray-500 mb-4">Add an address to continue checkout</p>
-              <button
-                onClick={() => setUseNewAddress(true)}
-                className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium text-sm"
-              >
-                Add Address
-              </button>
-            </div>
-          )}
-
-          {/* Payment Method */}
-          {(selectedAddressId || useNewAddress) && (
-            <div className="bg-white rounded-2xl border border-gray-100 p-5">
-              <h2 className="font-semibold text-lg text-gray-900 mb-4 flex items-center gap-2">
-                <CreditCard className="w-5 h-5 text-gray-400" />
-                Payment Method
-              </h2>
-              <div className="grid grid-cols-2 gap-3">
-                {PAYMENT_METHODS.map((method) => {
-                  const Icon = method.icon;
-                  return (
-                    <button
-                      key={method.id}
-                      onClick={() => setPaymentMethod(method.id)}
-                      className={`flex items-center gap-3 p-4 border rounded-xl transition-all ${
-                        paymentMethod === method.id
-                          ? "border-primary-500 bg-primary-50"
-                          : "border-gray-100 hover:border-gray-200"
-                      }`}
-                    >
-                      <Icon className={`w-5 h-5 ${paymentMethod === method.id ? "text-primary-600" : "text-gray-400"}`} />
-                      <div className="text-left">
-                        <span className="font-medium text-sm">{method.name}</span>
-                        {method.id === "cod" && (
-                          <p className="text-xs text-green-600">No extra charges</p>
-                        )}
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Right Column - Order Summary */}
-        <div className="lg:col-span-4">
-          <div className="bg-white rounded-2xl border border-gray-100 p-5 sticky top-4">
-            <h2 className="font-semibold text-lg text-gray-900 mb-4 flex items-center gap-2">
-              <Package className="w-5 h-5 text-gray-400" />
-              Order Summary
-            </h2>
-
-            {displayCartItems.length === 0 ? (
-              <div className="text-center py-8">
-                <ShoppingCart className="w-12 h-12 mx-auto text-gray-300 mb-3" />
-                <p className="text-gray-500 mb-3">Cart is empty</p>
-                <button
-                  onClick={() => navigate("/products")}
-                  className="text-primary-600 hover:text-primary-700 font-medium text-sm"
-                >
-                  Browse Products
-                </button>
-              </div>
-            ) : (
-              <>
-                <div className="space-y-3 max-h-48 overflow-y-auto mb-4">
-                  {displayCartItems.map((item: any) => {
-    const price = item.variant?.sellingPrice || item.product.sellingPrice;
-                    const image = item.variant?.image || item.product.images?.[0];
-                    return (
-                      <div key={item.id} className="flex gap-3">
-                        {image && (
-                          <img src={image} alt={item.product.name} className="w-14 h-14 object-cover rounded-lg" />
-                        )}
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium truncate">{item.product.name}</p>
-                          {item.variant && <p className="text-xs text-gray-500">{item.variant.name}</p>}
-                          <div className="flex items-center gap-2 mt-1">
-                            <span className="text-sm font-medium">₹{formatPrice(price)}</span>
-                            <span className="text-xs text-gray-500">x {item.quantity}</span>
-                          </div>
                         </div>
                       </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {addresses.length > 0 && (
+                <button
+                  onClick={() => {
+                    setUseNewAddress(true);
+                    setSelectedAddressId(null);
+                    resetForm();
+                  }}
+                  className={`w-full mt-3 py-3.5 border-2 border-dashed rounded-2xl flex items-center justify-center gap-2 transition-all duration-300 font-medium text-sm ${
+                    useNewAddress
+                      ? "border-primary-500 bg-primary-50 text-primary-600"
+                      : "border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:shadow-sm"
+                  }`}
+                >
+                  <Plus className="w-4 h-4" />
+                  Add New Address
+                </button>
+              )}
+            </div>
+
+            {/* New Address Form */}
+            {useNewAddress && (
+              <div className="bg-white rounded-3xl border border-gray-100 p-5 md:p-6">
+                <div className="flex items-center justify-between mb-5">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 bg-gradient-to-br from-primary-500 to-blue-500 rounded-xl flex items-center justify-center shadow-md shadow-primary-500/20">
+                      <Plus className="w-4 h-4 text-white" />
+                    </div>
+                    <h2 className="font-bold text-lg text-gray-900">New Address</h2>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setUseNewAddress(false);
+                      resetForm();
+                    }}
+                    className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-xl transition-all"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1.5">Full Name *</label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all bg-gray-50/50 focus:bg-white"
+                        placeholder="Enter full name"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1.5">Mobile *</label>
+                      <input
+                        type="tel"
+                        required
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all bg-gray-50/50 focus:bg-white"
+                        placeholder="10-digit number"
+                        maxLength={10}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">House No. / Street *</label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.addressLine1}
+                      onChange={(e) => setFormData({ ...formData, addressLine1: e.target.value })}
+                      className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all bg-gray-50/50 focus:bg-white"
+                      placeholder="e.g., 123 Main Road"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1.5">Area / Locality</label>
+                      <input
+                        type="text"
+                        value={formData.addressLine2}
+                        onChange={(e) => setFormData({ ...formData, addressLine2: e.target.value })}
+                        className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all bg-gray-50/50 focus:bg-white"
+                        placeholder="e.g., Sector 15"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1.5">Landmark</label>
+                      <input
+                        type="text"
+                        value={formData.landmark}
+                        onChange={(e) => setFormData({ ...formData, landmark: e.target.value })}
+                        className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all bg-gray-50/50 focus:bg-white"
+                        placeholder="e.g., Near Metro"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1.5">City *</label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.city}
+                        onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                        className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all bg-gray-50/50 focus:bg-white"
+                        placeholder="City"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1.5">State *</label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.state}
+                        onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                        className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all bg-gray-50/50 focus:bg-white"
+                        placeholder="State"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1.5">Pincode *</label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.pincode}
+                        onChange={(e) => setFormData({ ...formData, pincode: e.target.value })}
+                        className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all bg-gray-50/50 focus:bg-white"
+                        placeholder="6-digit"
+                        maxLength={6}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-3 pt-2">
+                    <button
+                      type="button"
+                      onClick={getCurrentLocation}
+                      disabled={gettingLocation}
+                      className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-green-600 text-white rounded-xl hover:from-emerald-600 hover:to-green-700 transition-all shadow-md shadow-emerald-500/20 disabled:opacity-50 text-sm font-medium"
+                    >
+                      {gettingLocation ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <MapPin className="w-4 h-4" />
+                      )}
+                      {gettingLocation ? "Getting location..." : "Use Current Location"}
+                    </button>
+
+                    <label className="flex items-center gap-2.5 cursor-pointer group ml-auto">
+                      <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all ${
+                        saveAddress
+                          ? "bg-gradient-to-br from-primary-500 to-blue-500 border-primary-500 shadow-md shadow-primary-500/20"
+                          : "border-gray-300 group-hover:border-gray-400"
+                      }`}>
+                        {saveAddress && <Check className="w-3 h-3 text-white" />}
+                      </div>
+                      <input
+                        type="checkbox"
+                        checked={saveAddress}
+                        onChange={(e) => setSaveAddress(e.target.checked)}
+                        className="hidden"
+                      />
+                      <span className="text-sm text-gray-600 group-hover:text-gray-800 transition-colors">Save this address for future orders</span>
+                    </label>
+                  </div>
+                </form>
+              </div>
+            )}
+
+            {/* No addresses state */}
+            {addresses.length === 0 && !useNewAddress && (
+              <div className="bg-white rounded-3xl border border-gray-100 p-8 md:p-10 text-center">
+                <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-50 rounded-3xl flex items-center justify-center mx-auto mb-5 shadow-inner">
+                  <Home className="w-10 h-10 text-gray-300" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-1">No saved addresses</h3>
+                <p className="text-sm text-gray-500 mb-6">Add an address to continue checkout</p>
+                <button
+                  onClick={() => setUseNewAddress(true)}
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-2xl font-semibold text-sm hover:from-primary-700 hover:to-primary-800 transition-all shadow-lg shadow-primary-600/30"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add Address
+                </button>
+              </div>
+            )}
+
+            {/* Payment Method */}
+            {(selectedAddressId || useNewAddress) && (
+              <div className="bg-white rounded-3xl border border-gray-100 p-5 md:p-6">
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="w-9 h-9 bg-gradient-to-br from-primary-500 to-blue-500 rounded-xl flex items-center justify-center shadow-md shadow-primary-500/20">
+                    <CreditCard className="w-4 h-4 text-white" />
+                  </div>
+                  <h2 className="font-bold text-lg text-gray-900">Payment Method</h2>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {PAYMENT_METHODS.map((method) => {
+                    const Icon = method.icon;
+                    return (
+                      <button
+                        key={method.id}
+                        onClick={() => setPaymentMethod(method.id)}
+                        className={`flex items-center gap-3 p-4 md:p-5 border rounded-2xl transition-all duration-300 ${
+                          paymentMethod === method.id
+                            ? "border-primary-500 ring-2 ring-primary-500/20 bg-primary-50/50 shadow-md shadow-primary-500/10"
+                            : "border-gray-100 hover:border-gray-200 hover:shadow-md hover:shadow-gray-200/50 bg-white"
+                        }`}
+                      >
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
+                          paymentMethod === method.id
+                            ? "bg-gradient-to-br from-primary-500 to-blue-500 shadow-md shadow-primary-500/20"
+                            : "bg-gray-100"
+                        }`}>
+                          <Icon className={`w-5 h-5 ${paymentMethod === method.id ? "text-white" : "text-gray-400"}`} />
+                        </div>
+                        <div className="text-left">
+                          <span className={`font-semibold text-sm ${paymentMethod === method.id ? "text-primary-700" : "text-gray-900"}`}>{method.name}</span>
+                          {method.id === "cod" && (
+                            <p className="text-xs text-emerald-600 font-medium mt-0.5">No extra charges</p>
+                          )}
+                        </div>
+                      </button>
                     );
                   })}
                 </div>
+              </div>
+            )}
+          </div>
 
-                <div className="border-t pt-4 space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Subtotal</span>
-                    <span className="font-medium">₹{formatPrice(subtotal)}</span>
+          {/* Right Column - Order Summary */}
+          <div className="lg:col-span-4">
+            <div className="bg-white rounded-3xl border border-gray-100 overflow-hidden sticky top-20 shadow-sm">
+              <div className="bg-gradient-to-r from-primary-600 to-blue-600 px-6 py-5">
+                <h3 className="font-bold text-white text-lg flex items-center gap-2">
+                  <Package className="w-5 h-5" />
+                  Order Summary
+                </h3>
+              </div>
+
+              {displayCartItems.length === 0 ? (
+                <div className="p-6 text-center">
+                  <div className="w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-50 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-inner">
+                    <ShoppingCart className="w-8 h-8 text-gray-300" />
                   </div>
-                  <div className="flex justify-between pt-2 border-t">
-                    <span className="font-semibold">Total</span>
-                    <span className="font-bold text-lg">₹{formatPrice(total)}</span>
+                  <p className="text-gray-500 mb-4 text-sm">Cart is empty</p>
+                  <button
+                    onClick={() => navigate("/products")}
+                    className="text-primary-600 hover:text-primary-700 font-semibold text-sm"
+                  >
+                    Browse Products
+                  </button>
+                </div>
+              ) : (
+                <div className="p-6">
+                  {/* Cart Items */}
+                  <div className="space-y-3 max-h-48 overflow-y-auto mb-5 scrollbar-hide">
+                    {displayCartItems.map((item: any) => {
+                      const price = item.variant?.sellingPrice || item.product.sellingPrice;
+                      const image = item.variant?.image || item.product.images?.[0];
+                      return (
+                        <div key={item.id} className="flex gap-3">
+                          {image && (
+                            <div className="w-16 h-16 bg-gradient-to-br from-gray-50 to-white rounded-2xl overflow-hidden flex-shrink-0 shadow-inner">
+                              <img src={image} alt={item.product.name} className="w-full h-full object-cover" />
+                            </div>
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold text-gray-900 truncate">{item.product.name}</p>
+                            {item.variant && (
+                              <span className="inline-flex items-center px-2 py-0.5 bg-gray-100 text-gray-600 text-[10px] font-semibold rounded-full mt-0.5">
+                                {item.variant.name}
+                              </span>
+                            )}
+                            <div className="flex items-center gap-2 mt-1.5">
+                              <span className="text-sm font-bold">₹{formatPrice(price)}</span>
+                              <span className="text-xs text-gray-400">x{item.quantity}</span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Price Breakdown */}
+                  <div className="space-y-3 mb-5">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-500">Subtotal</span>
+                      <span className="font-semibold text-gray-900">₹{formatPrice(subtotal)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-500">Delivery</span>
+                      <span className="font-semibold text-emerald-600">Free</span>
+                    </div>
+                    <div className="border-t border-gray-100 pt-4">
+                      <div className="flex justify-between items-baseline">
+                        <span className="font-bold text-gray-900">Total</span>
+                        <span className="text-2xl font-bold text-gray-900">₹{formatPrice(total)}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={handleSubmit}
+                    disabled={createOrderMutation.isPending || (!selectedAddressId && !useNewAddress)}
+                    className="w-full py-4 bg-gradient-to-r from-primary-600 to-blue-600 text-white rounded-2xl font-bold text-sm hover:from-primary-700 hover:to-blue-700 transition-all shadow-lg shadow-primary-500/25 flex items-center justify-center gap-2 hover:shadow-xl hover:shadow-primary-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {createOrderMutation.isPending ? (
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                    ) : (
+                      <>
+                        {paymentMethod === "cod" ? "Place Order" : "Proceed to Payment"}
+                        <ArrowRight className="w-4 h-4" />
+                      </>
+                    )}
+                  </button>
+
+                  {/* Trust Badges */}
+                  <div className="mt-5 pt-5 border-t border-gray-100">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="flex items-center gap-2.5 p-3 bg-gradient-to-br from-blue-50 to-primary-50 rounded-2xl border border-blue-100">
+                        <div className="w-9 h-9 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md shadow-blue-500/20">
+                          <Truck className="h-4 w-4 text-white" />
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-bold text-gray-700">Free Delivery</p>
+                          <p className="text-[9px] text-gray-500">On all orders</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2.5 p-3 bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl border border-green-100">
+                        <div className="w-9 h-9 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md shadow-green-500/20">
+                          <Shield className="h-4 w-4 text-white" />
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-bold text-gray-700">Secure Payment</p>
+                          <p className="text-[9px] text-gray-500">100% protected</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2.5 p-3 bg-gradient-to-br from-purple-50 to-violet-50 rounded-2xl border border-purple-100">
+                        <div className="w-9 h-9 bg-gradient-to-br from-purple-400 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md shadow-purple-500/20">
+                          <Package className="h-4 w-4 text-white" />
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-bold text-gray-700">Quality Assured</p>
+                          <p className="text-[9px] text-gray-500">Genuine products</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2.5 p-3 bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl border border-amber-100">
+                        <div className="w-9 h-9 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md shadow-amber-500/20">
+                          <Check className="h-4 w-4 text-white" />
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-bold text-gray-700">Easy Returns</p>
+                          <p className="text-[9px] text-gray-500">7-day returns</p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-
-                <button
-                  onClick={handleSubmit}
-                  disabled={createOrderMutation.isPending || (!selectedAddressId && !useNewAddress)}
-                  className="w-full mt-4 py-3 bg-primary-600 text-white rounded-xl font-semibold hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                >
-                  {createOrderMutation.isPending ? (
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                  ) : (
-                    <>
-                      {paymentMethod === "cod" ? "Place Order" : "Proceed to Payment"}
-                      <ArrowRight className="w-4 h-4" />
-                    </>
-                  )}
-                </button>
-              </>
-            )}
+              )}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Delete Confirmation Modal */}
-      {showDeleteModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl p-6 max-w-sm w-full">
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                <Trash2 className="w-6 h-6 text-red-600" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-lg">Delete Address</h3>
-                <p className="text-sm text-gray-500">This action cannot be undone</p>
-              </div>
+      {/* Mobile Sticky Bottom Bar */}
+      {(selectedAddressId || useNewAddress) && displayCartItems.length > 0 && (
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-gray-200 px-4 py-3 z-40 shadow-lg">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Total</p>
+              <p className="text-lg font-bold text-gray-900">₹{formatPrice(total)}</p>
             </div>
-            <p className="text-gray-600 mb-6">Are you sure you want to delete this address?</p>
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowDeleteModal(null)}
-                className="flex-1 px-4 py-2.5 border rounded-xl hover:bg-gray-50 font-medium"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => deleteAddressMutation.mutate(showDeleteModal)}
-                disabled={deleteAddressMutation.isPending}
-                className="flex-1 px-4 py-2.5 bg-red-500 text-white rounded-xl hover:bg-red-600 disabled:opacity-50 font-medium"
-              >
-                {deleteAddressMutation.isPending ? "Deleting..." : "Delete"}
-              </button>
-            </div>
+            <button
+              onClick={handleSubmit}
+              disabled={createOrderMutation.isPending}
+              className="flex-1 max-w-[220px] py-3.5 bg-gradient-to-r from-primary-600 to-blue-600 text-white rounded-2xl font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-primary-500/25 disabled:opacity-50"
+            >
+              {createOrderMutation.isPending ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <>
+                  {paymentMethod === "cod" ? "Place Order" : "Pay Now"}
+                  <ArrowRight className="h-4 w-4" />
+                </>
+              )}
+            </button>
           </div>
         </div>
       )}
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmModal
+        isOpen={showDeleteModal !== null}
+        onClose={() => setShowDeleteModal(null)}
+        onConfirm={() => {
+          if (showDeleteModal) {
+            deleteAddressMutation.mutate(showDeleteModal);
+          }
+        }}
+        title="Delete Address"
+        message="Are you sure you want to delete this address? This action cannot be undone."
+      />
     </div>
   );
 }

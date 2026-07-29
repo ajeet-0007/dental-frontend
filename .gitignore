@@ -134,6 +134,13 @@ dist
 !.yarn/sdks
 !.yarn/versions
 
+# Vite build artifacts (compiled from vite.config.ts by tsc -b)
+vite.config.js
+vite.config.d.ts
+
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# vite-plugin-pwa dev build output
+dev-dist/

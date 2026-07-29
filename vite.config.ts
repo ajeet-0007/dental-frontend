@@ -11,7 +11,7 @@ export default defineConfig({
       devOptions: {
         enabled: true,
       },
-      includeAssets: ['DentZoo_Logo.svg'],
+      includeAssets: ['DentZoo_Logo.svg', 'offline.html'],
       manifest: {
         name: 'Dentzoo - Dental Products Online',
         short_name: 'Dentzoo',
@@ -41,6 +41,7 @@ export default defineConfig({
         ],
       },
       workbox: {
+        cacheId: 'dentzoo-v1',
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
         maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
         runtimeCaching: [
