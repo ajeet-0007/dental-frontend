@@ -8,6 +8,9 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      devOptions: {
+        enabled: true,
+      },
       includeAssets: ['DentZoo_Logo.svg'],
       manifest: {
         name: 'Dentzoo - Dental Products Online',
