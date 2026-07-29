@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import api from "@/api";
 import { useCartStore } from "@/stores/cartStore";
 import { useWishlistStore } from "@/stores/wishlistStore";
+import { formatPrice } from "@/utils/format";
 import { Package, ChevronDown, ChevronUp, ChevronRight, X, SlidersHorizontal, ShoppingCart, Heart, ArrowUpDown, Tag, Layers, Store, PackageCheck, Loader2, Search, Home } from "lucide-react";
 import CartDrawer from "@/components/common/CartDrawer";
 import { PriceRangeSlider } from "@/components/common/PriceRangeSlider";
@@ -1046,11 +1047,11 @@ export default function Products() {
                           <div className="flex items-center justify-between">
                             <div className="flex items-baseline gap-2">
                               <span className="text-base font-bold text-primary-600">
-                                {showPriceRange ? `From ₹${minPrice.toLocaleString()}` : `₹${minPrice.toLocaleString()}`}
+                                {showPriceRange ? `From ₹${formatPrice(minPrice)}` : `₹${formatPrice(minPrice)}`}
                               </span>
                               {product.mrp > minPrice && (
                                 <span className="text-xs text-gray-400 line-through">
-                                  ₹{product.mrp.toLocaleString()}
+                                  ₹{formatPrice(product.mrp)}
                                 </span>
                               )}
                             </div>

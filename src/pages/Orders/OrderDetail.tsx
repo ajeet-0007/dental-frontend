@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import api from '@/api'
+import { formatPrice } from '@/utils/format'
 import { useCartStore } from '@/stores/cartStore'
 import { ArrowLeft, Package, MapPin, CheckCircle, Loader2, RefreshCw, Clock, Truck, XCircle, AlertCircle, ShieldCheck, RotateCw, Undo2, Calendar, ChevronRight } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -355,7 +356,7 @@ export default function OrderDetail() {
                   </p>
                 </div>
                 <div className="text-right">
-                  <span className="text-xl font-bold text-gray-900">₹{Number(order.totalAmount || 0).toLocaleString()}</span>
+                  <span className="text-xl font-bold text-gray-900">₹{formatPrice(order.totalAmount)}</span>
                 </div>
               </div>
             </div>

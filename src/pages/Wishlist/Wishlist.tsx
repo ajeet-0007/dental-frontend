@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { Heart, Trash2, ShoppingBag } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useWishlistStore } from '@/stores/wishlistStore'
+import { formatPrice } from '@/utils/format'
 import { useCartStore } from '@/stores/cartStore'
 import { useAuthStore } from '@/stores/authStore'
 import api from '@/api'
@@ -154,9 +155,9 @@ export default function Wishlist() {
                   <div className="p-3">
                     <h3 className="font-medium text-gray-900 text-sm line-clamp-2 min-h-[40px] mb-1">{item.product.name}</h3>
                     <div className="flex items-center gap-2">
-                      <span className="text-base font-bold text-primary-600">₹{item.product.sellingPrice}</span>
+                      <span className="text-base font-bold text-primary-600">₹{formatPrice(item.product.sellingPrice)}</span>
                       {item.product.mrp > item.product.sellingPrice && (
-                        <span className="text-xs text-gray-400 line-through">₹{item.product.mrp}</span>
+                        <span className="text-xs text-gray-400 line-through">₹{formatPrice(item.product.mrp)}</span>
                       )}
                     </div>
                   </div>

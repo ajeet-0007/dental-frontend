@@ -1,4 +1,5 @@
 import { Package, Calendar } from 'lucide-react';
+import { formatPrice } from '@/utils/format';
 
 export interface ProductVariantOption {
   optionId: number;
@@ -84,15 +85,15 @@ export function VariantSelector({
     if (variant.sellingPrice < variant.mrp) {
       return (
         <div className="flex items-center gap-2">
-          <span className="font-bold text-primary-600">₹{variant.sellingPrice}</span>
-          <span className="text-sm text-gray-400 line-through">₹{variant.mrp}</span>
+          <span className="font-bold text-primary-600">₹{formatPrice(variant.sellingPrice)}</span>
+          <span className="text-sm text-gray-400 line-through">₹{formatPrice(variant.mrp)}</span>
           <span className="text-xs bg-red-100 text-red-600 px-1.5 py-0.5 rounded">
             {Math.round((1 - variant.sellingPrice / variant.mrp) * 100)}% off
           </span>
         </div>
       );
     }
-    return <span className="font-bold text-primary-600">₹{variant.sellingPrice}</span>;
+    return <span className="font-bold text-primary-600">₹{formatPrice(variant.sellingPrice)}</span>;
   };
 
   if (variants.length === 0) return null;

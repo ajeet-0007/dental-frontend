@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { formatPrice } from '@/utils/format'
 import { 
   Package, 
   CheckCircle, 
@@ -87,7 +88,7 @@ export default function OrderCard({
             </div>
           </div>
           <div className="text-right flex-shrink-0">
-            <span className="text-lg font-bold text-gray-900">₹{Number(order.totalAmount || 0).toLocaleString()}</span>
+            <span className="text-lg font-bold text-gray-900">₹{formatPrice(order.totalAmount)}</span>
           </div>
         </div>
       </div>

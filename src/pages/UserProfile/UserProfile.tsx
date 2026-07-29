@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import api from '@/api'
+import { formatPrice } from '@/utils/format'
 import { User, MapPin, Plus, Edit, ShoppingBag, Heart, ChevronRight, HelpCircle, Loader2, Package, Clock, CheckCircle, Shield, LogOut, Settings } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useAuthStore } from '@/stores/authStore'
@@ -508,7 +509,7 @@ export default function UserProfile() {
                           </div>
                           <div>
                             <p className="font-semibold text-gray-900 text-sm">#{order.orderNumber}</p>
-                            <p className="text-xs text-gray-500 mt-0.5">{order.items?.length || 0} items • ₹{Number(order.totalAmount || 0).toLocaleString()}</p>
+                            <p className="text-xs text-gray-500 mt-0.5">{order.items?.length || 0} items • ₹{formatPrice(order.totalAmount)}</p>
                           </div>
                         </div>
                         <div className="text-right">

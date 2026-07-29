@@ -3,6 +3,7 @@ import { Send, Bot, User, Loader2, X, MessageCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../../api';
 import toast from 'react-hot-toast';
+import { formatPrice } from '@/utils/format';
 
 interface Message {
   id: string;
@@ -164,7 +165,7 @@ const ChatWidget = () => {
                               className="block p-2 bg-white border border-gray-200 rounded-lg hover:border-blue-300 transition-colors"
                             >
                               <p className="text-sm font-medium text-gray-900 truncate">{product.name}</p>
-                              <p className="text-xs text-blue-600 font-semibold">₹{product.sellingPrice.toLocaleString()}</p>
+                              <p className="text-xs text-blue-600 font-semibold">₹{formatPrice(product.sellingPrice)}</p>
                             </a>
                           ))}
                         </div>

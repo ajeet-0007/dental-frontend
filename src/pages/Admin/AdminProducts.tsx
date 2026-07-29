@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/api";
 import { useAuthStore } from "@/stores/authStore";
 import toast from "react-hot-toast";
+import { formatPrice } from "@/utils/format";
 import VariantManager from "@/components/admin/VariantManager";
 import RichTextEditor from "@/components/admin/RichTextEditor";
 import {
@@ -426,11 +427,11 @@ export default function AdminProducts() {
                   ) : (
                     <>
                       <p className="text-lg font-bold text-primary-600">
-                        ₹{product.sellingPrice || 0}
+                        ₹{formatPrice(product.sellingPrice || 0)}
                       </p>
                       {product.mrp > product.sellingPrice && (
                         <p className="text-xs text-gray-400 line-through">
-                          ₹{product.mrp}
+                          ₹{formatPrice(product.mrp)}
                         </p>
                       )}
                     </>

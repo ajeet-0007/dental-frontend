@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Plus, Trash2, Edit, X, Save, Layers, Check } from "lucide-react";
+import { formatPrice } from "@/utils/format";
 import api from "@/api";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
@@ -520,11 +521,11 @@ export default function VariantManager({ productId, onClose, onVariantsChange }:
                               </div>
                               <div className="flex items-center gap-3 mt-2">
                                 <span className="font-bold text-primary-600">
-                                  ₹{variant.sellingPrice}
+                                  ₹{formatPrice(variant.sellingPrice)}
                                 </span>
                                 {variant.mrp > variant.sellingPrice && (
                                   <span className="text-sm text-gray-400 line-through">
-                                    ₹{variant.mrp}
+                                    ₹{formatPrice(variant.mrp)}
                                   </span>
                                 )}
                                 {variant.sku && (

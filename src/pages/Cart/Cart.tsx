@@ -7,6 +7,7 @@ import { useCartStore } from "@/stores/cartStore";
 import { useEffect, useRef, useState } from "react";
 import ProductCarousel from "@/components/common/ProductCarousel";
 import CartDrawer from "@/components/common/CartDrawer";
+import { formatPrice } from "@/utils/format";
 
 
 const DEFAULT_IMAGE =
@@ -277,12 +278,12 @@ export default function Cart() {
                       {/* Price */}
                       <div className="flex items-center gap-2 mt-2 flex-wrap">
                         <span className="text-base md:text-lg font-bold text-gray-900">
-                          ₹{itemTotal.toLocaleString()}
+                          ₹{formatPrice(itemTotal)}
                         </span>
                         {unitMrp > unitPrice && (
                           <>
                             <span className="text-xs text-gray-400 line-through">
-                              ₹{(unitMrp * item.quantity).toLocaleString()}
+                              ₹{formatPrice(unitMrp * item.quantity)}
                             </span>
                             {itemDiscount > 0 && (
                               <span className="text-[10px] font-bold px-2 py-0.5 bg-gradient-to-r from-emerald-500 to-green-500 text-white rounded-full shadow-md shadow-emerald-500/20">
@@ -315,7 +316,7 @@ export default function Cart() {
                         </div>
                         {item.quantity > 1 && (
                           <span className="text-[10px] text-gray-400 font-medium">
-                            ₹{unitPrice.toLocaleString()} each
+                            ₹{formatPrice(unitPrice)} each
                           </span>
                         )}
                       </div>
@@ -343,7 +344,7 @@ export default function Cart() {
                     </div>
                     <div>
                       <p className="text-sm font-bold text-emerald-700">
-                        You're saving ₹{totalSavings.toLocaleString()}
+                        You're saving ₹{formatPrice(totalSavings)}
                       </p>
                       <p className="text-xs text-emerald-600">on this order</p>
                     </div>
@@ -353,7 +354,7 @@ export default function Cart() {
                 <div className="space-y-3.5 mb-5">
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500">Subtotal ({allItems.length} items)</span>
-                    <span className="font-semibold text-gray-900">₹{subtotal.toLocaleString()}</span>
+                    <span className="font-semibold text-gray-900">₹{formatPrice(subtotal)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500">Delivery</span>
@@ -363,7 +364,7 @@ export default function Cart() {
                   <div className="border-t border-gray-100 pt-4">
                     <div className="flex justify-between items-baseline">
                       <span className="font-bold text-gray-900">Total</span>
-                      <span className="text-2xl font-bold text-gray-900">₹{total.toLocaleString()}</span>
+                      <span className="text-2xl font-bold text-gray-900">₹{formatPrice(total)}</span>
                     </div>
                   </div>
                 </div>
@@ -495,7 +496,7 @@ export default function Cart() {
         <div className="flex items-center justify-between gap-4">
           <div>
             <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Total</p>
-            <p className="text-lg font-bold text-gray-900">₹{total.toLocaleString()}</p>
+            <p className="text-lg font-bold text-gray-900">₹{formatPrice(total)}</p>
           </div>
           <button
             onClick={() => {

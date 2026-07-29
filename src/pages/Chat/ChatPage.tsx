@@ -3,6 +3,7 @@ import { Send, Bot, User, Loader2, ShoppingCart, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../../api';
 import toast from 'react-hot-toast';
+import { formatPrice } from '@/utils/format';
 
 interface Message {
   id: string;
@@ -174,7 +175,7 @@ const ChatPage = () => {
                                       <p className="text-xs text-gray-500">{product.category} • {product.brand}</p>
                                     </div>
                                     <div className="text-right">
-                                      <p className="font-semibold text-blue-600">₹{product.sellingPrice.toLocaleString()}</p>
+                                      <p className="font-semibold text-blue-600">₹{formatPrice(product.sellingPrice)}</p>
                                     </div>
                                   </a>
                                 ))}

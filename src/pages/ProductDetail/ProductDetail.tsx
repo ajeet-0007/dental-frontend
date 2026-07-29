@@ -7,6 +7,7 @@ import { useAuthStore } from "@/stores/authStore";
 import { useCartStore } from "@/stores/cartStore";
 import { useWishlistStore } from "@/stores/wishlistStore";
 import { useRecentlyViewedStore } from "@/stores/recentlyViewedStore";
+import { formatPrice } from "@/utils/format";
 import {
   Package, ShoppingCart, Star, ChevronLeft, ChevronRight, Heart,
   Minus, Plus, X, ArrowRight, Layers, Share2, Truck, Shield, RotateCcw, Sparkles
@@ -555,12 +556,12 @@ export default function ProductDetail() {
                     </span>
                   )}
                   <span className="text-3xl md:text-4xl font-bold text-gray-900">
-                    ₹{displayPrice.toLocaleString()}
+                    ₹{formatPrice(displayPrice)}
                   </span>
                   {displayMRP > displayPrice && displayMRP > 0 && (
                     <>
                       <span className="text-lg text-gray-400 line-through">
-                        ₹{displayMRP.toLocaleString()}
+                        ₹{formatPrice(displayMRP)}
                       </span>
                       <span className="px-3 py-1 bg-gradient-to-r from-emerald-500 to-green-500 text-white text-xs font-bold rounded-full shadow-md shadow-emerald-500/25">
                         {Math.round((1 - displayPrice / displayMRP) * 100)}% OFF
@@ -634,11 +635,11 @@ export default function ProductDetail() {
                             </p>
                             <div className="flex items-center gap-2 mt-1 flex-wrap">
                               <span className="text-base font-bold text-primary-600">
-                                ₹{variantPrice.toLocaleString()}
+                                ₹{formatPrice(variantPrice)}
                               </span>
                               {variantMRP > variantPrice && variantMRP > 0 && (
                                 <span className="text-xs text-gray-400 line-through">
-                                  ₹{variantMRP.toLocaleString()}
+                                  ₹{formatPrice(variantMRP)}
                                 </span>
                               )}
                               {discount > 0 && (

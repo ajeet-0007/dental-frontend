@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import api from "@/api";
 import { useAuthStore } from "@/stores/authStore";
 import { useNavigate } from "react-router-dom";
+import { formatPrice } from "@/utils/format";
 import {
   Package,
   ShoppingCart,
@@ -49,7 +50,7 @@ export default function AdminDashboard() {
   const statCards = [
     {
       label: "Total Revenue",
-      value: `₹${(stats.totalRevenue || 0).toLocaleString("en-IN", { minimumFractionDigits: 2 })}`,
+      value: `₹${formatPrice(stats.totalRevenue || 0)}`,
       icon: DollarSign,
       color: "bg-green-500",
       change: "+12.5%",
@@ -191,7 +192,7 @@ export default function AdminDashboard() {
                     <td className="py-3 text-gray-500">
                       {order.user?.firstName} {order.user?.lastName}
                     </td>
-                    <td className="py-3 font-medium">₹{order.totalAmount}</td>
+                    <td className="py-3 font-medium">₹{formatPrice(order.totalAmount)}</td>
                     <td className="py-3">
                       <span
                         className={`px-2 py-1 rounded-full text-xs font-medium ${

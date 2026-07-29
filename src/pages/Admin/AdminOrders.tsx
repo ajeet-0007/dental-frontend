@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/api";
 import { useAuthStore } from "@/stores/authStore";
 import toast from "react-hot-toast";
+import { formatPrice } from "@/utils/format";
 import { Search, ChevronLeft, ChevronRight, Eye } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -197,7 +198,7 @@ export default function AdminOrders() {
                     {order.items?.length || 0} items
                   </td>
                   <td className="px-6 py-4 font-medium text-gray-900">
-                    ₹{order.totalAmount}
+                    ₹{formatPrice(order.totalAmount)}
                   </td>
                   <td className="px-6 py-4">
                     <select

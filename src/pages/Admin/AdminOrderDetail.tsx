@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/api";
 import { useAuthStore } from "@/stores/authStore";
+import { formatPrice } from "@/utils/format";
 import toast from "react-hot-toast";
 import {
   ArrowLeft,
@@ -248,18 +249,18 @@ export default function AdminOrderDetail() {
           </div>
           <div>
             <p className="text-sm text-gray-500">Subtotal</p>
-            <p className="font-medium">₹{order.subtotal}</p>
+            <p className="font-medium">₹{formatPrice(order.subtotal)}</p>
           </div>
           <div>
             <p className="text-sm text-gray-500">Shipping</p>
             <p className="font-medium">
-              {order.shippingAmount == 0 ? "Free" : `₹${order.shippingAmount}`}
+              {order.shippingAmount == 0 ? "Free" : `₹${formatPrice(order.shippingAmount)}`}
             </p>
           </div>
           <div>
             <p className="text-sm text-gray-500">Total Amount</p>
             <p className="font-bold text-lg text-primary-600">
-              ₹{order.totalAmount}
+              ₹{formatPrice(order.totalAmount)}
             </p>
           </div>
         </div>
@@ -285,7 +286,7 @@ export default function AdminOrderDetail() {
                 <p className="text-sm text-gray-500">SKU: {item.sku}</p>
                 <div className="flex justify-between items-center mt-2">
                   <span className="text-sm">Qty: {item.quantity}</span>
-                  <span className="font-medium">₹{item.totalAmount}</span>
+                  <span className="font-medium">₹{formatPrice(item.totalAmount)}</span>
                 </div>
               </div>
             </div>
@@ -336,7 +337,7 @@ export default function AdminOrderDetail() {
                 className="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
               >
                 <div>
-                  <p className="font-medium">₹{payment.amount}</p>
+                  <p className="font-medium">₹{formatPrice(payment.amount)}</p>
                   <p className="text-sm text-gray-500 capitalize">
                     {payment.method === "cod"
                       ? "Cash on Delivery"

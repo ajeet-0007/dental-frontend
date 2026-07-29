@@ -12,6 +12,7 @@ import BottomNav from '@/components/common/BottomNav'
 import Breadcrumbs from '@/components/common/Breadcrumbs'
 import BackButton from '@/components/common/BackButton'
 import LogoutModal from '@/components/common/LogoutModal'
+import { formatPrice } from '@/utils/format'
 import { useVoiceSearch } from '@/hooks/useVoiceSearch'
 // import ChatWidget from '@/pages/Chat/ChatWidget'
 
@@ -301,7 +302,7 @@ export default function Layout() {
                                 </div>
                                 <div className="flex-1 min-w-0">
                                   <span className="text-gray-800 font-medium block truncate">{product.name}</span>
-                                  <span className="text-primary-600 font-bold">₹{product.sellingPrice}</span>
+                                  <span className="text-primary-600 font-bold">₹{formatPrice(product.sellingPrice)}</span>
                                 </div>
                               </Link>
                             </motion.div>
@@ -686,7 +687,7 @@ export default function Layout() {
                         </div>
                         <div>
                           <p className="text-sm font-medium">{product.name}</p>
-                          <p className="text-sm text-primary-600 font-bold">₹{product.sellingPrice}</p>
+                          <p className="text-sm text-primary-600 font-bold">₹{formatPrice(product.sellingPrice)}</p>
                         </div>
                       </Link>
                     ))}

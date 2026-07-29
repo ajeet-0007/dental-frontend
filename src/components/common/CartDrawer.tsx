@@ -6,6 +6,7 @@ import api from "@/api";
 import { useAuthStore } from "@/stores/authStore";
 import { useCartStore } from "@/stores/cartStore";
 import { X, ShoppingCart, Minus, Plus, Package } from "lucide-react";
+import { formatPrice } from "@/utils/format";
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -187,11 +188,11 @@ export default function CartDrawer({ isOpen, onClose, product }: CartDrawerProps
               )}
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-xl font-bold text-primary-600">
-                  ₹{displayPrice.toLocaleString()}
+                  ₹{formatPrice(displayPrice)}
                 </span>
                 {displayMrp > displayPrice && (
                   <span className="text-sm text-gray-400 line-through">
-                    ₹{displayMrp.toLocaleString()}
+                    ₹{formatPrice(displayMrp)}
                   </span>
                 )}
               </div>
@@ -243,11 +244,11 @@ export default function CartDrawer({ isOpen, onClose, product }: CartDrawerProps
                       </p>
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-sm font-bold text-primary-600">
-                          ₹{variant.sellingPrice.toLocaleString()}
+                          ₹{formatPrice(variant.sellingPrice)}
                         </span>
                         {variant.mrp > variant.sellingPrice && (
                           <span className="text-xs text-gray-400 line-through">
-                            ₹{variant.mrp.toLocaleString()}
+                            ₹{formatPrice(variant.mrp)}
                           </span>
                         )}
                         {vDiscount > 0 && (

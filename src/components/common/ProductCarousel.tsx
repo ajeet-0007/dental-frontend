@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ShoppingCart, Heart } from "lucide-react";
+import { formatPrice } from "@/utils/format";
 import { useCartStore } from "@/stores/cartStore";
 import { useWishlistStore } from "@/stores/wishlistStore";
 import toast from "react-hot-toast";
@@ -212,11 +213,11 @@ export default function ProductCarousel({ products, onOpenCartDrawer }: ProductC
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <span className="text-base font-bold text-primary-600">
-                          ₹{product.sellingPrice}
+                          ₹{formatPrice(product.sellingPrice)}
                         </span>
                         {product.mrp > product.sellingPrice && (
                           <span className="text-xs text-gray-400 line-through">
-                            ₹{product.mrp}
+                            ₹{formatPrice(product.mrp)}
                           </span>
                         )}
                       </div>

@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import api from "@/api";
 import { useAuthStore } from "@/stores/authStore";
 import { useCartStore } from "@/stores/cartStore";
+import { formatPrice } from "@/utils/format";
 import {
   Plus, Check, ShoppingCart, MapPin, Loader2,
   Trash2, Home, Phone, CreditCard, Banknote,
@@ -734,7 +735,7 @@ export default function Checkout() {
                           <p className="text-sm font-medium truncate">{item.product.name}</p>
                           {item.variant && <p className="text-xs text-gray-500">{item.variant.name}</p>}
                           <div className="flex items-center gap-2 mt-1">
-                            <span className="text-sm font-medium">₹{price.toLocaleString()}</span>
+                            <span className="text-sm font-medium">₹{formatPrice(price)}</span>
                             <span className="text-xs text-gray-500">x {item.quantity}</span>
                           </div>
                         </div>
@@ -746,11 +747,11 @@ export default function Checkout() {
                 <div className="border-t pt-4 space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-gray-600">Subtotal</span>
-                    <span className="font-medium">₹{subtotal.toLocaleString()}</span>
+                    <span className="font-medium">₹{formatPrice(subtotal)}</span>
                   </div>
                   <div className="flex justify-between pt-2 border-t">
                     <span className="font-semibold">Total</span>
-                    <span className="font-bold text-lg">₹{total.toLocaleString()}</span>
+                    <span className="font-bold text-lg">₹{formatPrice(total)}</span>
                   </div>
                 </div>
 

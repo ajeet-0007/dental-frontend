@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import api from "@/api";
 import { useAuthStore } from "@/stores/authStore";
+import { formatPrice } from "@/utils/format";
 import { useWishlistStore } from "@/stores/wishlistStore";
 import { useCartStore } from "@/stores/cartStore";
 import { motion, AnimatePresence } from "framer-motion";
@@ -180,11 +181,11 @@ export default function WishlistDrawer({ isOpen, onClose }: WishlistDrawerProps)
                           </Link>
                           <div className="mt-1.5 flex items-center gap-2">
                             <span className="text-base font-bold text-gray-900">
-                              ₹{item.product.sellingPrice}
+                              ₹{formatPrice(item.product.sellingPrice)}
                             </span>
                             {item.product.mrp > item.product.sellingPrice && (
                               <span className="text-xs text-gray-400 line-through">
-                                ₹{item.product.mrp}
+                                ₹{formatPrice(item.product.mrp)}
                               </span>
                             )}
                           </div>

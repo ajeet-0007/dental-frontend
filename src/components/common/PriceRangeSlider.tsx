@@ -1,4 +1,5 @@
 import { useState, memo, useRef } from "react";
+import { formatPrice } from "@/utils/format";
 
 interface PriceRangeSliderProps {
   min: number;
@@ -121,11 +122,11 @@ export const PriceRangeSlider = memo(function PriceRangeSlider({
       {/* Price labels */}
       <div className="flex items-center justify-between text-sm">
         <span className="px-3 py-1.5 bg-gray-100 rounded-lg font-medium text-gray-700">
-          ₹{minValue.toLocaleString()}
+          ₹{formatPrice(minValue)}
         </span>
         <span className="text-gray-400">-</span>
         <span className="px-3 py-1.5 bg-gray-100 rounded-lg font-medium text-gray-700">
-          ₹{maxValue.toLocaleString()}
+          ₹{formatPrice(maxValue)}
         </span>
       </div>
     </div>

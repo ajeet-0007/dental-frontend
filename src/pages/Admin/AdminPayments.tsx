@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import api from "@/api";
 import { useAuthStore } from "@/stores/authStore";
 import { ChevronLeft, ChevronRight, DollarSign } from "lucide-react";
+import { formatPrice } from "@/utils/format";
 
 const PAYMENT_STATUSES = [
   { value: "", label: "All Status" },
@@ -69,9 +70,7 @@ export default function AdminPayments() {
             <p className="text-sm text-green-600">Total Revenue</p>
             <p className="text-2xl font-bold text-green-700">
               ₹
-              {totalAmount.toLocaleString("en-IN", {
-                minimumFractionDigits: 2,
-              })}
+              {formatPrice(totalAmount)}
             </p>
           </div>
         </div>
@@ -135,7 +134,7 @@ export default function AdminPayments() {
                     {payment.order?.user?.lastName}
                   </td>
                   <td className="px-6 py-4 font-medium text-gray-900">
-                    ₹{payment.amount}
+                    ₹{formatPrice(payment.amount)}
                   </td>
                   <td className="px-6 py-4 text-gray-600 capitalize">
                     {payment.method || "Card"}
