@@ -51,7 +51,7 @@ interface VariantSelectorProps {
   options?: ProductOption[];
   selectedVariant: ProductVariant | null;
   onVariantSelect: (variant: ProductVariant) => void;
-  inventories?: { variantId: string; quantity: number }[];
+  inventories?: { variantId: string; quantity: number; reservedQuantity?: number }[];
 }
 
 export function VariantSelector({
@@ -63,7 +63,8 @@ export function VariantSelector({
 
   const getVariantStock = (variantId: string) => {
     const inv = inventories.find(i => i.variantId === variantId);
-    return inv?.quantity ?? -1;
+    if (!inv) return -1;
+    return Math.max(0, (inv.quantity || 0) - (inv.reservedQuantity || 0));
   };
   const hasAvailableOptions = variants.length > 0 && (variants[0]?.availableOptions?.length ?? 0) > 0;
 

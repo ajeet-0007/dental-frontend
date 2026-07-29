@@ -570,6 +570,10 @@ export default function ProductDetail() {
                   )}
                 </div>
 
+                {!hasVariants && productStock > 0 && productStock <= 5 && (
+                  <p className="text-xs font-semibold text-amber-600 mb-4">Only {productStock} left in stock</p>
+                )}
+
                 {/* Short Description */}
                 {product.shortDescription && (
                   <p className="text-sm text-gray-600 leading-relaxed mb-4 p-4 bg-gradient-to-r from-gray-50 to-white rounded-2xl border border-gray-100">
@@ -693,13 +697,14 @@ export default function ProductDetail() {
                     <span className="px-5 font-bold text-lg min-w-[48px] text-center">
                       {quantity}
                     </span>
-                    <button
-                      onClick={() => setQuantity((q) => q + 1)}
-                      className="p-3 hover:bg-gray-200 rounded-r-xl transition-colors"
-                      title="Increase quantity"
-                    >
-                      <Plus className="h-4 w-4 text-gray-700" />
-                    </button>
+                      <button
+                        onClick={() => setQuantity((q) => Math.min(q + 1, productStock))}
+                        disabled={quantity >= productStock}
+                        className="p-3 hover:bg-gray-200 rounded-r-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        title="Increase quantity"
+                      >
+                        <Plus className="h-4 w-4 text-gray-700" />
+                      </button>
                   </div>
 
                   <button

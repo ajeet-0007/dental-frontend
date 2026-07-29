@@ -49,6 +49,16 @@ export default function WishlistDrawer({ isOpen, onClose }: WishlistDrawerProps)
     const cartItemId = productId
 
     try {
+      const res = await api.get(`/products/slug/${item.product.slug}`);
+      const product = res.data;
+      const inventories = product.inventories || [];
+      const baseInv = inventories.find((i: any) => !i.productVariantId);
+      const stock = baseInv ? Math.max(0, (baseInv.quantity || 0) - (baseInv.reservedQuantity || 0)) : Infinity;
+      if (stock <= 0) {
+        toast.error('This product is out of stock');
+        return;
+      }
+
       await api.post('/cart/add', { productId, quantity: 1 })
       addItem({
         id: cartItemId,

@@ -336,6 +336,19 @@ function SingleProductAdd({ product, onClose }: { product: any; onClose: () => v
   const price = product.sellingPrice || 0;
   const mrp = product.mrp || 0;
 
+  const { data: stockData } = useQuery({
+    queryKey: ["cartDrawerStock", product?.slug],
+    queryFn: async () => {
+      const res = await api.get(`/products/slug/${product.slug}`);
+      const p = res.data;
+      const inv = (p.inventories || []).find((i: any) => !i.productVariantId);
+      return inv ? Math.max(0, (inv.quantity || 0) - (inv.reservedQuantity || 0)) : Infinity;
+    },
+    enabled: !!product?.slug,
+    staleTime: 30_000,
+  });
+  const stock = stockData ?? Infinity;
+
   const addToCartMutation = useMutation({
     mutationFn: (payload: { productId: string; quantity: number }) =>
       api.post("/cart/add", payload),
@@ -380,9 +393,14 @@ function SingleProductAdd({ product, onClose }: { product: any; onClose: () => v
     }
   };
 
+  const isOutOfStock = stock === 0;
+
   return (
     <div className="bg-gradient-to-br from-gray-50 to-primary-50/30 rounded-2xl p-5 mb-4 border border-gray-100">
       <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Select Quantity</p>
+      {stock > 0 && stock <= 5 && (
+        <p className="text-xs font-semibold text-amber-600 mb-2">Only {stock} left in stock</p>
+      )}
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center border border-gray-200 rounded-xl bg-white shadow-sm">
           <button
@@ -397,9 +415,9 @@ function SingleProductAdd({ product, onClose }: { product: any; onClose: () => v
             {quantity}
           </span>
           <button
-            onClick={() => setQuantity((q) => Math.min(q + 1, 99))}
+            onClick={() => setQuantity((q) => Math.min(q + 1, stock))}
             className="p-3 hover:bg-gray-50 transition-colors disabled:opacity-30 rounded-r-xl"
-            disabled={quantity >= 99}
+            disabled={quantity >= stock}
             title="Increase quantity"
           >
             <Plus className="h-4 w-4 text-gray-600" />
@@ -407,11 +425,15 @@ function SingleProductAdd({ product, onClose }: { product: any; onClose: () => v
         </div>
         <button
           onClick={handleAddToCart}
-          disabled={addToCartMutation.isPending}
-          className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-600 to-blue-600 text-white rounded-xl font-semibold text-sm hover:from-primary-700 hover:to-blue-700 transition-all shadow-lg shadow-primary-500/25 disabled:opacity-50"
+          disabled={addToCartMutation.isPending || isOutOfStock}
+          className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm transition-all shadow-lg ${
+            isOutOfStock
+              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+              : "bg-gradient-to-r from-primary-600 to-blue-600 text-white hover:from-primary-700 hover:to-blue-700 shadow-primary-500/25"
+          } disabled:opacity-50`}
         >
           <ShoppingCart className="h-4 w-4" />
-          {addToCartMutation.isPending ? "Adding..." : "Add to Cart"}
+          {addToCartMutation.isPending ? "Adding..." : isOutOfStock ? "Out of Stock" : "Add to Cart"}
         </button>
       </div>
     </div>

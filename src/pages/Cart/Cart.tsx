@@ -5,6 +5,7 @@ import { Trash2, Plus, Minus, ShoppingCart, ArrowRight, Package, Tag, ShoppingBa
 import { useAuthStore } from "@/stores/authStore";
 import { useCartStore } from "@/stores/cartStore";
 import { useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
 import ProductCarousel from "@/components/common/ProductCarousel";
 import CartDrawer from "@/components/common/CartDrawer";
 import { formatPrice } from "@/utils/format";
@@ -90,6 +91,7 @@ export default function Cart() {
   });
 
   const allItems = items;
+  const totalItemCount = allItems.reduce((sum: number, item: any) => sum + item.quantity, 0);
 
   const isStudentOnlyCart = allItems.length > 0 && allItems.every(
     (item: any) => item.product.category?.slug === 'student-section'
@@ -133,6 +135,34 @@ export default function Cart() {
   });
 
   const recommendedProductsArray = Array.isArray(recommendedData) ? recommendedData : [];
+
+  const { data: stockMap } = useQuery({
+    queryKey: ["stockMap", allItems.map((i: any) => i.id).join(",")],
+    queryFn: async () => {
+      const slugs = [...new Set(allItems.map((i: any) => i.product.slug))];
+      const products = await Promise.all(
+        slugs.map((slug: string) => api.get(`/products/slug/${slug}`).then(r => r.data))
+      );
+      const map: Record<string, number> = {};
+      products.forEach((p: any) => {
+        const inventories = p.inventories || [];
+        const getStock = (variantId?: string) => {
+          const inv = inventories.find((i: any) =>
+            variantId ? i.productVariantId === variantId : !i.productVariantId
+          );
+          return inv ? Math.max(0, (inv.quantity || 0) - (inv.reservedQuantity || 0)) : 0;
+        };
+        allItems.forEach((item: any) => {
+          if (item.product.slug === p.slug) {
+            map[item.id] = getStock(item.variant?.id);
+          }
+        });
+      });
+      return map;
+    },
+    enabled: allItems.length > 0,
+    staleTime: 30_000,
+  });
 
   const handleRemove = async (id: string) => {
     removeItem(id);
@@ -224,7 +254,7 @@ export default function Cart() {
             </div>
             <div>
               <p className="text-xs font-semibold text-primary-600 uppercase tracking-widest mb-0.5">Your Cart</p>
-              <h1 className="text-xl md:text-2xl font-bold text-gray-900">Shopping Cart ({allItems.length})</h1>
+              <h1 className="text-xl md:text-2xl font-bold text-gray-900">Shopping Cart ({totalItemCount})</h1>
             </div>
           </div>
         </div>
@@ -239,6 +269,9 @@ export default function Cart() {
               const unitMrp = item.product.mrp || item.variant?.mrp || unitPrice;
               const itemTotal = unitPrice * item.quantity;
               const itemDiscount = unitMrp > unitPrice ? Math.round((1 - unitPrice / unitMrp) * 100) : 0;
+              const stock = stockMap?.[item.id];
+              const isOutOfStock = stock !== undefined && stock <= 0;
+              const isLowStock = stock !== undefined && stock > 0 && stock <= 5;
 
               return (
                 <div key={item.id} className="bg-white rounded-3xl border border-gray-100 p-4 md:p-5 hover:shadow-lg hover:shadow-gray-200/50 transition-all duration-300">
@@ -307,8 +340,16 @@ export default function Cart() {
                             </button>
                           <span className="w-10 text-center font-bold text-sm text-gray-900">{item.quantity}</span>
                           <button
-                              onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
-                              className="w-9 h-9 flex items-center justify-center hover:bg-gray-200 rounded-r-xl transition-colors"
+                              onClick={() => {
+                                const newQty = item.quantity + 1;
+                                if (stock !== undefined && newQty > stock) {
+                                  toast.error(`Only ${stock} items available`);
+                                  return;
+                                }
+                                handleQuantityChange(item.id, newQty);
+                              }}
+                              disabled={stock !== undefined && item.quantity >= stock}
+                              className="w-9 h-9 flex items-center justify-center hover:bg-gray-200 rounded-r-xl transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                               title="Increase quantity"
                             >
                               <Plus className="h-3.5 w-3.5 text-gray-600" />
@@ -318,6 +359,12 @@ export default function Cart() {
                           <span className="text-[10px] text-gray-400 font-medium">
                             ₹{formatPrice(unitPrice)} each
                           </span>
+                        )}
+                        {isOutOfStock && (
+                          <span className="text-[10px] text-red-500 font-semibold">Out of stock</span>
+                        )}
+                        {isLowStock && (
+                          <span className="text-[10px] text-amber-600 font-semibold">Only {stock} left</span>
                         )}
                       </div>
                     </div>
@@ -353,7 +400,7 @@ export default function Cart() {
 
                 <div className="space-y-3.5 mb-5">
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">Subtotal ({allItems.length} items)</span>
+                    <span className="text-gray-500">Subtotal ({totalItemCount} items)</span>
                     <span className="font-semibold text-gray-900">₹{formatPrice(subtotal)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
