@@ -9,6 +9,8 @@ import { useWishlistStore } from '@/stores/wishlistStore'
 import api from '@/api'
 import WishlistDrawer from '@/components/common/WishlistDrawer'
 import BottomNav from '@/components/common/BottomNav'
+import Breadcrumbs from '@/components/common/Breadcrumbs'
+import BackButton from '@/components/common/BackButton'
 import LogoutModal from '@/components/common/LogoutModal'
 import { useVoiceSearch } from '@/hooks/useVoiceSearch'
 // import ChatWidget from '@/pages/Chat/ChatWidget'
@@ -699,6 +701,8 @@ export default function Layout() {
         )}
       </AnimatePresence>
 
+      <BackButton />
+      <Breadcrumbs />
       <main className="flex-1 pb-20 md:pb-0">
         <Outlet />
       </main>
