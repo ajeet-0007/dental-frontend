@@ -1,6 +1,8 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { HelmetProvider } from "react-helmet-async";
 import { useEffect } from "react";
+import Seo from "./components/seo/Seo";
 import { Toaster } from "react-hot-toast";
 import Layout from "./components/layout/Layout";
 import Home from "./pages/Home/Home";
@@ -49,9 +51,24 @@ import Returns from "./pages/Returns/Returns";
 import ReturnDetail from "./pages/Returns/ReturnDetail";
 import InitiateReturn from "./pages/Returns/InitiateReturn";
 import { GalleryPage } from "./pages/Gallery";
+import {
+  CategoryProductsPage,
+  DepartmentProductsPage,
+  BrandProductsPage,
+} from "./pages/EntityProducts/EntityProductsPage";
 // import ChatPage from "./pages/Chat/ChatPage";
 
 const queryClient = new QueryClient();
+
+const PRIVATE_PATH_PATTERN =
+  /^\/(login|register|forgot-password|auth\/callback|admin|cart|checkout|payment-success|orders|returns|profile|wishlist)(\/|$)/;
+
+function RouteSeo() {
+  const location = useLocation();
+  const isPrivate = PRIVATE_PATH_PATTERN.test(location.pathname);
+  if (!isPrivate) return null;
+  return <Seo noindex />;
+}
 
 function App() {
   const { isAuthenticated, token, hydrate } = useAuthStore();
@@ -79,16 +96,21 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Toaster position="top-right" />
-      <BrowserRouter>
+      <HelmetProvider>
+        <BrowserRouter>
         <ScrollToTop />
+        <RouteSeo />
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
             <Route path="products" element={<Products />} />
             <Route path="products/:slug" element={<ProductDetail />} />
             <Route path="departments" element={<Departments />} />
+            <Route path="departments/:slug" element={<DepartmentProductsPage />} />
             <Route path="brands" element={<Brands />} />
+            <Route path="brands/:slug" element={<BrandProductsPage />} />
             <Route path="categories" element={<Categories />} />
+            <Route path="categories/:slug" element={<CategoryProductsPage />} />
             <Route path="cart" element={<Cart />} />
             <Route path="checkout" element={<Checkout />} />
             <Route path="payment-success" element={<PaymentSuccess />} />
@@ -130,7 +152,8 @@ function App() {
             <Route path="gallery" element={<AdminGallery />} />
           </Route>
         </Routes>
-      </BrowserRouter>
+        </BrowserRouter>
+      </HelmetProvider>
     </QueryClientProvider>
   );
 }

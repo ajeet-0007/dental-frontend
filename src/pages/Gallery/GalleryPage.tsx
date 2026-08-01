@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import api from "@/api";
 import { ArrowLeft, X, ChevronLeft, ChevronRight, FolderOpen, Image as ImageIcon } from "lucide-react";
+import Seo from "@/components/seo/Seo";
 
 interface GalleryAlbum {
   id: number;
@@ -92,6 +93,12 @@ export default function GalleryPage() {
     }
 
     return (
+      <>
+      <Seo
+        title={currentAlbum.title || "Gallery"}
+        description={currentAlbum.description}
+        canonical={slug ? `/gallery/${slug}` : "/gallery"}
+      />
       <div className="min-h-screen bg-gray-50 py-8 md:py-12">
         <div className="container mx-auto px-4">
           <Link
@@ -205,11 +212,14 @@ export default function GalleryPage() {
           )}
         </AnimatePresence>
       </div>
+      </>
     );
   }
 
   // Albums grid view
   return (
+    <>
+      <Seo title="Gallery" canonical="/gallery" />
     <div className="min-h-screen bg-gray-50 py-8 md:py-12">
       <div className="container mx-auto px-4">
         <div className="mb-8">
@@ -273,5 +283,6 @@ export default function GalleryPage() {
         )}
       </div>
     </div>
+    </>
   );
 }

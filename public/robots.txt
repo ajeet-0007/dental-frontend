@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /auth/
+Disallow: /cart
+Disallow: /checkout
+Disallow: /orders
+Disallow: /returns
+Disallow: /profile
+Disallow: /wishlist
+
+Sitemap: https://dentzoo.com/sitemap.xml

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/stores/authStore";
+import Seo from "@/components/seo/Seo";
 import {
   LayoutDashboard,
   Package,
@@ -58,6 +59,8 @@ export default function AdminLayout() {
   };
 
   return (
+    <>
+      <Seo title="Admin" noindex />
     <div className="min-h-screen bg-gray-100">
       {/* Mobile sidebar backdrop */}
       {sidebarOpen && (
@@ -177,5 +180,6 @@ export default function AdminLayout() {
         </main>
       </div>
     </div>
+    </>
   );
 }

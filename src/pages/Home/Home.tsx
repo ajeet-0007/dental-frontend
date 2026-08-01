@@ -19,6 +19,8 @@ import NewsSection from "@/components/common/NewsSection";
 import GalleryPreview from "@/pages/Gallery/GalleryPreview";
 import { useAuthStore } from "@/stores/authStore";
 import { useRecentlyViewedStore } from "@/stores/recentlyViewedStore";
+import Seo from "@/components/seo/Seo";
+import { buildOrganizationJsonLd, buildWebSiteJsonLd } from "@/components/seo/seoHelpers";
 
 export default function Home() {
   const [cartDrawerProduct, setCartDrawerProduct] = useState<any>(null);
@@ -86,6 +88,13 @@ export default function Home() {
   };
 
   return (
+    <>
+      <Seo
+        title="Dentzoo - India's Online Dental Store for Equipment, Instruments & Materials"
+        description="Dentzoo is an online dental store for dental equipment, instruments, materials, and consumables. Shop premium dental products at the best prices with genuine 100% authentic brands."
+        canonical="/"
+        jsonLd={[buildOrganizationJsonLd(), buildWebSiteJsonLd()]}
+      />
     <div>
       {/* Hero Banner Carousel */}
       {banners.length > 0 && (
@@ -396,7 +405,7 @@ export default function Home() {
                 </div>
               </div>
               <Link
-                to="/products?category=student-section"
+                to="/categories/student-section"
                 className="flex items-center gap-1 text-sm font-medium text-gray-500 hover:text-primary-600 transition-colors group"
               >
                 <span>View All</span>
@@ -480,5 +489,6 @@ export default function Home() {
         product={cartDrawerProduct}
       />
     </div>
+    </>
   );
 }

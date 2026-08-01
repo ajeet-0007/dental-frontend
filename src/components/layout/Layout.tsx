@@ -220,7 +220,7 @@ export default function Layout() {
                               transition={{ delay: index * 0.05 }}
                             >
                               <Link
-                                to={`/products?category=${category.slug}&categoryName=${encodeURIComponent(category.name)}`}
+                                to={`/categories/${category.slug}`}
                                 onClick={() => {
                                   setIsSearchOpen(false)
                                   setSearchQuery('')
@@ -254,7 +254,7 @@ export default function Layout() {
                               transition={{ delay: index * 0.05 }}
                             >
                               <Link
-                                to={`/products?brand=${brand.slug}`}
+                                to={`/brands/${brand.slug}`}
                                 onClick={() => {
                                   setIsSearchOpen(false)
                                   setSearchQuery('')
@@ -623,7 +623,7 @@ export default function Layout() {
                     {searchData.categories.map((category: any) => (
                       <Link
                         key={category.id}
-                        to={`/products?category=${category.slug}`}
+                        to={`/categories/${category.slug}`}
                         onClick={() => {
                           setIsSearchOpen(false)
                           setSearchQuery('')
@@ -648,7 +648,7 @@ export default function Layout() {
                     {searchData.brands.map((brand: any) => (
                       <Link
                         key={brand.id}
-                        to={`/products?brand=${brand.slug}`}
+                        to={`/brands/${brand.slug}`}
                         onClick={() => {
                           setIsSearchOpen(false)
                           setSearchQuery('')

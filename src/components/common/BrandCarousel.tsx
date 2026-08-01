@@ -110,7 +110,7 @@ export default function BrandCarousel({ brands, itemsPerPage = 6 }: BrandCarouse
                 style={{ width: `calc(${100 / visibleCount}% - ${(visibleCount - 1) * 16 / visibleCount}px)` }}
               >
                 <Link
-                  to={`/products?brand=${brand.slug}`}
+                  to={`/brands/${brand.slug}`}
                   className="group/card block"
                 >
                   <div className="relative bg-white rounded-2xl border border-gray-200 overflow-hidden transition-all duration-300 group-hover/card:shadow-lg group-hover/card:border-primary-200 group-hover/card:-translate-y-1">

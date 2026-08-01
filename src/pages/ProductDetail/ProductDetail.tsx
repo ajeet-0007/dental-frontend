@@ -17,6 +17,12 @@ import HtmlRenderer from "@/components/common/HtmlRenderer";
 import ProductCarousel from "@/components/common/ProductCarousel";
 import CartDrawer from "@/components/common/CartDrawer";
 import { ReviewsSection } from "@/components/common/Reviews";
+import Seo from "@/components/seo/Seo";
+import {
+  buildProductJsonLd,
+  buildBreadcrumbJsonLd,
+  truncateDescription,
+} from "@/components/seo/seoHelpers";
 
 const DEFAULT_IMAGE =
   "https://images.unsplash.com/photo-1629909613654-28e377c37b09";
@@ -384,7 +390,46 @@ export default function ProductDetail() {
     ? Math.round((1 - displayPrice / displayMRP) * 100)
     : 0;
 
+  const totalAvailableStock = hasVariants
+    ? activeVariants.reduce((sum, v) => sum + getVariantStock(v.id), 0)
+    : productStock;
+
+  const productJsonLd = product
+    ? buildProductJsonLd(
+        {
+          ...product,
+          inStock: totalAvailableStock > 0,
+        },
+        reviewStatsData
+      )
+    : undefined;
+
+  const breadcrumbJsonLd = product
+    ? buildBreadcrumbJsonLd([
+        { name: "Home", path: "/" },
+        { name: "Products", path: "/products" },
+        ...(product.category?.slug
+          ? [{ name: product.category.name || "Category", path: `/categories/${product.category.slug}` }]
+          : []),
+        { name: product.name, path: `/products/${product.slug}` },
+      ])
+    : undefined;
+
+  const productSeoDescription = truncateDescription(
+    product?.shortDescription || product?.description,
+    155
+  );
+
   return (
+    <>
+      <Seo
+        title={product?.name}
+        description={productSeoDescription}
+        canonical={product?.slug ? `/products/${product.slug}` : undefined}
+        image={images[0]}
+        type="product"
+        jsonLd={[productJsonLd, breadcrumbJsonLd].filter(Boolean)}
+      />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
       <div className="container mx-auto px-4 py-6 md:py-8">
         <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
@@ -590,7 +635,7 @@ export default function ProductDetail() {
                   )}
                   {product.category && (
                     <Link
-                      to={`/products?category=${product.category.slug}`}
+                      to={`/categories/${product.category.slug}`}
                       className="text-xs text-primary-600 bg-primary-50 px-3 py-1.5 rounded-full hover:bg-primary-100 transition-colors"
                     >
                       {product.category.name}
@@ -967,5 +1012,6 @@ export default function ProductDetail() {
         product={selectedProductForDrawer}
       />
     </div>
+    </>
   );
 }

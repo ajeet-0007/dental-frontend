@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import toast from 'react-hot-toast'
 import api from '@/api'
 import { useAuthStore } from '@/stores/authStore'
+import Seo from '@/components/seo/Seo'
 
 const faqs = [
   {
@@ -74,6 +75,12 @@ export default function HelpSupport() {
   }
 
   return (
+    <>
+      <Seo
+        title="Help & Support"
+        description="Get help with orders, returns, payments, shipping, and more on Dentzoo. Contact our support team for assistance."
+        canonical="/help"
+      />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
       <div className="container mx-auto px-4 py-6 md:py-8">
         {/* Header */}
@@ -283,5 +290,6 @@ export default function HelpSupport() {
         </div>
       </div>
     </div>
+    </>
   )
 }

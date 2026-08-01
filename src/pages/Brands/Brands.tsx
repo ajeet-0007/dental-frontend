@@ -4,6 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import api from "@/api";
 import { Search, ArrowRight, Grid3X3, List, Store } from "lucide-react";
+import Seo from "@/components/seo/Seo";
+import { absoluteUrl } from "@/components/seo/seoConstants";
 
 const INITIAL_COLORS = [
   "from-blue-500 to-blue-600",
@@ -68,6 +70,23 @@ export default function Brands() {
   }
 
   return (
+    <>
+      <Seo
+        title="Browse Dental Products by Brand"
+        description="Shop dental products from top brands - instruments, materials, equipment, and consumables from the brands you trust. Available on Dentzoo."
+        canonical="/brands"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          numberOfItems: brands.length,
+          itemListElement: brands.map((brand: any, index: number) => ({
+            "@type": "ListItem",
+            position: index + 1,
+            url: absoluteUrl(`/brands/${brand.slug}`),
+            name: brand.name,
+          })),
+        }}
+      />
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-100">
@@ -151,7 +170,7 @@ export default function Brands() {
                       transition={{ delay: index * 0.03, duration: 0.3 }}
                     >
                       <Link
-                        to={`/products?brand=${brand.slug}`}
+                        to={`/brands/${brand.slug}`}
                         className="group block"
                       >
                         <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden group-hover:shadow-lg group-hover:border-gray-200 group-hover:-translate-y-1 transition-all duration-300">
@@ -200,7 +219,7 @@ export default function Brands() {
                       transition={{ delay: index * 0.02, duration: 0.2 }}
                     >
                       <Link
-                        to={`/products?brand=${brand.slug}`}
+                        to={`/brands/${brand.slug}`}
                         className="group flex items-center gap-4 p-4 bg-white rounded-xl border border-gray-100 hover:border-purple-200 hover:shadow-md transition-all"
                       >
                         <div className="h-16 w-16 rounded-xl overflow-hidden flex-shrink-0 bg-gray-50 p-1 flex items-center justify-center">
@@ -265,5 +284,6 @@ export default function Brands() {
         )}
       </div>
     </div>
+    </>
   );
 }

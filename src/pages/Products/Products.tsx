@@ -10,6 +10,8 @@ import { formatPrice } from "@/utils/format";
 import { Package, ChevronDown, ChevronUp, ChevronRight, X, SlidersHorizontal, ShoppingCart, Heart, ArrowUpDown, Tag, Layers, Store, PackageCheck, Loader2, Search, Home } from "lucide-react";
 import CartDrawer from "@/components/common/CartDrawer";
 import { PriceRangeSlider } from "@/components/common/PriceRangeSlider";
+import Seo from "@/components/seo/Seo";
+import { buildItemListJsonLd } from "@/components/seo/seoHelpers";
 
 
 const DEFAULT_IMAGE =
@@ -32,7 +34,25 @@ interface ExpandedSections {
   availability: boolean;
 }
 
-export default function Products() {
+interface ProductsProps {
+  categorySlug?: string;
+  departmentSlug?: string;
+  brandSlug?: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  seoCanonical?: string;
+  seoJsonLd?: object | object[];
+}
+
+export default function Products({
+  categorySlug,
+  departmentSlug,
+  brandSlug,
+  seoTitle,
+  seoDescription,
+  seoCanonical,
+  seoJsonLd,
+}: ProductsProps = {}) {
   const [searchParams, setSearchParams] = useSearchParams();
   const [showFilters, setShowFilters] = useState(false);
   const [expandedSections, setExpandedSections] = useState<ExpandedSections>({
@@ -105,14 +125,26 @@ export default function Products() {
     const urlInStock = searchParams.get("inStock");
 
     setFilters(() => ({
-      categories: urlCategories ? urlCategories.split(",").filter(Boolean) : [],
-      departments: urlDepartments ? urlDepartments.split(",").filter(Boolean) : [],
-      brands: urlBrands ? urlBrands.split(",").filter(Boolean) : [],
+      categories: categorySlug
+        ? [categorySlug]
+        : urlCategories
+          ? urlCategories.split(",").filter(Boolean)
+          : [],
+      departments: departmentSlug
+        ? [departmentSlug]
+        : urlDepartments
+          ? urlDepartments.split(",").filter(Boolean)
+          : [],
+      brands: brandSlug
+        ? [brandSlug]
+        : urlBrands
+          ? urlBrands.split(",").filter(Boolean)
+          : [],
       minPrice: urlMinPrice || "",
       maxPrice: urlMaxPrice || "",
       inStock: urlInStock === "true",
     }));
-  }, [searchParams]);
+  }, [searchParams, categorySlug, departmentSlug, brandSlug]);
 
   const buildParams = useCallback((p: number) => ({
     search: searchQuery || undefined,
@@ -506,7 +538,45 @@ export default function Products() {
     </div>
   ));
 
+  const isEntityPage = !!(categorySlug || departmentSlug || brandSlug);
+  const filterNames = [
+    ...filters.categories
+      .map((slug) => categories.find((c: any) => c.slug === slug)?.name)
+      .filter(Boolean),
+    ...filters.departments
+      .map((slug) => departments.find((d: any) => d.slug === slug)?.name)
+      .filter(Boolean),
+    ...filters.brands
+      .map((slug) => brands.find((b: any) => b.slug === slug)?.name)
+      .filter(Boolean),
+  ];
+
+  const shouldNoindex = (!isEntityPage && hasActiveFilters) || !!searchQuery;
+
+  const seoDescriptionValue =
+    seoDescription ||
+    (filterNames.length
+      ? `Shop ${filterNames.join(", ")} dental products online at the best prices.`
+      : "Shop dental products online at the best prices.");
+
+  const derivedCanonical = isEntityPage && seoCanonical ? seoCanonical : "/products";
+  const itemListJsonLd = seoJsonLd || buildItemListJsonLd(products.slice(0, 20));
+
+  const listingTitle = isEntityPage && seoTitle
+    ? seoTitle
+    : searchQuery
+      ? `Search Results for "${searchQuery}"`
+      : "Buy Dental Products Online";
+
   return (
+    <>
+      <Seo
+        title={listingTitle}
+        description={seoDescriptionValue}
+        canonical={derivedCanonical}
+        noindex={shouldNoindex}
+        jsonLd={itemListJsonLd}
+      />
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
     <div className="container mx-auto px-3 py-4 md:px-4 md:py-6">
       {/* Page Header */}
@@ -519,8 +589,14 @@ export default function Products() {
             <div className="flex items-center gap-1.5 text-xs text-gray-400 mb-0.5">
               <Home className="w-3 h-3" />
               <ChevronRight className="w-3 h-3" />
-              <span>Products</span>
-              {searchQuery && (
+              <span>{isEntityPage ? (categorySlug ? "Categories" : departmentSlug ? "Departments" : "Brands") : "Products"}</span>
+              {isEntityPage && seoTitle && (
+                <>
+                  <ChevronRight className="w-3 h-3" />
+                  <span className="text-primary-600 font-medium">{seoTitle}</span>
+                </>
+              )}
+              {!isEntityPage && searchQuery && (
                 <>
                   <ChevronRight className="w-3 h-3" />
                   <span className="text-primary-600 font-medium">"{searchQuery}"</span>
@@ -528,7 +604,11 @@ export default function Products() {
               )}
             </div>
             <h1 className="text-lg md:text-xl font-bold text-gray-900 tracking-tight">
-              {searchQuery ? `Results for "${searchQuery}"` : "All Products"}
+              {isEntityPage && seoTitle
+                ? seoTitle
+                : searchQuery
+                  ? `Results for "${searchQuery}"`
+                  : "All Products"}
             </h1>
           </div>
         </div>
@@ -1140,5 +1220,6 @@ export default function Products() {
       />
     </div>
     </div>
+    </>
   );
 }

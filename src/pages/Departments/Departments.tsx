@@ -4,6 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import api from "@/api";
 import { Search, ArrowRight, Grid3X3, List, Layers, Stethoscope } from "lucide-react";
+import Seo from "@/components/seo/Seo";
+import { absoluteUrl } from "@/components/seo/seoConstants";
 
 export default function Departments() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -53,6 +55,23 @@ export default function Departments() {
   }
 
   return (
+    <>
+      <Seo
+        title="Browse Dental Products by Department"
+        description="Browse dental products by department - endodontics, orthodontics, prosthodontics, periodontics, and more. Find everything you need on Dentzoo."
+        canonical="/departments"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          numberOfItems: departments.length,
+          itemListElement: departments.map((dept: any, index: number) => ({
+            "@type": "ListItem",
+            position: index + 1,
+            url: absoluteUrl(`/departments/${dept.slug}`),
+            name: dept.name,
+          })),
+        }}
+      />
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-100">
@@ -133,7 +152,7 @@ export default function Departments() {
                     transition={{ delay: index * 0.03, duration: 0.3 }}
                   >
                     <Link
-                      to={`/products?department=${department.slug}`}
+                      to={`/departments/${department.slug}`}
                       className="group block"
                     >
                       <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden group-hover:shadow-lg group-hover:border-gray-200 group-hover:-translate-y-1 transition-all duration-300">
@@ -181,7 +200,7 @@ export default function Departments() {
                     transition={{ delay: index * 0.02, duration: 0.2 }}
                   >
                     <Link
-                      to={`/products?department=${department.slug}`}
+                      to={`/departments/${department.slug}`}
                       className="group flex items-center gap-4 p-4 bg-white rounded-xl border border-gray-100 hover:border-rose-200 hover:shadow-md transition-all"
                     >
                       <div className="h-16 w-16 rounded-xl overflow-hidden flex-shrink-0 bg-gray-50 p-1">
@@ -243,5 +262,6 @@ export default function Departments() {
         )}
       </div>
     </div>
+    </>
   );
 }
