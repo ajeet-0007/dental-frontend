@@ -44,12 +44,6 @@ export default function ReviewsSection({ productId }: ReviewsSectionProps) {
     }),
   })
 
-  const { data: canReviewData } = useQuery({
-    queryKey: ['canReview', productId],
-    queryFn: () => reviewsApi.canReview(String(productId)),
-    enabled: isAuthenticated,
-  })
-
   const stats = statsData?.data
   const reviews = reviewsData?.data?.reviews || []
   const totalPages = reviewsData?.data?.totalPages || 1
@@ -125,14 +119,6 @@ export default function ReviewsSection({ productId }: ReviewsSectionProps) {
                 <Edit className="w-4 h-4" />
                 Edit Your Review
               </button>
-            ) : isAuthenticated && canReviewData?.data?.canReview && !canReviewData?.data?.existingReview ? (
-              <button
-                onClick={() => setShowForm(!showForm)}
-                className="w-full py-3 bg-primary-600 text-white font-medium rounded-xl hover:bg-primary-700 transition-colors flex items-center justify-center gap-2"
-              >
-                <Edit className="w-4 h-4" />
-                Write a Review
-              </button>
             ) : !isAuthenticated ? (
               <a
                 href="/login"
@@ -141,11 +127,13 @@ export default function ReviewsSection({ productId }: ReviewsSectionProps) {
                 Login to Write a Review
               </a>
             ) : (
-              <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 text-center">
-                <p className="text-gray-600 text-sm">
-                  You can only review products you have purchased
-                </p>
-              </div>
+              <button
+                onClick={() => setShowForm(!showForm)}
+                className="w-full py-3 bg-primary-600 text-white font-medium rounded-xl hover:bg-primary-700 transition-colors flex items-center justify-center gap-2"
+              >
+                <Edit className="w-4 h-4" />
+                Write a Review
+              </button>
             )}
           </div>
 

@@ -45,8 +45,6 @@ api.interceptors.response.use(
 export default api
 
 export const reviewsApi = {
-  canReview: (productId: string | number) => api.get(`/reviews/user/can-review/${productId}`),
-  
   create: (data: { productId: number; rating: number; title?: string; comment?: string; images?: string[] }) => 
     api.post('/reviews', data),
   
