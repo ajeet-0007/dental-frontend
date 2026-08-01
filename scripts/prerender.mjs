@@ -29,7 +29,11 @@ async function waitForServer(url, timeoutMs = 30000) {
 async function ensureChromium() {
   try {
     return await chromium.launch({ headless: true });
-  } catch {
+  } catch (error) {
+    if (process.env.VERCEL) {
+      log("Skipping Chromium install on Vercel");
+      throw error;
+    }
     log("Chromium not found, attempting to install...");
   }
   try {
@@ -129,7 +133,11 @@ async function main() {
   try {
     browser = await ensureChromium();
   } catch {
-    log("Skipping prerender: Chromium unavailable. Build continues with SPA fallback.");
+    log("Chromium unavailable. Writing SPA shell fallback for all routes.");
+    for (const pathname of paths) {
+      writeHtml(pathname, baseHtml);
+    }
+    log(`done: ${paths.length}/${paths.length} routes written as SPA shell (no browser)`);
     server.kill();
     process.exit(0);
   }
