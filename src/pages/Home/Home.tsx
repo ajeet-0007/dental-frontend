@@ -90,8 +90,8 @@ export default function Home() {
   return (
     <>
       <Seo
-        title="Dentzoo - India's Online Dental Store for Equipment, Instruments & Materials"
-        description="Dentzoo is an online dental store for dental equipment, instruments, materials, and consumables. Shop premium dental products at the best prices with genuine 100% authentic brands."
+        title="Dentzoo - India's Online Dental Store for Equipment"
+        description="Dentzoo is an online dental store for dental equipment, instruments, materials, and consumables from genuine 100% authentic brands."
         canonical="/"
         jsonLd={[buildOrganizationJsonLd(), buildWebSiteJsonLd()]}
       />
