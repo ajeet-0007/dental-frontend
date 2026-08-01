@@ -28,6 +28,7 @@ export default function ReviewCard({ review, onEdit, onDelete }: ReviewCardProps
   const [helpfulCount, setHelpfulCount] = useState(review.helpfulCount)
   const [markedHelpful, setMarkedHelpful] = useState(false)
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
+  const [avatarFailed, setAvatarFailed] = useState(false)
 
   const handleMarkHelpful = async () => {
     if (markedHelpful) return
@@ -63,10 +64,11 @@ export default function ReviewCard({ review, onEdit, onDelete }: ReviewCardProps
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center">
-            {review.user.avatar ? (
+            {review.user.avatar && !avatarFailed ? (
               <img
                 src={review.user.avatar}
                 alt={`${review.user.firstName} ${review.user.lastName}`}
+                onError={() => setAvatarFailed(true)}
                 className="w-10 h-10 rounded-full object-cover"
               />
             ) : (

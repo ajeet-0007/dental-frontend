@@ -7,6 +7,7 @@ interface User {
   phone: string
   firstName: string
   lastName: string
+  avatar?: string
   role: 'user' | 'admin'
   isProfessionalVerified?: boolean
   dentalRegistrationId?: string

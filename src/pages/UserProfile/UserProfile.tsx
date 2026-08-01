@@ -30,6 +30,7 @@ export default function UserProfile() {
     phone: '',
   })
   const [deleteAddressId, setDeleteAddressId] = useState<string | null>(null)
+  const [avatarFailed, setAvatarFailed] = useState(false)
 
   useEffect(() => {
     const section = searchParams.get('section')
@@ -77,6 +78,7 @@ export default function UserProfile() {
 
   const addresses = addressesData?.data || []
   const orders = ordersData?.data?.orders || ordersData?.data || []
+  const totalOrders = ordersData?.data?.total ?? orders.length
   const recentOrders = orders.slice(0, 3)
 
   const addAddressMutation = useMutation({
@@ -277,7 +279,7 @@ export default function UserProfile() {
   const menuItems = [
     { id: 'overview', icon: User, label: 'My Profile', gradient: 'from-violet-500 to-purple-500' },
     { id: 'verification', icon: Shield, label: 'Verification', gradient: 'from-emerald-500 to-green-500' },
-    { id: 'orders', icon: ShoppingBag, label: 'My Orders', badge: orders.length, gradient: 'from-blue-500 to-indigo-500' },
+    { id: 'orders', icon: ShoppingBag, label: 'My Orders', badge: totalOrders, gradient: 'from-blue-500 to-indigo-500' },
     { id: 'addresses', icon: MapPin, label: 'Addresses', badge: addresses.length, gradient: 'from-orange-500 to-amber-500' },
     { id: 'wishlist', icon: Heart, label: 'Wishlist', badge: wishlistItems.length, gradient: 'from-pink-500 to-rose-500' },
     { id: 'help', icon: HelpCircle, label: 'Help & Support', gradient: 'from-teal-500 to-cyan-500' },
@@ -289,8 +291,17 @@ export default function UserProfile() {
       <div className="md:hidden bg-white/80 backdrop-blur-lg border-b border-gray-100 sticky top-0 z-20">
         <div className="px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-md shadow-primary-500/20">
-              <span className="text-sm font-bold text-white">{getInitials()}</span>
+            <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-md shadow-primary-500/20 overflow-hidden">
+              {user?.avatar && !avatarFailed ? (
+                <img
+                  src={user.avatar}
+                  alt={`${user?.firstName} ${user?.lastName}`}
+                  onError={() => setAvatarFailed(true)}
+                  className="w-full h-full rounded-xl object-cover"
+                />
+              ) : (
+                <span className="text-sm font-bold text-white">{getInitials()}</span>
+              )}
             </div>
             <div>
               <p className="font-semibold text-gray-900 text-sm">
@@ -336,8 +347,17 @@ export default function UserProfile() {
               <div className="p-6 bg-gradient-to-br from-primary-500 via-primary-600 to-blue-600 text-center relative overflow-hidden">
                 <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wNSkiLz48L3N2Zz4=')] opacity-50" />
                 <div className="relative">
-                  <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-3 ring-4 ring-white/30">
-                    <span className="text-2xl font-bold text-white">{getInitials()}</span>
+                  <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-3 ring-4 ring-white/30 overflow-hidden">
+                    {user?.avatar && !avatarFailed ? (
+                      <img
+                        src={user.avatar}
+                        alt={`${user?.firstName} ${user?.lastName}`}
+                        onError={() => setAvatarFailed(true)}
+                        className="w-full h-full rounded-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-2xl font-bold text-white">{getInitials()}</span>
+                    )}
                   </div>
                   <h3 className="font-semibold text-white text-lg">
                     {user?.firstName} {user?.lastName}
@@ -451,7 +471,7 @@ export default function UserProfile() {
               className="grid grid-cols-3 gap-3 md:gap-4"
             >
               {[
-                { label: 'Orders', value: orders.length, icon: ShoppingBag, gradient: 'from-blue-500 to-indigo-500', shadow: 'shadow-blue-500/20' },
+                { label: 'Orders', value: totalOrders, icon: ShoppingBag, gradient: 'from-blue-500 to-indigo-500', shadow: 'shadow-blue-500/20' },
                 { label: 'Wishlist', value: wishlistItems.length, icon: Heart, gradient: 'from-pink-500 to-rose-500', shadow: 'shadow-pink-500/20' },
                 { label: 'Addresses', value: addresses.length, icon: MapPin, gradient: 'from-emerald-500 to-green-500', shadow: 'shadow-emerald-500/20' },
               ].map((stat) => (
