@@ -44,6 +44,8 @@ export default defineConfig({
         cacheId: 'dentzoo-v1',
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
         maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
+        navigateFallback: '/index.html',
+        navigateFallbackDenylist: [/sitemap\.xml$/, /robots\.txt$/, /\.(xml|txt|json|webmanifest)$/],
         runtimeCaching: [
           {
             urlPattern: /^https?:\/\/.*\/api\/.*/i,
