@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider, dehydrate } from "@tanstack/react-query";
 import { HelmetProvider } from "react-helmet-async";
 import { useEffect } from "react";
+import { queryClient } from "./queryClient";
 import Seo from "./components/seo/Seo";
 import { Toaster } from "react-hot-toast";
 import Layout from "./components/layout/Layout";
@@ -58,8 +59,6 @@ import {
 } from "./pages/EntityProducts/EntityProductsPage";
 // import ChatPage from "./pages/Chat/ChatPage";
 
-const queryClient = new QueryClient();
-
 const PRIVATE_PATH_PATTERN =
   /^\/(login|register|forgot-password|auth\/callback|admin|cart|checkout|payment-success|orders|returns|profile|wishlist)(\/|$)/;
 
@@ -77,6 +76,13 @@ function App() {
   useEffect(() => {
     hydrate();
   }, [hydrate]);
+
+  useEffect(() => {
+    window.__DENTZOO_SNAPSHOT__ = () => dehydrate(queryClient);
+    return () => {
+      window.__DENTZOO_SNAPSHOT__ = undefined;
+    };
+  }, []);
 
   useEffect(() => {
     if (isAuthenticated && token) {

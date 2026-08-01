@@ -12,4 +12,4 @@ Disallow: /returns
 Disallow: /profile
 Disallow: /wishlist
 
-Sitemap: https://dentzoo.com/sitemap.xml
+Sitemap: https://www.dentzoo.com/sitemap.xml

@@ -1,4 +1,6 @@
 {
+  "installCommand": "npm install && npx playwright install --with-deps chromium",
+  "cleanUrls": true,
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]

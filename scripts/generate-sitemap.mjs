@@ -26,6 +26,13 @@ function xmlEscape(value = "") {
     .replace(/'/g, "&apos;");
 }
 
+function encodePathSegment(value = "") {
+  return String(value)
+    .split("/")
+    .map((segment) => encodeURIComponent(segment))
+    .join("/");
+}
+
 async function fetchJson(path) {
   const response = await fetch(`${API_BASE}${path}`, {
     headers: { Accept: "application/json" },
@@ -103,17 +110,22 @@ async function main() {
     )
     .join("\n");
 
-  const dynamicEntryLines = urlSet(
-    products
-      .map((p) => ({ loc: `${SITE_URL}/products/${p.slug}`, lastmod: lastmodOf(p) }))
-      .concat(
-        categories.map((c) => ({ loc: `${SITE_URL}/categories/${c.slug}`, lastmod: lastmodOf(c) })),
-        departments.map((d) => ({ loc: `${SITE_URL}/departments/${d.slug}`, lastmod: lastmodOf(d) })),
-        brands.map((b) => ({ loc: `${SITE_URL}/brands/${b.slug}`, lastmod: lastmodOf(b) }))
-      ),
-    "weekly",
-    "0.6"
-  );
+  const dynamicEntries = products
+    .map((p) => ({ loc: `${SITE_URL}/products/${encodePathSegment(p.slug)}`, lastmod: lastmodOf(p) }))
+    .concat(
+      categories.map((c) => ({ loc: `${SITE_URL}/categories/${encodePathSegment(c.slug)}`, lastmod: lastmodOf(c) })),
+      departments.map((d) => ({ loc: `${SITE_URL}/departments/${encodePathSegment(d.slug)}`, lastmod: lastmodOf(d) })),
+      brands.map((b) => ({ loc: `${SITE_URL}/brands/${encodePathSegment(b.slug)}`, lastmod: lastmodOf(b) }))
+    );
+
+  const seen = new Set();
+  const uniqueDynamicEntries = dynamicEntries.filter((entry) => {
+    if (seen.has(entry.loc)) return false;
+    seen.add(entry.loc);
+    return true;
+  });
+
+  const dynamicEntryLines = urlSet(uniqueDynamicEntries, "weekly", "0.6");
 
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

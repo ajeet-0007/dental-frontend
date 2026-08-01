@@ -1,4 +1,4 @@
-export const SITE_URL = (import.meta.env.VITE_SITE_URL as string) || "https://dentzoo.com";
+export const SITE_URL = (import.meta.env.VITE_SITE_URL as string) || "https://www.dentzoo.com";
 
 export const SITE_NAME = "Dentzoo";
 
