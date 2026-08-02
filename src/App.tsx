@@ -52,11 +52,9 @@ import Returns from "./pages/Returns/Returns";
 import ReturnDetail from "./pages/Returns/ReturnDetail";
 import InitiateReturn from "./pages/Returns/InitiateReturn";
 import { GalleryPage } from "./pages/Gallery";
-import {
-  CategoryProductsPage,
-  DepartmentProductsPage,
-} from "./pages/EntityProducts/EntityProductsPage";
 import BrandDetail from "./pages/BrandDetail/BrandDetail";
+import CategoryDetail from "./pages/CategoryDetail/CategoryDetail";
+import DepartmentDetail from "./pages/DepartmentDetail/DepartmentDetail";
 // import ChatPage from "./pages/Chat/ChatPage";
 
 const PRIVATE_PATH_PATTERN =
@@ -112,11 +110,11 @@ function App() {
             <Route path="products" element={<Products />} />
             <Route path="products/:slug" element={<ProductDetail />} />
             <Route path="departments" element={<Departments />} />
-            <Route path="departments/:slug" element={<DepartmentProductsPage />} />
+            <Route path="departments/:slug" element={<DepartmentDetail />} />
             <Route path="brands" element={<Brands />} />
             <Route path="brands/:slug" element={<BrandDetail />} />
             <Route path="categories" element={<Categories />} />
-            <Route path="categories/:slug" element={<CategoryProductsPage />} />
+            <Route path="categories/:slug" element={<CategoryDetail />} />
             <Route path="cart" element={<Cart />} />
             <Route path="checkout" element={<Checkout />} />
             <Route path="payment-success" element={<PaymentSuccess />} />
