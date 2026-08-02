@@ -23,6 +23,7 @@
     "axios": "^1.6.5",
     "ckeditor4-react": "^5.2.1",
     "clsx": "^2.1.0",
+    "dompurify": "^3.4.12",
     "framer-motion": "^12.38.0",
     "imagekit-javascript": "^4.0.1",
     "imagekitio-react": "^4.3.0",

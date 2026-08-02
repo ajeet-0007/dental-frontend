@@ -55,8 +55,8 @@ import { GalleryPage } from "./pages/Gallery";
 import {
   CategoryProductsPage,
   DepartmentProductsPage,
-  BrandProductsPage,
 } from "./pages/EntityProducts/EntityProductsPage";
+import BrandDetail from "./pages/BrandDetail/BrandDetail";
 // import ChatPage from "./pages/Chat/ChatPage";
 
 const PRIVATE_PATH_PATTERN =
@@ -114,7 +114,7 @@ function App() {
             <Route path="departments" element={<Departments />} />
             <Route path="departments/:slug" element={<DepartmentProductsPage />} />
             <Route path="brands" element={<Brands />} />
-            <Route path="brands/:slug" element={<BrandProductsPage />} />
+            <Route path="brands/:slug" element={<BrandDetail />} />
             <Route path="categories" element={<Categories />} />
             <Route path="categories/:slug" element={<CategoryProductsPage />} />
             <Route path="cart" element={<Cart />} />

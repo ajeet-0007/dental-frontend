@@ -1,3 +1,5 @@
+import DOMPurify from "dompurify";
+
 interface HtmlRendererProps {
   content: string | string[] | null | undefined;
   className?: string;
@@ -36,7 +38,10 @@ export default function HtmlRenderer({ content, className = "" }: HtmlRendererPr
         className={`text-sm text-gray-700 leading-relaxed ${className}`}
       >
         <style>{listStyles}</style>
-        <div className="html-renderer" dangerouslySetInnerHTML={{ __html: decoded }} />
+        <div
+          className="html-renderer"
+          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(decoded) }}
+        />
       </div>
     );
   }
