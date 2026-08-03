@@ -1,28 +1,25 @@
 import { Outlet, Link, useNavigate } from 'react-router-dom'
-import { ShoppingCart, User, Menu, X, Package, Search, Heart, Mic, MicOff, Mail, Phone, MapPin, Instagram, Facebook, Twitter, Youtube, Linkedin } from 'lucide-react'
-import { useState, useRef, useEffect } from 'react'
+import { ShoppingCart, User, Menu, X, Package, Heart, Mic, MicOff, Mail, Phone, MapPin, Instagram, Facebook, Twitter, Youtube, Linkedin } from 'lucide-react'
+import { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useQuery } from '@tanstack/react-query'
 import { useAuthStore } from '@/stores/authStore'
 import { useCartStore } from '@/stores/cartStore'
 import { useWishlistStore } from '@/stores/wishlistStore'
-import api from '@/api'
 import WishlistDrawer from '@/components/common/WishlistDrawer'
 import BottomNav from '@/components/common/BottomNav'
 import Breadcrumbs from '@/components/common/Breadcrumbs'
 import BackButton from '@/components/common/BackButton'
 import LogoutModal from '@/components/common/LogoutModal'
-import { formatPrice } from '@/utils/format'
+import SearchAutocomplete, { type SearchAutocompleteHandle } from '@/components/common/SearchAutocomplete'
 import { useVoiceSearch } from '@/hooks/useVoiceSearch'
 // import ChatWidget from '@/pages/Chat/ChatWidget'
 
 export default function Layout() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [isWishlistOpen, setIsWishlistOpen] = useState(false)
   const [showLogoutModal, setShowLogoutModal] = useState(false)
-  const [searchQuery, setSearchQuery] = useState('')
-  const searchRef = useRef<HTMLDivElement>(null)
+  const mobileSearchRef = useRef<SearchAutocompleteHandle>(null)
+  const desktopSearchRef = useRef<SearchAutocompleteHandle>(null)
   const { isAuthenticated, logout } = useAuthStore()
   const { items } = useCartStore()
   const { items: wishlistItems } = useWishlistStore()
@@ -34,7 +31,8 @@ export default function Layout() {
       if (text && text.trim()) {
         const trimmedText = text.trim()
         console.log('[Layout] Voice search result:', trimmedText)
-        setSearchQuery(trimmedText)
+        mobileSearchRef.current?.setValue(trimmedText)
+        desktopSearchRef.current?.setValue(trimmedText)
         stopListening()
         navigate(`/products?search=${encodeURIComponent(trimmedText)}`)
       }
@@ -46,24 +44,6 @@ export default function Layout() {
   })
 
   const cartCount = items.reduce((sum, item) => sum + item.quantity, 0)
-
-  const { data: searchResults } = useQuery({
-    queryKey: ['search', searchQuery],
-    queryFn: () => api.get(`/products/search/${encodeURIComponent(searchQuery)}`),
-    enabled: searchQuery.length >= 2,
-  })
-
-  const searchData = searchResults?.data || { products: [], categories: [], brands: [] }
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
-        setIsSearchOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -80,29 +60,12 @@ export default function Layout() {
 
             {/* Mobile Search */}
             <div className="flex-1 md:hidden">
-              <div className="relative">
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => {
-                    setSearchQuery(e.target.value)
-                    if (e.target.value.length >= 2) {
-                      setIsSearchOpen(true)
-                    } else {
-                      setIsSearchOpen(false)
-                    }
-                  }}
-                  onFocus={() => {
-                    if (searchQuery.length >= 2) {
-                      setIsSearchOpen(true)
-                    }
-                  }}
-                  placeholder="Search..."
-                  className="w-full px-3 py-1.5 pl-8 pr-16 rounded-full bg-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-                />
-                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                  {isSupported && (
+              <SearchAutocomplete
+                ref={mobileSearchRef}
+                variant="mobile"
+                placeholder="Search..."
+                micButton={
+                  isSupported ? (
                     <button
                       onClick={() => {
                         if (isListening) {
@@ -112,8 +75,8 @@ export default function Layout() {
                         }
                       }}
                       className={`p-1.5 rounded-full transition-all ${
-                        isListening 
-                          ? 'bg-red-500 text-white animate-pulse' 
+                        isListening
+                          ? 'bg-red-500 text-white animate-pulse'
                           : 'hover:bg-gray-200 text-gray-500'
                       }`}
                     >
@@ -123,45 +86,19 @@ export default function Layout() {
                         <MicOff className="h-4 w-4" />
                       )}
                     </button>
-                  )}
-                  {searchQuery && (
-                    <button
-                      onClick={() => {
-                        setSearchQuery('')
-                        setIsSearchOpen(false)
-                      }}
-                      className="p-1 hover:bg-gray-200 rounded-full"
-                    >
-                      <X className="h-3 w-3 text-gray-500" />
-                    </button>
-                  )}
-                </div>
-              </div>
+                  ) : null
+                }
+              />
             </div>
 
             {/* Desktop Search */}
             <div className="hidden md:flex items-center flex-1 max-w-lg mx-8">
-              <div className="relative w-full" ref={searchRef}>
-                <div className="relative group">
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => {
-                      setSearchQuery(e.target.value)
-                      setIsSearchOpen(true)
-                    }}
-                    onFocus={() => setIsSearchOpen(true)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && searchQuery) {
-                        window.location.href = `/products?search=${encodeURIComponent(searchQuery)}`
-                      }
-                    }}
-                    placeholder="Search products, brands, categories..."
-                    className="w-full px-5 py-3 pl-12 pr-24 rounded-full bg-white border-2 border-gray-200 focus:border-primary-500 focus:outline-none focus:ring-4 focus:ring-primary-100 transition-all duration-200 text-sm placeholder-gray-400 shadow-sm"
-                  />
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-primary-500 transition-colors" />
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                  {isSupported && (
+              <SearchAutocomplete
+                ref={desktopSearchRef}
+                variant="desktop"
+                placeholder="Search products, brands, categories..."
+                micButton={
+                  isSupported ? (
                     <button
                       onClick={() => {
                         if (isListening) {
@@ -171,8 +108,8 @@ export default function Layout() {
                         }
                       }}
                       className={`p-2 rounded-full transition-all ${
-                        isListening 
-                          ? 'bg-red-500 text-white animate-voice-pulse' 
+                        isListening
+                          ? 'bg-red-500 text-white animate-voice-pulse'
                           : 'hover:bg-gray-100 text-gray-400'
                       }`}
                       title={isListening ? 'Stop listening' : 'Voice search'}
@@ -183,158 +120,9 @@ export default function Layout() {
                         <MicOff className="h-5 w-5" />
                       )}
                     </button>
-                  )}
-                    {searchQuery && (
-                      <button
-                        onClick={() => {
-                          setSearchQuery('')
-                          setIsSearchOpen(false)
-                        }}
-                        className="p-1.5 rounded-full hover:bg-gray-100 transition-colors"
-                      >
-                        <X className="h-4 w-4 text-gray-500" />
-                      </button>
-                    )}
-                  </div>
-                </div>
-
-                <AnimatePresence>
-                  {isSearchOpen && searchQuery.length >= 2 && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                      transition={{ duration: 0.2 }}
-                      className="absolute top-full left-0 right-0 mt-3 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 max-h-96 overflow-y-auto"
-                    >
-                      {searchData.categories && searchData.categories.length > 0 && (
-                        <div>
-                          <div className="px-5 py-3 bg-gray-50 border-b border-gray-100">
-                            <span className="text-xs font-bold text-gray-500 uppercase tracking-wide">Categories</span>
-                          </div>
-                          {searchData.categories.map((category: any, index: number) => (
-                            <motion.div
-                              key={category.id}
-                              initial={{ opacity: 0, x: -10 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              transition={{ delay: index * 0.05 }}
-                            >
-                              <Link
-                                to={`/categories/${category.slug}`}
-                                onClick={() => {
-                                  setIsSearchOpen(false)
-                                  setSearchQuery('')
-                                }}
-                                className="flex items-center gap-4 px-5 py-4 hover:bg-primary-50 transition-colors border-b border-gray-50 last:border-b-0"
-                              >
-                                <div className="w-10 h-10 rounded-xl bg-primary-100 flex items-center justify-center overflow-hidden">
-                                  {category.image ? (
-                                    <img src={category.image} alt="" className="w-full h-full object-cover" />
-                                  ) : (
-                                    <Package className="h-5 w-5 text-primary-600" />
-                                  )}
-                                </div>
-                                <span className="text-gray-800 font-medium">{category.name}</span>
-                              </Link>
-                            </motion.div>
-                          ))}
-                        </div>
-                      )}
-
-                      {searchData.brands && searchData.brands.length > 0 && (
-                        <div>
-                          <div className="px-5 py-3 bg-gray-50 border-b border-gray-100">
-                            <span className="text-xs font-bold text-gray-500 uppercase tracking-wide">Brands</span>
-                          </div>
-                          {searchData.brands.map((brand: any, index: number) => (
-                            <motion.div
-                              key={brand.id}
-                              initial={{ opacity: 0, x: -10 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              transition={{ delay: index * 0.05 }}
-                            >
-                              <Link
-                                to={`/brands/${brand.slug}`}
-                                onClick={() => {
-                                  setIsSearchOpen(false)
-                                  setSearchQuery('')
-                                }}
-                                className="flex items-center gap-4 px-5 py-4 hover:bg-primary-50 transition-colors border-b border-gray-50 last:border-b-0"
-                              >
-                                <div className="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center overflow-hidden">
-                                  {brand.logo ? (
-                                    <img src={brand.logo} alt="" className="w-full h-full object-contain" />
-                                  ) : (
-                                    <Package className="h-5 w-5 text-orange-600" />
-                                  )}
-                                </div>
-                                <span className="text-gray-800 font-medium">{brand.name}</span>
-                              </Link>
-                            </motion.div>
-                          ))}
-                        </div>
-                      )}
-
-                      {searchData.products && searchData.products.length > 0 && (
-                        <div>
-                          <div className="px-5 py-3 bg-gray-50 border-b border-gray-100">
-                            <span className="text-xs font-bold text-gray-500 uppercase tracking-wide">Products</span>
-                          </div>
-                          {searchData.products.map((product: any, index: number) => (
-                            <motion.div
-                              key={product.id}
-                              initial={{ opacity: 0, x: -10 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              transition={{ delay: index * 0.05 }}
-                            >
-                              <Link
-                                to={`/products/${product.slug}`}
-                                onClick={() => {
-                                  setIsSearchOpen(false)
-                                  setSearchQuery('')
-                                }}
-                                className="flex items-center gap-4 px-5 py-3.5 hover:bg-primary-50 transition-colors border-b border-gray-50 last:border-b-0"
-                              >
-                                <div className="w-12 h-12 rounded-xl bg-gray-100 overflow-hidden flex-shrink-0 border border-gray-200">
-                                  {product.images?.[0] && (
-                                    <img src={product.images[0]} alt="" className="w-full h-full object-cover" />
-                                  )}
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <span className="text-gray-800 font-medium block truncate">{product.name}</span>
-                                  <span className="text-primary-600 font-bold">₹{formatPrice(product.sellingPrice)}</span>
-                                </div>
-                              </Link>
-                            </motion.div>
-                          ))}
-                        </div>
-                      )}
-
-                      {(!searchData.categories || searchData.categories.length === 0) && 
-                       (!searchData.products || searchData.products.length === 0) &&
-                       (!searchData.brands || searchData.brands.length === 0) && (
-                        <div className="px-5 py-10 text-center">
-                          <Search className="h-10 w-10 text-gray-300 mx-auto mb-3" />
-                          <p className="text-gray-500 font-medium">No results found</p>
-                        </div>
-                      )}
-
-                      <Link
-                        to={`/products?search=${encodeURIComponent(searchQuery)}`}
-                        onClick={() => {
-                          setIsSearchOpen(false)
-                        }}
-                        className="flex items-center justify-center gap-2 px-5 py-4 bg-primary-500 text-white font-semibold hover:bg-primary-600 transition-colors rounded-b-2xl"
-                      >
-                      View all results
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </Link>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+                  ) : null
+                }
+              />
             </div>
 
             <div className="flex items-center space-x-1 md:space-x-4">
@@ -596,111 +384,6 @@ export default function Layout() {
           )}
         </AnimatePresence>
       </header>
-
-      {/* Mobile Search Dropdown */}
-      <AnimatePresence>
-        {isSearchOpen && searchQuery.length >= 2 && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/20 z-[99] md:hidden"
-              onClick={() => {
-                setIsSearchOpen(false)
-              }}
-            />
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="fixed top-16 left-0 right-0 md:hidden bg-white shadow-lg z-[100] max-h-[60vh] overflow-y-auto"
-            >
-              <div className="container mx-auto px-4 py-2">
-                {searchData.categories && searchData.categories.length > 0 && (
-                  <div className="mb-2">
-                    <p className="text-xs font-bold text-gray-500 uppercase mb-2">Categories</p>
-                    {searchData.categories.map((category: any) => (
-                      <Link
-                        key={category.id}
-                        to={`/categories/${category.slug}`}
-                        onClick={() => {
-                          setIsSearchOpen(false)
-                          setSearchQuery('')
-                        }}
-                        className="flex items-center gap-3 py-2 hover:text-primary-600"
-                      >
-                        <div className="w-8 h-8 bg-gray-100 rounded overflow-hidden flex-shrink-0">
-                          {category.image ? (
-                            <img src={category.image} alt="" className="w-full h-full object-cover" />
-                          ) : (
-                            <Package className="h-5 w-5 text-primary-500 p-1" />
-                          )}
-                        </div>
-                        <span>{category.name}</span>
-                      </Link>
-                    ))}
-                  </div>
-                )}
-                {searchData.brands && searchData.brands.length > 0 && (
-                  <div className="mb-2">
-                    <p className="text-xs font-bold text-gray-500 uppercase mb-2">Brands</p>
-                    {searchData.brands.map((brand: any) => (
-                      <Link
-                        key={brand.id}
-                        to={`/brands/${brand.slug}`}
-                        onClick={() => {
-                          setIsSearchOpen(false)
-                          setSearchQuery('')
-                        }}
-                        className="flex items-center gap-3 py-2 hover:text-primary-600"
-                      >
-                        <div className="w-8 h-8 bg-orange-100 rounded overflow-hidden">
-                          {brand.logo ? (
-                            <img src={brand.logo} alt="" className="w-full h-full object-contain" />
-                          ) : (
-                            <Package className="h-5 w-5 text-orange-500 p-1" />
-                          )}
-                        </div>
-                        <span>{brand.name}</span>
-                      </Link>
-                    ))}
-                  </div>
-                )}
-                {searchData.products && searchData.products.length > 0 && (
-                  <div>
-                    <p className="text-xs font-bold text-gray-500 uppercase mb-2">Products</p>
-                    {searchData.products.map((product: any) => (
-                      <Link
-                        key={product.id}
-                        to={`/products/${product.slug}`}
-                        onClick={() => {
-                          setIsSearchOpen(false)
-                          setSearchQuery('')
-                        }}
-                        className="flex items-center gap-3 py-2 hover:text-primary-600"
-                      >
-                        <div className="w-10 h-10 bg-gray-100 rounded overflow-hidden">
-                          {product.images?.[0] && (
-                            <img src={product.images[0]} alt="" className="w-full h-full object-cover" />
-                          )}
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium">{product.name}</p>
-                          <p className="text-sm text-primary-600 font-bold">₹{formatPrice(product.sellingPrice)}</p>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                )}
-                {(!searchData.categories?.length && !searchData.products?.length && !searchData.brands?.length) && (
-                  <p className="text-center py-4 text-gray-500">No results found</p>
-                )}
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
 
       <BackButton />
       <Breadcrumbs />
