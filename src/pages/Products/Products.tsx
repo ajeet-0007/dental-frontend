@@ -7,7 +7,7 @@ import api from "@/api";
 import { useCartStore } from "@/stores/cartStore";
 import { useWishlistStore } from "@/stores/wishlistStore";
 import { formatPrice } from "@/utils/format";
-import { Package, ChevronDown, ChevronUp, ChevronRight, X, SlidersHorizontal, ShoppingCart, Heart, ArrowUpDown, Tag, Layers, Store, PackageCheck, Loader2, Search, Home } from "lucide-react";
+import { Package, ChevronDown, ChevronUp, X, SlidersHorizontal, ShoppingCart, Heart, ArrowUpDown, Tag, Layers, Store, PackageCheck, Loader2, Search } from "lucide-react";
 import CartDrawer from "@/components/common/CartDrawer";
 import { PriceRangeSlider } from "@/components/common/PriceRangeSlider";
 import Seo from "@/components/seo/Seo";
@@ -592,23 +592,6 @@ export default function Products({
             <Package className="w-5 h-5 text-white" />
           </div>
           <div>
-            <div className="flex items-center gap-1.5 text-xs text-gray-400 mb-0.5">
-              <Home className="w-3 h-3" />
-              <ChevronRight className="w-3 h-3" />
-              <span>{isEntityPage ? (categorySlug ? "Categories" : departmentSlug ? "Departments" : "Brands") : "Products"}</span>
-              {isEntityPage && seoTitle && (
-                <>
-                  <ChevronRight className="w-3 h-3" />
-                  <span className="text-primary-600 font-medium">{seoTitle}</span>
-                </>
-              )}
-              {!isEntityPage && searchQuery && (
-                <>
-                  <ChevronRight className="w-3 h-3" />
-                  <span className="text-primary-600 font-medium">"{searchQuery}"</span>
-                </>
-              )}
-            </div>
             <h1 className="text-lg md:text-xl font-bold text-gray-900 tracking-tight">
               {isEntityPage && seoTitle
                 ? seoTitle
