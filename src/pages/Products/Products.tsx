@@ -188,7 +188,8 @@ export default function Products({
     return () => observer.disconnect();
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  const updateURLParams = (newFilters: Filters) => {
+  const updateURLParams = (newFilters: Filters, options?: { keepSearch?: boolean }) => {
+    const keepSearch = options?.keepSearch ?? true;
     const params = new URLSearchParams();
     
     if (newFilters.categories.length > 0) {
@@ -209,7 +210,7 @@ export default function Products({
     if (newFilters.inStock) {
       params.set("inStock", "true");
     }
-    if (searchQuery) {
+    if (keepSearch && searchQuery) {
       params.set("search", searchQuery);
     }
     
@@ -256,6 +257,7 @@ export default function Products({
   };
 
   const hasActiveFilters = 
+    !!searchQuery ||
     filters.categories.length > 0 || 
     filters.departments.length > 0 ||
     filters.brands.length > 0 ||
@@ -285,7 +287,11 @@ export default function Products({
       inStock: false,
     };
     setFilters(emptyFilters);
-    updateURLParams(emptyFilters);
+    updateURLParams(emptyFilters, { keepSearch: false });
+  };
+
+  const removeSearch = () => {
+    updateURLParams(filters, { keepSearch: false });
   };
 
   const isInCart = (productId: string) => {
@@ -631,7 +637,7 @@ export default function Products({
             Filters
             {hasActiveFilters && (
               <span className="w-5 h-5 bg-gradient-to-br from-primary-500 to-blue-600 text-white text-xs rounded-full flex items-center justify-center shadow-sm">
-                {filters.categories.length + filters.departments.length + filters.brands.length + (filters.inStock ? 1 : 0) + (filters.minPrice || filters.maxPrice ? 1 : 0)}
+                {filters.categories.length + filters.departments.length + filters.brands.length + (filters.inStock ? 1 : 0) + (filters.minPrice || filters.maxPrice ? 1 : 0) + (searchQuery ? 1 : 0)}
               </span>
             )}
           </button>
@@ -643,6 +649,19 @@ export default function Products({
               className="text-sm text-red-500 hover:text-red-600 font-semibold whitespace-nowrap px-2"
             >
               Clear All
+            </button>
+          )}
+
+          {/* Search Chip */}
+          {searchQuery && (
+            <button
+              onClick={removeSearch}
+              className="flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium rounded-full border transition-all duration-200 whitespace-nowrap bg-gradient-to-r from-primary-500 to-blue-600 text-white border-transparent shadow-md shadow-primary-500/25"
+              aria-label={`Remove search "${searchQuery}"`}
+            >
+              <Search className="h-3.5 w-3.5" />
+              {searchQuery}
+              <X className="h-3 w-3" />
             </button>
           )}
 
@@ -836,105 +855,6 @@ export default function Products({
 
         {/* Products Grid */}
         <div className="flex-1">
-          {/* Active Filters Tags */}
-          {hasActiveFilters && (
-            <div className="flex flex-wrap gap-2 mb-5">
-              {filters.categories.map((slug) => {
-                const cat = categories.find((c: any) => c.slug === slug);
-                return (
-                  <span
-                    key={slug}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-primary-50 to-blue-50 text-primary-700 text-xs font-semibold rounded-full border border-primary-200"
-                  >
-                    {cat?.name}
-                    <button
-                      onClick={() => toggleCategory(slug)}
-                      className="hover:text-primary-900"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </span>
-                );
-              })}
-              {filters.departments.map((slug) => {
-                const dept = departments.find((d: any) => d.slug === slug);
-                return (
-                  <span
-                    key={slug}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-green-50 to-emerald-50 text-green-700 text-xs font-semibold rounded-full border border-green-200"
-                  >
-                    {dept?.name}
-                    <button
-                      onClick={() => toggleDepartment(slug)}
-                      className="hover:text-green-900"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </span>
-                );
-              })}
-              {filters.brands.map((slug) => {
-                const brand = brands.find((b: any) => b.slug === slug);
-                return (
-                  <span
-                    key={slug}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-amber-50 to-orange-50 text-amber-700 text-xs font-semibold rounded-full border border-amber-200"
-                  >
-                    {brand?.name}
-                    <button
-                      onClick={() => toggleBrand(slug)}
-                      className="hover:text-amber-900"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </span>
-                );
-              })}
-              {filters.minPrice && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 text-xs font-semibold rounded-full border border-blue-200">
-                  Min: ₹{filters.minPrice}
-                  <button onClick={() => {
-                    setFilters((p) => {
-                      const newFilters = { ...p, minPrice: "" };
-                      updateURLParams(newFilters);
-                      return newFilters;
-                    });
-                  }}>
-                    <X className="h-3 w-3" />
-                  </button>
-                </span>
-              )}
-              {filters.maxPrice && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 text-xs font-semibold rounded-full border border-blue-200">
-                  Max: ₹{filters.maxPrice}
-                  <button onClick={() => {
-                    setFilters((p) => {
-                      const newFilters = { ...p, maxPrice: "" };
-                      updateURLParams(newFilters);
-                      return newFilters;
-                    });
-                  }}>
-                    <X className="h-3 w-3" />
-                  </button>
-                </span>
-              )}
-              {filters.inStock && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-emerald-50 to-teal-50 text-emerald-700 text-xs font-semibold rounded-full border border-emerald-200">
-                  In Stock
-                  <button onClick={() => {
-                    setFilters((p) => {
-                      const newFilters = { ...p, inStock: false };
-                      updateURLParams(newFilters);
-                      return newFilters;
-                    });
-                  }}>
-                    <X className="h-3 w-3" />
-                  </button>
-                </span>
-              )}
-            </div>
-          )}
-
           {/* Sort and Results Count */}
           <div className="flex items-center justify-between mb-5 gap-2">
             <p className="text-sm text-gray-500 font-medium">
