@@ -222,7 +222,11 @@ const SearchAutocomplete = forwardRef<
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.97 }}
             transition={{ duration: 0.15 }}
-            className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden"
+            className={
+              isDesktop
+                ? "absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden"
+                : "fixed top-16 left-0 right-0 mx-2 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden"
+            }
           >
             <div className="px-5 py-3 bg-gray-50 border-b border-gray-100">
               <span className="text-xs font-bold text-gray-500 uppercase tracking-wide">
