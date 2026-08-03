@@ -1,4 +1,4 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import api from "@/api";
@@ -12,8 +12,6 @@ import {
   Layers,
   Tag,
   ShoppingBag,
-  ChevronRight,
-  Home,
   Sparkles,
   ArrowDown,
 } from "lucide-react";
@@ -130,23 +128,6 @@ export default function BrandDetail() {
       />
       <div className="bg-gradient-to-br from-gray-50 via-white to-gray-50">
         <div className="container mx-auto px-3 md:px-4 pt-4">
-          {/* Breadcrumb */}
-          <nav className="flex items-center gap-1.5 text-xs text-gray-400 pb-4 overflow-x-auto whitespace-nowrap">
-            <Link
-              to="/"
-              className="flex items-center gap-1 hover:text-primary-600 transition-colors"
-            >
-              <Home className="w-3 h-3" />
-              Home
-            </Link>
-            <ChevronRight className="w-3 h-3 flex-shrink-0" />
-            <Link to="/brands" className="hover:text-primary-600 transition-colors">
-              Brands
-            </Link>
-            <ChevronRight className="w-3 h-3 flex-shrink-0" />
-            <span className="text-primary-600 font-medium">{entityName}</span>
-          </nav>
-
           {/* Hero */}
           {isLoading || !brand ? (
             <div className="rounded-3xl bg-white border border-gray-100 shadow-sm p-6 md:p-8 mb-8 animate-pulse">
