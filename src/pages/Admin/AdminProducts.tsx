@@ -78,6 +78,7 @@ export default function AdminProducts() {
         `/admin/products?page=${page}&limit=12&search=${debouncedSearch}`,
       ),
     enabled: user?.role === "admin",
+    placeholderData: (prevData) => prevData,
   });
 
   const handleSearch = (e: React.FormEvent) => {
@@ -309,7 +310,7 @@ export default function AdminProducts() {
     }
   };
 
-  if (isLoading) {
+  if (isLoading && !data) {
     return (
       <div className="animate-pulse space-y-4">
         <div className="h-10 w-64 bg-gray-200 rounded"></div>

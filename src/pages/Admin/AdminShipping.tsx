@@ -46,6 +46,7 @@ export default function AdminShipping() {
         `/admin/shipping?page=${page}&limit=20&status=${status}&search=${search}`,
       ),
     enabled: user?.role === "admin",
+    placeholderData: (prevData) => prevData,
   });
 
   const { data: statsData } = useQuery({
@@ -221,7 +222,7 @@ export default function AdminShipping() {
     }
   };
 
-  if (isLoading) {
+  if (isLoading && !data) {
     return (
       <div className="animate-pulse space-y-4">
         <div className="h-10 w-64 bg-gray-200 rounded"></div>

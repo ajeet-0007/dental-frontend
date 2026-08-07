@@ -25,6 +25,7 @@ export default function AdminInventory() {
     queryKey: ["admin-inventory", debouncedSearch],
     queryFn: () => api.get(`/admin/inventory?search=${debouncedSearch}`),
     enabled: user?.role === "admin",
+    placeholderData: (prevData) => prevData,
   });
 
   const updateMutation = useMutation({
@@ -71,7 +72,7 @@ export default function AdminInventory() {
     }
   };
 
-  if (isLoading) {
+  if (isLoading && !data) {
     return (
       <div className="animate-pulse space-y-4">
         <div className="h-10 w-64 bg-gray-200 rounded"></div>
