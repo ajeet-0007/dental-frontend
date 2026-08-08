@@ -1,8 +1,12 @@
 import { useMemo, useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "@/api";
 import { useAuthStore } from "@/stores/authStore";
 import { formatPrice } from "@/utils/format";
+import {
+  ProductFormModal,
+  DeleteProductModal,
+} from "@/components/admin/ProductModal";
 import {
   Search,
   Filter,
@@ -22,6 +26,8 @@ import {
   Clock,
   Copy,
   PackageX,
+  Edit,
+  Trash2,
 } from "lucide-react";
 
 const DEFAULT_IMAGE =
@@ -366,7 +372,15 @@ function getPageNumbers(totalPages: number, current: number): (number | string)[
   return range;
 }
 
-function ProductCard({ product }: { product: any }) {
+function ProductCard({
+  product,
+  onEdit,
+  onDelete,
+}: {
+  product: any;
+  onEdit: (product: any) => void;
+  onDelete: (product: any) => void;
+}) {
   return (
     <div className="group bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
       <div className="aspect-square bg-gray-100 relative overflow-hidden">
@@ -437,6 +451,24 @@ function ProductCard({ product }: { product: any }) {
           </span>
         </div>
       </div>
+      <div className="flex items-center gap-2 px-4 py-3 border-t border-gray-100 bg-gray-50/50">
+        <button
+          type="button"
+          onClick={() => onEdit(product)}
+          className="flex flex-1 items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold text-gray-700 bg-white border border-gray-200 rounded-lg hover:text-primary-600 hover:border-primary-400 hover:bg-primary-50/50 transition-colors"
+        >
+          <Edit className="w-3.5 h-3.5" />
+          Edit
+        </button>
+        <button
+          type="button"
+          onClick={() => onDelete(product)}
+          className="flex flex-1 items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold text-red-600 bg-white border border-gray-200 rounded-lg hover:bg-red-50 hover:border-red-300 transition-colors"
+        >
+          <Trash2 className="w-3.5 h-3.5" />
+          Delete
+        </button>
+      </div>
     </div>
   );
 }
@@ -445,11 +477,36 @@ function ProductCard({ product }: { product: any }) {
 
 export default function AdminProductFilters() {
   const { user } = useAuthStore();
+  const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [filters, setFilters] = useState<Filters>({ ...EMPTY_FILTERS });
   const [appliedFilters, setAppliedFilters] = useState<Filters | null>(null);
+  const [showModal, setShowModal] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<any>(null);
+  const [deleteModal, setDeleteModal] = useState<{
+    show: boolean;
+    product: any;
+  }>({ show: false, product: null });
+
+  const refreshResults = () => {
+    queryClient.invalidateQueries({ queryKey: ["admin-product-filters"] });
+  };
+
+  const openEdit = (product: any) => {
+    setEditingProduct(product);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setEditingProduct(null);
+  };
+
+  const confirmDelete = (product: any) => {
+    setDeleteModal({ show: true, product });
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -1084,7 +1141,12 @@ export default function AdminProductFilters() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {group.map((product: any) => (
-                  <ProductCard key={product.id} product={product} />
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    onEdit={openEdit}
+                    onDelete={confirmDelete}
+                  />
                 ))}
               </div>
             </div>
@@ -1103,7 +1165,12 @@ export default function AdminProductFilters() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {products.map((product: any) => (
-            <ProductCard key={product.id} product={product} />
+            <ProductCard
+              key={product.id}
+              product={product}
+              onEdit={openEdit}
+              onDelete={confirmDelete}
+            />
           ))}
           {products.length === 0 && (
             <div className="col-span-full flex flex-col items-center justify-center py-20">
@@ -1167,6 +1234,20 @@ export default function AdminProductFilters() {
           </button>
         </div>
       )}
+
+      <ProductFormModal
+        open={showModal}
+        product={editingProduct}
+        onClose={closeModal}
+        onSaved={refreshResults}
+      />
+
+      <DeleteProductModal
+        open={deleteModal.show}
+        product={deleteModal.product}
+        onClose={() => setDeleteModal({ show: false, product: null })}
+        onDeleted={refreshResults}
+      />
     </div>
   );
 }
