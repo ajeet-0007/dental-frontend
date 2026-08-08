@@ -389,18 +389,13 @@ function ProductCard({
   return (
     <div className="group bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
       <div className="aspect-square bg-gray-100 relative overflow-hidden">
-        <button
-          type="button"
-          onClick={onToggleSelect}
+        <input
+          type="checkbox"
+          checked={selected}
+          onChange={onToggleSelect}
           aria-label={selected ? "Deselect product" : "Select product"}
-          className={`absolute top-2.5 left-2.5 z-10 flex h-7 w-7 items-center justify-center rounded-lg border-2 bg-white shadow-md transition-all duration-200 ${
-            selected
-              ? "border-red-500 bg-red-500 text-white"
-              : "border-gray-300 text-transparent hover:border-red-400"
-          }`}
-        >
-          <Check className="h-4 w-4" strokeWidth={3} />
-        </button>
+          className="absolute top-2.5 left-2.5 z-10 h-5 w-5 rounded border-gray-300 accent-red-600 shadow-md cursor-pointer"
+        />
         <img
           src={product.images?.[0] || DEFAULT_IMAGE}
           alt={product.name}
@@ -1258,18 +1253,13 @@ export default function AdminProductFilters() {
             return (
               <div key={idx}>
                 <div className="flex items-center gap-3 mb-4">
-                  <button
-                    type="button"
-                    onClick={() => toggleGroupSelect(group)}
+                  <input
+                    type="checkbox"
+                    checked={groupSelected}
+                    onChange={() => toggleGroupSelect(group)}
                     aria-label="Select all copies"
-                    className={`flex h-6 w-6 items-center justify-center rounded border-2 transition-all duration-200 ${
-                      groupSelected
-                        ? "border-red-500 bg-red-500 text-white"
-                        : "border-gray-300 text-transparent hover:border-red-400"
-                    }`}
-                  >
-                    <Check className="h-3.5 w-3.5" strokeWidth={3} />
-                  </button>
+                    className="h-4 w-4 rounded border-gray-300 accent-red-600 cursor-pointer"
+                  />
                   <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-100 text-amber-600">
                     <AlertTriangle className="w-4 h-4" />
                   </span>
