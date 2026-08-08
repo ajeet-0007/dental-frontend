@@ -586,18 +586,21 @@ export default function AdminProductFilters() {
     queryKey: ["admin-categories"],
     queryFn: () => api.get("/admin/categories"),
     enabled: user?.role === "admin",
+    staleTime: 5 * 60 * 1000,
   });
 
   const { data: brandsData } = useQuery({
     queryKey: ["admin-brands"],
     queryFn: () => api.get("/brands/admin/all"),
     enabled: user?.role === "admin",
+    staleTime: 5 * 60 * 1000,
   });
 
   const { data: departmentsData } = useQuery({
     queryKey: ["admin-departments"],
     queryFn: () => api.get("/departments?active=false"),
     enabled: user?.role === "admin",
+    staleTime: 5 * 60 * 1000,
   });
 
   const categories = (categoriesData?.data as any)?.categories || [];

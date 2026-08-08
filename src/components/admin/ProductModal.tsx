@@ -57,18 +57,21 @@ export function ProductFormModal({
     queryKey: ["admin-categories"],
     queryFn: () => api.get("/admin/categories"),
     enabled: open,
+    staleTime: 5 * 60 * 1000,
   });
 
   const { data: brandsData } = useQuery({
     queryKey: ["admin-brands"],
     queryFn: () => api.get("/brands/admin/all"),
     enabled: open,
+    staleTime: 5 * 60 * 1000,
   });
 
   const { data: departmentsData } = useQuery({
     queryKey: ["admin-departments"],
     queryFn: () => api.get("/departments?active=false"),
     enabled: open,
+    staleTime: 5 * 60 * 1000,
   });
 
   const categories = (categoriesData?.data as any)?.categories || [];
@@ -332,7 +335,9 @@ export function ProductFormModal({
                   <RichTextEditor
                     label="Description"
                     value={formData.description}
-                    onChange={(data) => setFormData({ ...formData, description: data })}
+                    onChange={(data) =>
+                      setFormData((prev) => ({ ...prev, description: data }))
+                    }
                     placeholder="Enter product description..."
                     minHeight="120px"
                   />
@@ -486,7 +491,9 @@ export function ProductFormModal({
                   <RichTextEditor
                     label="Features"
                     value={formData.features}
-                    onChange={(data) => setFormData({ ...formData, features: data })}
+                    onChange={(data) =>
+                      setFormData((prev) => ({ ...prev, features: data }))
+                    }
                     placeholder="Enter product features..."
                     minHeight="150px"
                   />
@@ -497,7 +504,9 @@ export function ProductFormModal({
                   <RichTextEditor
                     label="Key Specifications"
                     value={formData.keySpecifications}
-                    onChange={(data) => setFormData({ ...formData, keySpecifications: data })}
+                    onChange={(data) =>
+                      setFormData((prev) => ({ ...prev, keySpecifications: data }))
+                    }
                     placeholder="Enter key specifications..."
                     minHeight="120px"
                   />
@@ -528,7 +537,9 @@ export function ProductFormModal({
                   <RichTextEditor
                     label="Directions to Use"
                     value={formData.directionToUse}
-                    onChange={(data) => setFormData({ ...formData, directionToUse: data })}
+                    onChange={(data) =>
+                      setFormData((prev) => ({ ...prev, directionToUse: data }))
+                    }
                     placeholder="Enter directions for use..."
                     minHeight="120px"
                   />
@@ -538,7 +549,9 @@ export function ProductFormModal({
                   <RichTextEditor
                     label="Additional Information"
                     value={formData.additionalInfo}
-                    onChange={(data) => setFormData({ ...formData, additionalInfo: data })}
+                    onChange={(data) =>
+                      setFormData((prev) => ({ ...prev, additionalInfo: data }))
+                    }
                     placeholder="Enter additional information..."
                     minHeight="120px"
                   />

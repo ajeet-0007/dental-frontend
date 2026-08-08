@@ -14,8 +14,9 @@
     "start": "vite preview --host 0.0.0.0 --port $PORT"
   },
   "dependencies": {
-    "@ckeditor/ckeditor5-build-decoupled-document": "^41.4.2",
-    "@ckeditor/ckeditor5-react": "^11.1.0",
+    "@ckeditor/ckeditor5-build-decoupled-document": "^44.3.0",
+    "@ckeditor/ckeditor5-react": "^10.0.0",
+    "ckeditor5": "^44.3.0",
     "@hookform/resolvers": "^3.3.4",
     "@react-oauth/google": "^0.13.4",
     "@stripe/stripe-js": "^8.9.0",

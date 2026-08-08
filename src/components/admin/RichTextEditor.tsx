@@ -1,6 +1,7 @@
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 // @ts-ignore
 import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
+import 'ckeditor5/ckeditor5.css';
 import { useState, useRef } from 'react';
 
 interface RichTextEditorProps {
@@ -95,19 +96,16 @@ export default function RichTextEditor({
             onBlur={() => setIsFocused(false)}
             disabled={disabled}
             config={{
+              licenseKey: 'GPL',
               placeholder: placeholder || 'Enter text here...',
               toolbar: [
                 {
-                  label: 'Document',
-                  items: ['Source'],
-                },
-                {
                   label: 'Basic Formatting',
-                  items: ['Bold', 'Italic', 'Underline', 'Strike'],
+                  items: ['Bold', 'Italic', 'Underline', 'Strikethrough'],
                 },
                 {
                   label: 'Lists',
-                  items: ['BulletedList', 'NumberedList', 'TodoList'],
+                  items: ['BulletedList', 'NumberedList'],
                 },
                 {
                   label: 'Alignment',
@@ -115,15 +113,11 @@ export default function RichTextEditor({
                 },
                 {
                   label: 'Insert',
-                  items: ['Link', 'Image', 'insertTable', 'Blockquote', 'MediaEmbed'],
+                  items: ['InsertImage', 'Link', 'insertTable', 'Blockquote', 'MediaEmbed'],
                 },
                 {
                   label: 'Formatting',
                   items: ['Heading', 'FontSize', 'FontColor', 'FontFamily'],
-                },
-                {
-                  label: 'Extras',
-                  items: ['Highlight', 'SpecialCharacters', 'HorizontalLine', 'RemoveFormat'],
                 },
                 '|',
                 'Undo',
@@ -139,13 +133,7 @@ export default function RichTextEditor({
                 ],
               },
               table: {
-                contentToolbar: [
-                  'tableColumn',
-                  'tableRow',
-                  'mergeTableCells',
-                  'tableProperties',
-                  'tableCellProperties',
-                ],
+                contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells'],
               },
               alignment: {
                 options: ['left', 'center', 'right', 'justify'],
