@@ -1,5 +1,6 @@
 import { useMemo, useState, useEffect } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 import api from "@/api";
 import { useAuthStore } from "@/stores/authStore";
 import { formatPrice } from "@/utils/format";
@@ -376,14 +377,30 @@ function ProductCard({
   product,
   onEdit,
   onDelete,
+  selected,
+  onToggleSelect,
 }: {
   product: any;
   onEdit: (product: any) => void;
   onDelete: (product: any) => void;
+  selected: boolean;
+  onToggleSelect: () => void;
 }) {
   return (
     <div className="group bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
       <div className="aspect-square bg-gray-100 relative overflow-hidden">
+        <button
+          type="button"
+          onClick={onToggleSelect}
+          aria-label={selected ? "Deselect product" : "Select product"}
+          className={`absolute top-2.5 left-2.5 z-10 flex h-7 w-7 items-center justify-center rounded-lg border-2 bg-white shadow-md transition-all duration-200 ${
+            selected
+              ? "border-red-500 bg-red-500 text-white"
+              : "border-gray-300 text-transparent hover:border-red-400"
+          }`}
+        >
+          <Check className="h-4 w-4" strokeWidth={3} />
+        </button>
         <img
           src={product.images?.[0] || DEFAULT_IMAGE}
           alt={product.name}
@@ -398,7 +415,7 @@ function ProductCard({
           </span>
         )}
         {product.isFeatured && (
-          <span className="absolute top-2.5 left-2.5 bg-gradient-to-r from-primary-500 to-blue-600 text-white text-[11px] font-semibold px-2.5 py-1 rounded-lg shadow-md shadow-primary-500/30">
+          <span className="absolute top-2.5 left-11 bg-gradient-to-r from-primary-500 to-blue-600 text-white text-[11px] font-semibold px-2.5 py-1 rounded-lg shadow-md shadow-primary-500/30">
             Featured
           </span>
         )}
@@ -489,6 +506,8 @@ export default function AdminProductFilters() {
     show: boolean;
     product: any;
   }>({ show: false, product: null });
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkDeleteModal, setBulkDeleteModal] = useState(false);
 
   const refreshResults = () => {
     queryClient.invalidateQueries({ queryKey: ["admin-product-filters"] });
@@ -508,6 +527,39 @@ export default function AdminProductFilters() {
     setDeleteModal({ show: true, product });
   };
 
+  const toggleSelect = (id: number) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      const key = String(id);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  };
+
+  const toggleGroupSelect = (group: any[]) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      const keys = group.map((p: any) => String(p.id));
+      const allSelected = keys.every((k) => next.has(k));
+      keys.forEach((k) => (allSelected ? next.delete(k) : next.add(k)));
+      return next;
+    });
+  };
+
+  const bulkDeleteMutation = useMutation({
+    mutationFn: (ids: number[]) =>
+      api.post("/admin/products/bulk-delete", { ids }),
+    onSuccess: (res) => {
+      const deleted = (res?.data as any)?.deleted ?? selectedIds.size;
+      toast.success(`${deleted} product${deleted !== 1 ? "s" : ""} deleted`);
+      setSelectedIds(new Set());
+      setBulkDeleteModal(false);
+      refreshResults();
+    },
+    onError: () => toast.error("Failed to delete products"),
+  });
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(search);
@@ -515,6 +567,10 @@ export default function AdminProductFilters() {
     }, 300);
     return () => clearTimeout(timer);
   }, [search]);
+
+  useEffect(() => {
+    setSelectedIds(new Set());
+  }, [page, appliedFilters, debouncedSearch]);
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin-product-filters", page, debouncedSearch, appliedFilters],
@@ -569,6 +625,26 @@ export default function AdminProductFilters() {
     });
     return Array.from(groups.values()).sort((a, b) => b.length - a.length);
   }, [products, appliedFilters]);
+
+  const visibleProducts = groupedProducts
+    ? groupedProducts.flat()
+    : products;
+
+  const toggleSelectAll = () => {
+    if (visibleProducts.length === 0) return;
+    const allSelected = visibleProducts.every((p: any) =>
+      selectedIds.has(String(p.id)),
+    );
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      visibleProducts.forEach((p: any) => {
+        const key = String(p.id);
+        if (allSelected) next.delete(key);
+        else next.add(key);
+      });
+      return next;
+    });
+  };
 
   const toggleBrand = (id: number) => {
     setFilters((f) => ({
@@ -1123,34 +1199,107 @@ export default function AdminProductFilters() {
         </div>
       )}
 
+      {/* Selection toolbar */}
+      {visibleProducts.length > 0 && (
+        <div
+          className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl border px-4 py-3 transition-colors ${
+            selectedIds.size > 0
+              ? "bg-red-50 border-red-200"
+              : "bg-white border-gray-200"
+          }`}
+        >
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={
+                visibleProducts.length > 0 &&
+                selectedIds.size === visibleProducts.length
+              }
+              onChange={toggleSelectAll}
+              className="w-4 h-4 rounded border-gray-300 accent-red-600"
+            />
+            <span className="text-sm font-medium text-gray-700">
+              Select all ({visibleProducts.length})
+            </span>
+            {selectedIds.size > 0 && (
+              <span className="text-sm font-semibold text-red-700">
+                {selectedIds.size} selected
+              </span>
+            )}
+          </label>
+          {selectedIds.size > 0 && (
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setSelectedIds(new Set())}
+                className="px-3 py-2 text-xs font-semibold text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Clear
+              </button>
+              <button
+                type="button"
+                onClick={() => setBulkDeleteModal(true)}
+                className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700 active:scale-[0.98] transition-all"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                Delete selected
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Results */}
       {groupedProducts ? (
         <div className="space-y-8">
-          {groupedProducts.map((group, idx) => (
-            <div key={idx}>
-              <div className="flex items-center gap-3 mb-4">
-                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-100 text-amber-600">
-                  <AlertTriangle className="w-4 h-4" />
-                </span>
-                <span className="text-sm font-semibold text-gray-900">
-                  {group[0].name}
-                </span>
-                <span className="text-xs px-2.5 py-1 bg-amber-100 text-amber-800 rounded-full font-semibold">
-                  {group.length} copies
-                </span>
+          {groupedProducts.map((group, idx) => {
+            const groupKeys = group.map((p: any) => String(p.id));
+            const groupSelected = groupKeys.every((k) => selectedIds.has(k));
+            return (
+              <div key={idx}>
+                <div className="flex items-center gap-3 mb-4">
+                  <button
+                    type="button"
+                    onClick={() => toggleGroupSelect(group)}
+                    aria-label="Select all copies"
+                    className={`flex h-6 w-6 items-center justify-center rounded border-2 transition-all duration-200 ${
+                      groupSelected
+                        ? "border-red-500 bg-red-500 text-white"
+                        : "border-gray-300 text-transparent hover:border-red-400"
+                    }`}
+                  >
+                    <Check className="h-3.5 w-3.5" strokeWidth={3} />
+                  </button>
+                  <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-100 text-amber-600">
+                    <AlertTriangle className="w-4 h-4" />
+                  </span>
+                  <span className="text-sm font-semibold text-gray-900">
+                    {group[0].name}
+                  </span>
+                  <span className="text-xs px-2.5 py-1 bg-amber-100 text-amber-800 rounded-full font-semibold">
+                    {group.length} copies
+                  </span>
+                  {groupSelected && (
+                    <span className="text-xs font-semibold text-red-600">
+                      selected
+                    </span>
+                  )}
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                  {group.map((product: any) => (
+                    <ProductCard
+                      key={product.id}
+                      product={product}
+                      onEdit={openEdit}
+                      onDelete={confirmDelete}
+                      selected={selectedIds.has(String(product.id))}
+                      onToggleSelect={() => toggleSelect(product.id)}
+                    />
+                  ))}
+                </div>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {group.map((product: any) => (
-                  <ProductCard
-                    key={product.id}
-                    product={product}
-                    onEdit={openEdit}
-                    onDelete={confirmDelete}
-                  />
-                ))}
-              </div>
-            </div>
-          ))}
+            );
+          })}
           {groupedProducts.length === 0 && (
             <div className="flex flex-col items-center justify-center py-16">
               <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gray-100 text-gray-400">
@@ -1170,6 +1319,8 @@ export default function AdminProductFilters() {
               product={product}
               onEdit={openEdit}
               onDelete={confirmDelete}
+              selected={selectedIds.has(String(product.id))}
+              onToggleSelect={() => toggleSelect(product.id)}
             />
           ))}
           {products.length === 0 && (
@@ -1248,6 +1399,75 @@ export default function AdminProductFilters() {
         onClose={() => setDeleteModal({ show: false, product: null })}
         onDeleted={refreshResults}
       />
+
+      {bulkDeleteModal && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full">
+            <div className="p-6">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+                  <Trash2 className="w-6 h-6 text-red-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Delete {selectedIds.size} product
+                    {selectedIds.size !== 1 ? "s" : ""}
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    This action cannot be undone
+                  </p>
+                </div>
+              </div>
+              <p className="text-gray-600 mb-4">
+                Are you sure you want to delete all selected products? This
+                will permanently remove them from your store.
+              </p>
+              <div className="flex flex-wrap gap-1.5 mb-6">
+                {products
+                  .filter((p: any) => selectedIds.has(String(p.id)))
+                  .slice(0, 5)
+                  .map((p: any) => (
+                    <span
+                      key={p.id}
+                      className="text-[11px] px-2 py-1 bg-gray-100 text-gray-700 rounded-full"
+                    >
+                      {p.name}
+                    </span>
+                  ))}
+                {selectedIds.size > 5 && (
+                  <span className="text-[11px] px-2 py-1 bg-gray-100 text-gray-500 rounded-full">
+                    +{selectedIds.size - 5} more
+                  </span>
+                )}
+              </div>
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setBulkDeleteModal(false)}
+                  disabled={bulkDeleteMutation.isPending}
+                  className="flex-1 px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    bulkDeleteMutation.mutate(
+                      Array.from(selectedIds).map(Number),
+                    )
+                  }
+                  disabled={bulkDeleteMutation.isPending}
+                  className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 font-medium"
+                >
+                  {bulkDeleteMutation.isPending
+                    ? "Deleting..."
+                    : `Delete ${selectedIds.size} product${selectedIds.size !== 1 ? "s" : ""}`}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
