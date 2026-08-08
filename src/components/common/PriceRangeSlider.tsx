@@ -55,13 +55,13 @@ export const PriceRangeSlider = memo(function PriceRangeSlider({
 
   return (
     <div className="mt-3">
-      <div className="relative h-2 mb-6">
+      <div className="relative h-2 mb-7">
         {/* Track background */}
-        <div className="absolute w-full h-1 bg-gray-200 rounded-full" />
-        
+        <div className="absolute w-full h-1.5 bg-gray-200 rounded-full" />
+
         {/* Active track */}
         <div
-          className="absolute h-1 bg-primary-600 rounded-full"
+          className="absolute h-1.5 bg-gradient-to-r from-primary-500 to-blue-600 rounded-full shadow-sm"
           style={{
             left: `${minPercent}%`,
             width: `${maxPercent - minPercent}%`,
@@ -84,13 +84,13 @@ export const PriceRangeSlider = memo(function PriceRangeSlider({
           className="absolute w-full h-2 appearance-none bg-transparent pointer-events-none z-10
             [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none 
             [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full 
-            [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-primary-600
-            [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:transition-transform
-            [&::-webkit-slider-thumb]:hover:scale-110
+            [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-[3px] [&::-webkit-slider-thumb]:border-primary-600
+            [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:cursor-grab [&::-webkit-slider-thumb]:active:cursor-grabbing
+            [&::-webkit-slider-thumb]:transition-transform [&::-webkit-slider-thumb]:hover:scale-110
             [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none 
             [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full 
-            [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-primary-600
-            [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:cursor-pointer"
+            [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-[3px] [&::-moz-range-thumb]:border-primary-600
+            [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:cursor-grab [&::-moz-range-thumb]:active:cursor-grabbing"
         />
 
         {/* Max slider */}
@@ -109,23 +109,23 @@ export const PriceRangeSlider = memo(function PriceRangeSlider({
           className="absolute w-full h-2 appearance-none bg-transparent pointer-events-none z-10
             [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none 
             [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full 
-            [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-primary-600
-            [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:transition-transform
-            [&::-webkit-slider-thumb]:hover:scale-110
+            [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-[3px] [&::-webkit-slider-thumb]:border-primary-600
+            [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:cursor-grab [&::-webkit-slider-thumb]:active:cursor-grabbing
+            [&::-webkit-slider-thumb]:transition-transform [&::-webkit-slider-thumb]:hover:scale-110
             [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none 
             [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full 
-            [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-primary-600
-            [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:cursor-pointer"
+            [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-[3px] [&::-moz-range-thumb]:border-primary-600
+            [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:cursor-grab [&::-moz-range-thumb]:active:cursor-grabbing"
         />
       </div>
 
       {/* Price labels */}
-      <div className="flex items-center justify-between text-sm">
-        <span className="px-3 py-1.5 bg-gray-100 rounded-lg font-medium text-gray-700">
+      <div className="flex items-center justify-between text-sm gap-2">
+        <span className="flex-1 px-3 py-2 bg-white border border-gray-200 rounded-xl font-medium text-gray-800 text-center shadow-sm">
           ₹{formatPrice(minValue)}
         </span>
-        <span className="text-gray-400">-</span>
-        <span className="px-3 py-1.5 bg-gray-100 rounded-lg font-medium text-gray-700">
+        <span className="text-gray-400 font-medium shrink-0">—</span>
+        <span className="flex-1 px-3 py-2 bg-white border border-gray-200 rounded-xl font-medium text-gray-800 text-center shadow-sm">
           ₹{formatPrice(maxValue)}
         </span>
       </div>

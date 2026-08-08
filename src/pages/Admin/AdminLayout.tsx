@@ -20,11 +20,13 @@ import {
   Truck,
   Upload,
   Bug,
+  Filter,
 } from "lucide-react";
 
 const adminNavItems = [
   { label: "Dashboard", path: "/admin", icon: LayoutDashboard },
   { label: "Products", path: "/admin/products", icon: Package },
+  { label: "Product Filters", path: "/admin/product-filters", icon: Filter },
   { label: "Categories", path: "/admin/categories", icon: FolderTree },
   { label: "Departments", path: "/admin/departments", icon: Layers },
   { label: "Brands", path: "/admin/brands", icon: Award },
