@@ -35,6 +35,9 @@ import AdminProductFilters from "./pages/Admin/AdminProductFilters";
 import AdminCategories from "./pages/Admin/AdminCategories";
 import AdminDepartments from "./pages/Admin/AdminDepartments";
 import AdminBrands from "./pages/Admin/AdminBrands";
+import AdminHomepageBrands from "./pages/Admin/AdminHomepageBrands";
+import AdminHomepageCategories from "./pages/Admin/AdminHomepageCategories";
+import AdminHomepageDepartments from "./pages/Admin/AdminHomepageDepartments";
 import AdminBanners from "./pages/Admin/AdminBanners";
 import AdminUsers from "./pages/Admin/AdminUsers";
 import AdminPayments from "./pages/Admin/AdminPayments";
@@ -143,6 +146,9 @@ function App() {
             <Route path="categories" element={<AdminCategories />} />
             <Route path="departments" element={<AdminDepartments />} />
             <Route path="brands" element={<AdminBrands />} />
+            <Route path="homepage-brands" element={<AdminHomepageBrands />} />
+            <Route path="homepage-categories" element={<AdminHomepageCategories />} />
+            <Route path="homepage-departments" element={<AdminHomepageDepartments />} />
             <Route path="banners" element={<AdminBanners />} />
             <Route path="orders" element={<AdminOrders />} />
             <Route path="orders/:id" element={<AdminOrderDetail />} />

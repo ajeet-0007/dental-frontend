@@ -13,6 +13,7 @@ import ProductCarousel from "@/components/common/ProductCarousel";
 import CategoryCarousel from "@/components/common/CategoryCarousel";
 import DepartmentCarousel from "@/components/common/DepartmentCarousel";
 import BrandCarousel from "@/components/common/BrandCarousel";
+import CollectionProductsSection from "@/components/common/CollectionProductsSection";
 import HeroCarousel from "@/components/common/HeroCarousel";
 import CartDrawer from "@/components/common/CartDrawer";
 import NewsSection from "@/components/common/NewsSection";
@@ -69,6 +70,30 @@ export default function Home() {
     },
   });
 
+  const { data: homepageBrandsData } = useQuery({
+    queryKey: ["homepage-brands"],
+    queryFn: async () => {
+      const response = await api.get("/homepage-brands");
+      return response.data;
+    },
+  });
+
+  const { data: homepageCategoriesData } = useQuery({
+    queryKey: ["homepage-categories"],
+    queryFn: async () => {
+      const response = await api.get("/homepage-categories");
+      return response.data;
+    },
+  });
+
+  const { data: homepageDepartmentsData } = useQuery({
+    queryKey: ["homepage-departments"],
+    queryFn: async () => {
+      const response = await api.get("/homepage-departments");
+      return response.data;
+    },
+  });
+
   const { data: studentData } = useQuery({
     queryKey: ["products", "student-section"],
     queryFn: () => api.get("/products?category=student-section&limit=10"),
@@ -80,6 +105,15 @@ export default function Home() {
   const departments = Array.isArray(departmentsData) ? departmentsData : departmentsData?.data || [];
   const brands = Array.isArray(brandsData) ? brandsData : brandsData?.data || [];
   const banners = Array.isArray(bannersData) ? bannersData : [];
+  const homepageBrandSections = Array.isArray(homepageBrandsData)
+    ? homepageBrandsData
+    : [];
+  const homepageCategorySections = Array.isArray(homepageCategoriesData)
+    ? homepageCategoriesData
+    : [];
+  const homepageDepartmentSections = Array.isArray(homepageDepartmentsData)
+    ? homepageDepartmentsData
+    : [];
   const studentProducts = studentData?.data?.products || studentData?.data || [];
 
   const handleOpenCartDrawer = (product: any) => {
@@ -303,6 +337,24 @@ export default function Home() {
         </section>
       )}
 
+      {/* Category Collections - Featured Products by Category */}
+      {homepageCategorySections.length > 0 && (
+        <CollectionProductsSection
+          sections={homepageCategorySections.map((s: any) => ({
+            item: s.category,
+            products: s.products,
+          }))}
+          subtitle="Explore"
+          title="Category Collections"
+          icon={<LayoutGrid className="w-5 h-5 text-white" />}
+          iconGradient="from-green-500 to-emerald-500"
+          itemLink={(item) => `/categories/${item.slug}`}
+          viewAllLink="/categories"
+          viewAllLabel="View All Categories"
+          onOpenCartDrawer={handleOpenCartDrawer}
+        />
+      )}
+
       {/* Brands Section */}
       {brands.length > 0 && (
         <section className="py-6 md:py-8 lg:py-10 bg-gray-50/50">
@@ -332,6 +384,24 @@ export default function Home() {
         </section>
       )}
 
+      {/* Brand Collections - Featured Products by Brand */}
+      {homepageBrandSections.length > 0 && (
+        <CollectionProductsSection
+          sections={homepageBrandSections.map((s: any) => ({
+            item: s.brand,
+            products: s.products,
+          }))}
+          subtitle="Featured Brands"
+          title="Brand Collections"
+          icon={<Store className="w-5 h-5 text-white" />}
+          iconGradient="from-fuchsia-500 to-purple-600"
+          itemLink={(item) => `/brands/${item.slug}`}
+          viewAllLink="/brands"
+          viewAllLabel="View All Brands"
+          onOpenCartDrawer={handleOpenCartDrawer}
+        />
+      )}
+
       {/* Departments Section */}
       {departments.length > 0 && (
         <section className="py-6 md:py-8 lg:py-10 bg-gray-50/50">
@@ -359,6 +429,24 @@ export default function Home() {
             <DepartmentCarousel departments={departments} itemsPerPage={6} />
           </div>
         </section>
+      )}
+
+      {/* Department Collections - Featured Products by Department */}
+      {homepageDepartmentSections.length > 0 && (
+        <CollectionProductsSection
+          sections={homepageDepartmentSections.map((s: any) => ({
+            item: s.department,
+            products: s.products,
+          }))}
+          subtitle="Browse"
+          title="Department Collections"
+          icon={<Stethoscope className="w-5 h-5 text-white" />}
+          iconGradient="from-rose-500 to-pink-500"
+          itemLink={(item) => `/departments/${item.slug}`}
+          viewAllLink="/departments"
+          viewAllLabel="View All Departments"
+          onOpenCartDrawer={handleOpenCartDrawer}
+        />
       )}
 
       {/* Top Selling Products */}

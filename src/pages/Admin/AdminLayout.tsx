@@ -21,6 +21,7 @@ import {
   Upload,
   Bug,
   Filter,
+  BadgePercent,
 } from "lucide-react";
 
 const adminNavItems = [
@@ -30,6 +31,9 @@ const adminNavItems = [
   { label: "Categories", path: "/admin/categories", icon: FolderTree },
   { label: "Departments", path: "/admin/departments", icon: Layers },
   { label: "Brands", path: "/admin/brands", icon: Award },
+  { label: "Homepage Brands", path: "/admin/homepage-brands", icon: BadgePercent },
+  { label: "Homepage Categories", path: "/admin/homepage-categories", icon: FolderTree },
+  { label: "Homepage Departments", path: "/admin/homepage-departments", icon: Layers },
   { label: "Banners", path: "/admin/banners", icon: Image },
   { label: "Gallery", path: "/admin/gallery", icon: Image },
   { label: "Orders", path: "/admin/orders", icon: ShoppingCart },
