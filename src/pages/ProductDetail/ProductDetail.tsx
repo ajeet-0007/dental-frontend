@@ -10,7 +10,7 @@ import { useRecentlyViewedStore } from "@/stores/recentlyViewedStore";
 import { formatPrice } from "@/utils/format";
 import {
   Package, ShoppingCart, Star, ChevronLeft, ChevronRight, Heart,
-  Minus, Plus, X, ArrowRight, Layers, Share2, Truck, Shield, RotateCcw, Sparkles
+  Minus, Plus, X, ArrowRight, Layers, Share2, Truck, Shield, RotateCcw, Sparkles, Play
 } from "lucide-react";
 import type { ProductVariant } from "@/components/common/VariantSelector";
 import HtmlRenderer from "@/components/common/HtmlRenderer";
@@ -493,6 +493,19 @@ export default function ProductDetail() {
                     <div className="absolute top-3 left-3 px-3 py-1.5 bg-gradient-to-r from-emerald-500 to-green-500 text-white text-xs font-bold rounded-full shadow-lg shadow-emerald-500/30">
                       {discountPercent}% OFF
                     </div>
+                  )}
+
+                  {/* How to Use Video Overlay */}
+                  {product.videoUrl && (
+                    <Link
+                      to={`/products/${product.slug}/how-to-use`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="absolute bottom-3 left-3 inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-primary-600 to-blue-600 text-white text-xs font-bold rounded-full shadow-lg shadow-primary-600/30 hover:scale-105 hover:from-primary-700 hover:to-blue-700 transition-all"
+                      title="Watch how to use this product"
+                    >
+                      <Play className="w-3.5 h-3.5 fill-white" />
+                      How to Use
+                    </Link>
                   )}
                 </div>
 

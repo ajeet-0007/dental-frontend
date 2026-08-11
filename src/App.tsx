@@ -9,6 +9,7 @@ import Layout from "./components/layout/Layout";
 import Home from "./pages/Home/Home";
 import Products from "./pages/Products/Products";
 import ProductDetail from "./pages/ProductDetail/ProductDetail";
+import HowToUseVideo from "./pages/ProductDetail/HowToUseVideo";
 import Cart from "./pages/Cart/Cart";
 import Checkout from "./pages/Checkout/Checkout";
 import PaymentSuccess from "./pages/Checkout/PaymentSuccess";
@@ -113,6 +114,7 @@ function App() {
             <Route index element={<Home />} />
             <Route path="products" element={<Products />} />
             <Route path="products/:slug" element={<ProductDetail />} />
+            <Route path="products/:slug/how-to-use" element={<HowToUseVideo />} />
             <Route path="departments" element={<Departments />} />
             <Route path="departments/:slug" element={<DepartmentDetail />} />
             <Route path="brands" element={<Brands />} />

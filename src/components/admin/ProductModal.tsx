@@ -31,6 +31,7 @@ const INITIAL_FORM_DATA = {
   directionToUse: "",
   additionalInfo: "",
   warranty: "",
+  videoUrl: "",
 };
 
 export function ProductFormModal({
@@ -105,6 +106,7 @@ export function ProductFormModal({
       directionToUse: product?.directionToUse || "",
       additionalInfo: product?.additionalInfo || "",
       warranty: product?.warranty || "",
+      videoUrl: product?.videoUrl || "",
     });
     setImages(product?.images || []);
     setUploading(false);
@@ -234,6 +236,7 @@ export function ProductFormModal({
       directionToUse: formData.directionToUse,
       additionalInfo: formData.additionalInfo,
       warranty: formData.warranty,
+      videoUrl: formData.videoUrl,
     };
 
     if (product) {
@@ -523,6 +526,18 @@ export function ProductFormModal({
                     <textarea value={formData.warranty} onChange={(e) => setFormData({ ...formData, warranty: e.target.value })} className="w-full px-3 py-1.5 text-sm border rounded-lg focus:ring-2 focus:ring-primary-500" rows={2} placeholder="Enter warranty details (one per line)" />
                     <p className="text-[10px] text-gray-500 mt-1">Each line = bullet point</p>
                   </div>
+                </div>
+
+                <div className="mt-4">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">How to Use Video URL (YouTube)</label>
+                  <input
+                    type="url"
+                    value={formData.videoUrl}
+                    onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
+                    className="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-primary-500"
+                    placeholder="https://youtu.be/VIDEO_ID or https://www.youtube.com/watch?v=VIDEO_ID"
+                  />
+                  <p className="text-[10px] text-gray-500 mt-1">Paste a YouTube link. It shows as a "How to Use" video on the product page.</p>
                 </div>
               </div>
 
