@@ -24,7 +24,6 @@ interface CollectionProductsSectionProps {
   iconGradient: string;
   itemLink: (item: CollectionItem) => string;
   viewAllLink: string;
-  viewAllLabel: string;
   onOpenCartDrawer?: (product: any) => void;
 }
 
@@ -58,7 +57,6 @@ export default function CollectionProductsSection({
   iconGradient,
   itemLink,
   viewAllLink,
-  viewAllLabel,
   onOpenCartDrawer,
 }: CollectionProductsSectionProps) {
   if (!sections || sections.length === 0) return null;
@@ -86,7 +84,7 @@ export default function CollectionProductsSection({
             to={viewAllLink}
             className="flex items-center gap-1 text-sm font-medium text-gray-500 hover:text-primary-600 transition-colors group"
           >
-            <span>{viewAllLabel}</span>
+            <span>View All</span>
             <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>

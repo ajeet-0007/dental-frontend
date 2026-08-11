@@ -350,7 +350,6 @@ export default function Home() {
           iconGradient="from-green-500 to-emerald-500"
           itemLink={(item) => `/categories/${item.slug}`}
           viewAllLink="/categories"
-          viewAllLabel="View All Categories"
           onOpenCartDrawer={handleOpenCartDrawer}
         />
       )}
@@ -397,7 +396,6 @@ export default function Home() {
           iconGradient="from-fuchsia-500 to-purple-600"
           itemLink={(item) => `/brands/${item.slug}`}
           viewAllLink="/brands"
-          viewAllLabel="View All Brands"
           onOpenCartDrawer={handleOpenCartDrawer}
         />
       )}
@@ -444,7 +442,6 @@ export default function Home() {
           iconGradient="from-rose-500 to-pink-500"
           itemLink={(item) => `/departments/${item.slug}`}
           viewAllLink="/departments"
-          viewAllLabel="View All Departments"
           onOpenCartDrawer={handleOpenCartDrawer}
         />
       )}
