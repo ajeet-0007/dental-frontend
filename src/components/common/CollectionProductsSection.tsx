@@ -28,25 +28,25 @@ interface CollectionProductsSectionProps {
 }
 
 const GRADIENTS = [
-  "from-blue-500 to-indigo-600",
-  "from-emerald-500 to-teal-600",
-  "from-purple-500 to-violet-600",
-  "from-orange-500 to-red-500",
-  "from-pink-500 to-rose-600",
-  "from-cyan-500 to-blue-600",
-  "from-amber-500 to-orange-600",
-  "from-indigo-500 to-purple-600",
+  "from-primary-700 to-primary-400",
+  "from-primary-800 to-primary-500",
+  "from-blue-700 to-sky-400",
+  "from-sky-700 to-primary-500",
+  "from-cyan-700 to-primary-400",
+  "from-primary-600 to-sky-500",
+  "from-blue-800 to-primary-400",
+  "from-sky-800 to-primary-500",
 ];
 
 const TEXT_SHADOWS = [
-  "shadow-blue-500/30",
-  "shadow-emerald-500/30",
-  "shadow-purple-500/30",
-  "shadow-orange-500/30",
-  "shadow-rose-500/30",
-  "shadow-cyan-500/30",
-  "shadow-amber-500/30",
-  "shadow-indigo-500/30",
+  "shadow-primary-700/30",
+  "shadow-primary-800/30",
+  "shadow-blue-700/30",
+  "shadow-sky-700/30",
+  "shadow-cyan-700/30",
+  "shadow-primary-600/30",
+  "shadow-blue-800/30",
+  "shadow-sky-800/30",
 ];
 
 export default function CollectionProductsSection({
@@ -75,7 +75,7 @@ export default function CollectionProductsSection({
               <p className="text-xs font-semibold text-primary-600 uppercase tracking-widest mb-1">
                 {subtitle}
               </p>
-              <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-gray-900 tracking-tight">
+              <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-slate-800 tracking-tight">
                 {title}
               </h2>
             </div>

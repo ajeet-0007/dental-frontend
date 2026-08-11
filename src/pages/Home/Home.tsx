@@ -347,7 +347,7 @@ export default function Home() {
           subtitle="Explore"
           title="Category Collections"
           icon={<LayoutGrid className="w-5 h-5 text-white" />}
-          iconGradient="from-green-500 to-emerald-500"
+          iconGradient="from-primary-700 to-primary-400"
           itemLink={(item) => `/categories/${item.slug}`}
           viewAllLink="/categories"
           onOpenCartDrawer={handleOpenCartDrawer}
@@ -393,7 +393,7 @@ export default function Home() {
           subtitle="Featured Brands"
           title="Brand Collections"
           icon={<Store className="w-5 h-5 text-white" />}
-          iconGradient="from-fuchsia-500 to-purple-600"
+          iconGradient="from-primary-800 to-primary-500"
           itemLink={(item) => `/brands/${item.slug}`}
           viewAllLink="/brands"
           onOpenCartDrawer={handleOpenCartDrawer}
@@ -439,7 +439,7 @@ export default function Home() {
           subtitle="Browse"
           title="Department Collections"
           icon={<Stethoscope className="w-5 h-5 text-white" />}
-          iconGradient="from-rose-500 to-pink-500"
+          iconGradient="from-primary-600 to-sky-400"
           itemLink={(item) => `/departments/${item.slug}`}
           viewAllLink="/departments"
           onOpenCartDrawer={handleOpenCartDrawer}
