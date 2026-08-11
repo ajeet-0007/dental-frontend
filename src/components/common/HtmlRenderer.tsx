@@ -3,6 +3,8 @@ import DOMPurify from "dompurify";
 interface HtmlRendererProps {
   content: string | string[] | null | undefined;
   className?: string;
+  /** "auto" = smart detection (default), "list" = force numbered <ol>, "paragraph" = force plain paragraphs */
+  variant?: "auto" | "list" | "paragraph";
 }
 
 function decodeHtmlEntities(text: string): string {
@@ -11,7 +13,7 @@ function decodeHtmlEntities(text: string): string {
   return textarea.value;
 }
 
-export default function HtmlRenderer({ content, className = "" }: HtmlRendererProps) {
+export default function HtmlRenderer({ content, className = "", variant = "auto" }: HtmlRendererProps) {
   if (!content) return null;
 
   if (typeof content !== "string") {
@@ -46,18 +48,32 @@ export default function HtmlRenderer({ content, className = "" }: HtmlRendererPr
     );
   }
 
-  const lines = decoded.split("\n").filter(Boolean);
-  if (lines.length > 0) {
+  const lines = decoded.split("\n").map((l) => l.trim()).filter(Boolean);
+  if (lines.length === 0) {
+    return null;
+  }
+
+  const selfMarked = lines.some((line) => /^[•●▪◦‣*](\s|$)/.test(line) || /^\d+[.)]/.test(line));
+
+  if (variant === "paragraph" || (variant === "auto" && (lines.length === 1 || selfMarked))) {
     return (
-      <ol className={`list-decimal list-inside space-y-1 ${className}`}>
+      <div className={className}>
         {lines.map((line, index) => (
-          <li key={index} className="text-sm text-gray-700 leading-relaxed">
+          <p key={index} className="text-sm text-gray-700 leading-relaxed mb-1">
             {line}
-          </li>
+          </p>
         ))}
-      </ol>
+      </div>
     );
   }
 
-  return null;
+  return (
+    <ol className={`list-decimal list-inside space-y-1 ${className}`}>
+      {lines.map((line, index) => (
+        <li key={index} className="text-sm text-gray-700 leading-relaxed">
+          {line}
+        </li>
+      ))}
+    </ol>
+  );
 }
