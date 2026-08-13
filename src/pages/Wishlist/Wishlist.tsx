@@ -7,6 +7,7 @@ import { useCartStore } from '@/stores/cartStore'
 import { useAuthStore } from '@/stores/authStore'
 import api from '@/api'
 import toast from 'react-hot-toast'
+import AppImage from '@/components/common/AppImage'
 
 export default function Wishlist() {
   const { items, removeItem } = useWishlistStore()
@@ -129,10 +130,12 @@ export default function Wishlist() {
                 <Link to={`/products/${item.product.slug}`} className="block">
                   <div className="relative aspect-square bg-gray-100 overflow-hidden">
                     {item.product.images?.[0] ? (
-                      <img
+                      <AppImage
                         src={item.product.images[0]}
                         alt={item.product.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        widths={[200, 400, 640]}
+                        sizes="(min-width: 640px) 250px, 160px"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">

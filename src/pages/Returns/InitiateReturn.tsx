@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import api from '@/api'
 import { ArrowLeft, Package, CheckCircle, AlertCircle, ChevronRight, Info } from 'lucide-react'
+import AppImage from '@/components/common/AppImage'
 
 const RETURN_REASONS = [
   { value: 'defective', label: 'Product is defective or damaged' },
@@ -185,7 +186,7 @@ export default function InitiateReturn() {
                   </div>
                   <div className="w-14 h-14 bg-gray-100 rounded-lg flex-shrink-0 overflow-hidden">
                     {item.productImage ? (
-                      <img src={item.productImage} alt={item.productName} className="w-full h-full object-cover" />
+                      <AppImage src={item.productImage} alt={item.productName} className="w-full h-full object-cover" widths={[96, 160]} sizes="56px" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
                         <Package className="h-6 w-6 text-gray-400" />

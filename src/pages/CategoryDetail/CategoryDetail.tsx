@@ -5,6 +5,7 @@ import api from "@/api";
 import Seo from "@/components/seo/Seo";
 import { buildBreadcrumbJsonLd, truncateDescription } from "@/components/seo/seoHelpers";
 import ProductCarousel from "@/components/common/ProductCarousel";
+import AppImage from "@/components/common/AppImage";
 import Products from "@/pages/Products/Products";
 import {
   FolderOpen,
@@ -159,10 +160,13 @@ export default function CategoryDetail() {
                 <div className="flex flex-col md:flex-row md:items-center gap-6">
                   <div className="w-20 h-20 md:w-28 md:h-28 rounded-2xl bg-white border border-gray-100 shadow-md flex items-center justify-center p-2 flex-shrink-0 overflow-hidden">
                     {category.image ? (
-                      <img
+                      <AppImage
                         src={category.image}
                         alt={category.name}
                         className="w-full h-full object-cover"
+                        priority
+                        widths={[200, 400, 640]}
+                        sizes="112px"
                       />
                     ) : (
                       <div

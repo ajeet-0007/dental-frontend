@@ -12,6 +12,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Search, Package, ArrowRight, X, Loader2, Store, Tag, Layers, ChevronRight } from "lucide-react";
 import api from "@/api";
 import { formatPrice } from "@/utils/format";
+import AppImage from "./AppImage";
 
 interface SuggestionProduct {
   id: number;
@@ -135,10 +136,12 @@ function EntityRow({
           >
             <span className="w-10 h-10 rounded-xl bg-gray-100 overflow-hidden flex-shrink-0 border border-gray-200">
               {imageSrc ? (
-                <img
+                <AppImage
                   src={imageSrc}
                   alt=""
                   className="w-full h-full object-cover"
+                  widths={[96, 160]}
+                  sizes="40px"
                 />
               ) : (
                 <span className="w-full h-full flex items-center justify-center">
@@ -437,10 +440,12 @@ const SearchAutocomplete = forwardRef<
                     >
                       <div className="w-12 h-12 rounded-xl bg-gray-100 overflow-hidden flex-shrink-0 border border-gray-200">
                         {product.images?.[0] ? (
-                          <img
+                          <AppImage
                             src={product.images[0]}
                             alt=""
                             className="w-full h-full object-cover"
+                            widths={[96, 160]}
+                            sizes="48px"
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">

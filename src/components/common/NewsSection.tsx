@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { Newspaper, ArrowRight, ExternalLink } from "lucide-react";
 import api from "@/api";
+import AppImage from "./AppImage";
 
 interface NewsArticle {
   id: number;
@@ -24,13 +25,15 @@ function ArticleImage({
 
   return (
     <div className={className}>
-      {hasImage ? (
-        <img
+      {src ? (
+        <AppImage
           src={src}
-          alt={alt}
+          alt={alt ?? ""}
           className={`w-full h-full object-cover ${className?.includes('group-hover') ? 'group-hover:scale-110 transition-transform duration-300' : ''}`}
+          widths={[400, 800, 1200]}
+          sizes="(min-width: 1024px) 640px, 100vw"
           onError={(e) => {
-            (e.target as HTMLImageElement).style.display = 'none';
+            (e.target as HTMLElement).style.display = 'none';
             const fallback = (e.target as HTMLImageElement).parentElement?.querySelector('.img-fallback') as HTMLElement;
             if (fallback) fallback.style.display = 'flex';
           }}

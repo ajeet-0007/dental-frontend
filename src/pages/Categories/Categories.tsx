@@ -6,6 +6,7 @@ import api from "@/api";
 import { Search, ArrowRight, Grid3X3, List, Layers, LayoutGrid } from "lucide-react";
 import Seo from "@/components/seo/Seo";
 import { absoluteUrl } from "@/components/seo/seoConstants";
+import AppImage from "@/components/common/AppImage";
 
 export default function Categories() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -163,10 +164,12 @@ export default function Categories() {
                         <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden group-hover:shadow-lg group-hover:border-gray-200 group-hover:-translate-y-1 transition-all duration-300">
                           <div className="aspect-square bg-gray-50/50 overflow-hidden p-2">
                             {category.image ? (
-                              <img
+                              <AppImage
                                 src={category.image}
                                 alt={category.name}
                                 className="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform duration-300"
+                                widths={[200, 400, 640]}
+                                sizes="(min-width: 1024px) 280px, (min-width: 640px) 220px, 160px"
                               />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center bg-gray-50 rounded-xl">
@@ -213,10 +216,12 @@ export default function Categories() {
                       >
                         <div className="h-16 w-16 rounded-xl overflow-hidden flex-shrink-0 bg-gray-50 p-1">
                           {category.image ? (
-                            <img
+                            <AppImage
                               src={category.image}
                               alt={category.name}
                               className="w-full h-full object-cover rounded-lg transition-transform group-hover:scale-105"
+                              widths={[128, 256]}
+                              sizes="64px"
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center bg-gray-50 rounded-lg">

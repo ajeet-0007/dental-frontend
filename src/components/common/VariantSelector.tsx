@@ -1,5 +1,6 @@
 import { Package, Calendar } from 'lucide-react';
 import { formatPrice } from '@/utils/format';
+import AppImage from './AppImage';
 
 export interface ProductVariantOption {
   optionId: number;
@@ -144,10 +145,12 @@ export function VariantSelector({
                 
                 <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
                   {variant.image || variant.images?.[0] ? (
-                    <img 
-                      src={variant.image || variant.images?.[0]} 
+                    <AppImage 
+                      src={variant.image || variant.images?.[0]!} 
                       alt={variantName}
                       className="w-full h-full object-cover rounded-lg"
+                      widths={[96, 160]}
+                      sizes="40px"
                     />
                   ) : (
                     <Package className="w-5 h-5 text-gray-500" />

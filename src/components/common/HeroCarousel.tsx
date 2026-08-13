@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useSwipe } from "@/hooks/useSwipe";
+import AppImage from "./AppImage";
 
 interface Banner {
   id: number;
@@ -112,15 +113,14 @@ export default function HeroCarousel({ banners }: HeroCarouselProps) {
             to={currentBanner.link || "/products"}
             className="block w-full h-full"
           >
-            <img
+            <AppImage
               src={currentBanner.image}
               alt={currentBanner.title}
               className="w-full h-full object-contain"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.src =
-                  "https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1200&h=500&fit=crop";
-              }}
+              priority
+              widths={[400, 800, 1200, 1600]}
+              sizes="100vw"
+              fallbackSrc="https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1200&h=500&fit=crop"
             />
           </Link>
         </motion.div>

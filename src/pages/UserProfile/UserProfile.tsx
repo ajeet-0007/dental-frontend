@@ -12,6 +12,7 @@ import { useGeolocation } from '@/hooks/useGeolocation'
 import DeleteConfirmModal from '@/components/common/DeleteConfirmModal'
 import LogoutModal from '@/components/common/LogoutModal'
 import ProfessionalVerification from './ProfessionalVerification'
+import AppImage from '@/components/common/AppImage'
 
 export default function UserProfile() {
   const navigate = useNavigate()
@@ -293,11 +294,12 @@ export default function UserProfile() {
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-md shadow-primary-500/20 overflow-hidden">
               {user?.avatar && !avatarFailed ? (
-                <img
+                <AppImage
                   src={user.avatar}
                   alt={`${user?.firstName} ${user?.lastName}`}
                   onError={() => setAvatarFailed(true)}
                   className="w-full h-full rounded-xl object-cover"
+                  responsive={false}
                 />
               ) : (
                 <span className="text-sm font-bold text-white">{getInitials()}</span>
@@ -349,11 +351,12 @@ export default function UserProfile() {
                 <div className="relative">
                   <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-3 ring-4 ring-white/30 overflow-hidden">
                     {user?.avatar && !avatarFailed ? (
-                      <img
+                      <AppImage
                         src={user.avatar}
                         alt={`${user?.firstName} ${user?.lastName}`}
                         onError={() => setAvatarFailed(true)}
                         className="w-full h-full rounded-full object-cover"
+                        responsive={false}
                       />
                     ) : (
                       <span className="text-2xl font-bold text-white">{getInitials()}</span>

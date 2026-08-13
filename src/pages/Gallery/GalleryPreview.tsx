@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import api from "@/api";
 import { Camera } from "lucide-react";
+import AppImage from "@/components/common/AppImage";
 
 interface GalleryAlbum {
   id: number;
@@ -64,11 +65,12 @@ export default function GalleryPreview() {
               >
                 <div className="aspect-[4/3] bg-gray-100 overflow-hidden">
                   {album.coverImage ? (
-                    <img
+                    <AppImage
                       src={album.coverImage}
                       alt={album.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      loading="lazy"
+                      widths={[200, 400, 640]}
+                      sizes="(min-width: 640px) 300px, 100vw"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">

@@ -12,6 +12,7 @@ import CartDrawer from "@/components/common/CartDrawer";
 import { PriceRangeSlider } from "@/components/common/PriceRangeSlider";
 import Seo from "@/components/seo/Seo";
 import { buildItemListJsonLd } from "@/components/seo/seoHelpers";
+import AppImage from "@/components/common/AppImage";
 
 
 const DEFAULT_IMAGE =
@@ -969,18 +970,19 @@ export default function Products({
                       >
                         <div className="aspect-square bg-gray-50 overflow-hidden relative">
                           {product.images?.[0] ? (
-                            <img
+                            <AppImage
                               src={product.images[0]}
                               alt={product.name}
                               className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${isOutOfStock ? 'opacity-60 grayscale-[30%]' : ''}`}
-                              loading="lazy"
+                              widths={[200, 400, 640]}
+                              sizes="(min-width: 1024px) 300px, (min-width: 640px) 250px, 160px"
                             />
                           ) : (
-                            <img
+                            <AppImage
                               src={DEFAULT_IMAGE}
                               alt={product.name}
                               className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${isOutOfStock ? 'opacity-60 grayscale-[30%]' : ''}`}
-                              loading="lazy"
+                              responsive={false}
                             />
                           )}
                           {discount > 0 && !isOutOfStock && (

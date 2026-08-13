@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useSwipe } from "@/hooks/useSwipe";
+import AppImage from "./AppImage";
 
 interface Department {
   id: number;
@@ -118,13 +119,14 @@ export default function DepartmentCarousel({ departments, itemsPerPage = 6 }: De
                 >
                   <div className="relative bg-white rounded-2xl border border-gray-200 overflow-hidden transition-all duration-300 group-hover/card:shadow-lg group-hover/card:border-primary-200 group-hover/card:-translate-y-1">
                     <div className="aspect-square bg-gray-50/50 overflow-hidden p-2">
-                      <img
+                      <AppImage
                         src={imageUrl}
                         alt={department.name}
                         className="w-full h-full object-cover rounded-xl transition-transform duration-300 group-hover/card:scale-110"
+                        widths={[200, 400, 640]}
+                        sizes="(min-width: 1024px) 300px, (min-width: 640px) 250px, 160px"
                         onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = "none";
+                          (e.target as HTMLElement).style.display = "none";
                         }}
                       />
                     </div>

@@ -7,6 +7,7 @@ import { useAuthStore } from "@/stores/authStore";
 import { useCartStore } from "@/stores/cartStore";
 import { formatPrice } from "@/utils/format";
 import DeleteConfirmModal from "@/components/common/DeleteConfirmModal";
+import AppImage from "@/components/common/AppImage";
 import {
   Plus, Check, ShoppingCart, MapPin, Loader2,
   Trash2, Home, Phone, CreditCard, Banknote,
@@ -786,7 +787,7 @@ export default function Checkout() {
                         <div key={item.id} className="flex gap-3">
                           {image && (
                             <div className="w-16 h-16 bg-gradient-to-br from-gray-50 to-white rounded-2xl overflow-hidden flex-shrink-0 shadow-inner">
-                              <img src={image} alt={item.product.name} className="w-full h-full object-cover" />
+                              <AppImage src={image} alt={item.product.name} className="w-full h-full object-cover" widths={[128, 256]} sizes="64px" />
                             </div>
                           )}
                           <div className="flex-1 min-w-0">

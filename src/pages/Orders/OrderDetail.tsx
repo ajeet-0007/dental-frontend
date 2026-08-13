@@ -7,6 +7,7 @@ import { formatPrice } from '@/utils/format'
 import { useCartStore } from '@/stores/cartStore'
 import { ArrowLeft, Package, MapPin, CheckCircle, Loader2, RefreshCw, Clock, Truck, XCircle, AlertCircle, ShieldCheck, RotateCw, Undo2, Calendar, ChevronRight } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import AppImage from '@/components/common/AppImage'
 
 const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=400&h=400&fit=crop'
 
@@ -534,9 +535,9 @@ export default function OrderDetail() {
                     >
                       <div className="w-16 h-16 rounded-lg bg-gray-50 overflow-hidden flex-shrink-0 border border-gray-100">
                         {item.productImage ? (
-                          <img src={item.productImage} alt={item.productName} className="w-full h-full object-cover" />
+                          <AppImage src={item.productImage} alt={item.productName} className="w-full h-full object-cover" widths={[128, 256]} sizes="64px" />
                         ) : (
-                          <img src={DEFAULT_IMAGE} alt={item.productName} className="w-full h-full object-cover" />
+                          <AppImage src={DEFAULT_IMAGE} alt={item.productName} className="w-full h-full object-cover" responsive={false} />
                         )}
                       </div>
                       <div className="flex-1 min-w-0">

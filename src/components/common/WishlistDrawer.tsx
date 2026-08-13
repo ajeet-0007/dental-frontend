@@ -8,6 +8,7 @@ import { useWishlistStore } from "@/stores/wishlistStore";
 import { useCartStore } from "@/stores/cartStore";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Heart, ShoppingCart, Trash2, ShoppingBag, ArrowRight } from "lucide-react";
+import AppImage from "./AppImage";
 
 interface WishlistDrawerProps {
   isOpen: boolean;
@@ -165,10 +166,12 @@ export default function WishlistDrawer({ isOpen, onClose }: WishlistDrawerProps)
                           className="w-20 h-20 bg-white rounded-xl overflow-hidden flex-shrink-0 relative"
                         >
                           {item.product.images?.[0] ? (
-                            <img
+                            <AppImage
                               src={item.product.images[0]}
                               alt={item.product.name}
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              widths={[160, 320]}
+                              sizes="80px"
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center">

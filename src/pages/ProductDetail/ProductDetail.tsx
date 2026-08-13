@@ -15,6 +15,7 @@ import {
 import type { ProductVariant } from "@/components/common/VariantSelector";
 import HtmlRenderer from "@/components/common/HtmlRenderer";
 import ProductCarousel from "@/components/common/ProductCarousel";
+import AppImage from "@/components/common/AppImage";
 import CartDrawer from "@/components/common/CartDrawer";
 import { ReviewsSection } from "@/components/common/Reviews";
 import Seo from "@/components/seo/Seo";
@@ -446,13 +447,14 @@ export default function ProductDetail() {
                   onTouchMove={onTouchMove}
                   onTouchEnd={onTouchEnd}
                 >
-                  <img
+                  <AppImage
                     src={images[currentImageIndex]}
                     alt={product.name}
                     className="w-full h-full object-contain p-4 md:p-6 group-hover:scale-105 transition-transform duration-500"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = DEFAULT_IMAGE;
-                    }}
+                    priority
+                    widths={[400, 800, 1200]}
+                    sizes="(min-width: 1024px) 600px, 100vw"
+                    fallbackSrc={DEFAULT_IMAGE}
                   />
 
                   {/* Navigation Arrows */}
@@ -522,13 +524,13 @@ export default function ProductDetail() {
                             : "border-gray-100 hover:border-primary-200"
                         }`}
                       >
-                        <img
+                        <AppImage
                           src={img}
                           alt={`${product.name} ${index + 1}`}
                           className="w-full h-full object-cover"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).src = DEFAULT_IMAGE;
-                          }}
+                          widths={[96, 160, 256]}
+                          sizes="64px"
+                          fallbackSrc={DEFAULT_IMAGE}
                         />
                       </button>
                     ))}
@@ -684,10 +686,12 @@ export default function ProductDetail() {
                           }`}
                         >
                           <div className="w-14 h-14 md:w-16 md:h-16 rounded-xl overflow-hidden bg-gradient-to-br from-gray-50 to-white flex-shrink-0 border border-gray-100 shadow-sm">
-                            <img
+                            <AppImage
                               src={variant.image || variant.images?.[0] || product?.images?.[0] || DEFAULT_IMAGE}
                               alt={variant.name || "Variant"}
                               className="w-full h-full object-cover"
+                              widths={[96, 160, 256]}
+                              sizes="64px"
                             />
                           </div>
 
@@ -976,10 +980,13 @@ export default function ProductDetail() {
             <ChevronLeft className="w-6 h-6 md:w-8 md:h-8" />
           </button>
 
-          <img
+          <AppImage
             src={images[currentImageIndex]}
             alt={product.name}
             className="max-w-[90vw] max-h-[70vh] md:max-w-[85vw] md:max-h-[85vh] object-contain"
+            widths={[400, 800, 1200, 1600]}
+            sizes="85vw"
+            fallbackSrc={DEFAULT_IMAGE}
             onClick={(e) => e.stopPropagation()}
           />
 
@@ -1008,7 +1015,7 @@ export default function ProductDetail() {
                     : "border-white/30 hover:border-white/60"
                 }`}
               >
-                <img src={img} alt="" className="w-full h-full object-cover" />
+                <AppImage src={img} alt="" className="w-full h-full object-cover" widths={[96, 160, 256]} sizes="64px" />
               </button>
             ))}
           </div>

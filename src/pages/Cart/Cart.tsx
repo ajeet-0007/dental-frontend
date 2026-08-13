@@ -7,6 +7,7 @@ import { useCartStore } from "@/stores/cartStore";
 import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import ProductCarousel from "@/components/common/ProductCarousel";
+import AppImage from "@/components/common/AppImage";
 import CartDrawer from "@/components/common/CartDrawer";
 import { formatPrice } from "@/utils/format";
 
@@ -278,10 +279,12 @@ export default function Cart() {
                   <div className="flex gap-4">
                     {/* Product Image */}
                     <Link to={`/products/${item.product.slug}`} className="w-20 h-20 md:w-24 md:h-24 bg-gradient-to-br from-gray-50 to-white rounded-2xl overflow-hidden flex-shrink-0 shadow-inner">
-                      <img
+                      <AppImage
                         src={item.variant?.image || item.product.images?.[0] || DEFAULT_IMAGE}
                         alt={item.product.name}
                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                        widths={[160, 320, 640]}
+                        sizes="96px"
                       />
                     </Link>
 

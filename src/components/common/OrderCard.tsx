@@ -13,6 +13,7 @@ import {
   ArrowRight,
   Calendar
 } from 'lucide-react'
+import AppImage from './AppImage'
 
 interface OrderCardProps {
   order: any
@@ -104,7 +105,7 @@ export default function OrderCard({
           >
             <div className="w-16 h-16 rounded-lg bg-gray-50 overflow-hidden flex-shrink-0 border border-gray-100">
               {item.productImage ? (
-                <img src={item.productImage} alt={item.productName} className="w-full h-full object-cover" />
+                <AppImage src={item.productImage} alt={item.productName} className="w-full h-full object-cover" widths={[128, 256]} sizes="64px" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
                   <Package className="w-6 h-6 text-gray-300" />

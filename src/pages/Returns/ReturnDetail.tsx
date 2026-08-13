@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import api from '@/api'
 import { ArrowLeft, Package, Clock, CheckCircle, XCircle, AlertCircle, Truck, RefreshCw, Calendar, MapPin, Phone } from 'lucide-react'
+import AppImage from '@/components/common/AppImage'
 
 const RETURN_STATUS_CONFIG: Record<string, { label: string; color: string; bgColor: string; icon: any }> = {
   requested: { label: 'Requested', color: 'text-blue-600', bgColor: 'bg-blue-50', icon: Clock },
@@ -150,7 +151,7 @@ export default function ReturnDetail() {
                 <div key={item.id} className="flex gap-3">
                   <div className="w-16 h-16 bg-gray-100 rounded-lg flex-shrink-0 overflow-hidden">
                     {item.productImage ? (
-                      <img src={item.productImage} alt={item.productName} className="w-full h-full object-cover" />
+                      <AppImage src={item.productImage} alt={item.productName} className="w-full h-full object-cover" widths={[128, 256]} sizes="64px" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
                         <Package className="h-6 w-6 text-gray-400" />

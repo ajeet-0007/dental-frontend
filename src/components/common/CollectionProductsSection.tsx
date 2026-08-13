@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Package } from "lucide-react";
 import ProductCarousel from "./ProductCarousel";
+import AppImage from "./AppImage";
 
 interface CollectionItem {
   id: number;
@@ -105,10 +106,12 @@ export default function CollectionProductsSection({
                       <div className="flex items-center gap-3 md:gap-4 min-w-0">
                         {thumb ? (
                           <div className="w-12 h-12 md:w-14 md:h-14 bg-white rounded-xl p-1.5 shadow-md flex items-center justify-center shrink-0">
-                            <img
+                            <AppImage
                               src={thumb}
                               alt={section.item.name}
                               className="w-full h-full object-contain"
+                              widths={[96, 160, 320]}
+                              sizes="56px"
                             />
                           </div>
                         ) : (

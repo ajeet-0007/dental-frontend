@@ -7,6 +7,7 @@ import { useAuthStore } from "@/stores/authStore";
 import { useCartStore } from "@/stores/cartStore";
 import { X, ShoppingCart, Minus, Plus, Package } from "lucide-react";
 import { formatPrice } from "@/utils/format";
+import AppImage from "./AppImage";
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -168,10 +169,12 @@ export default function CartDrawer({ isOpen, onClose, product }: CartDrawerProps
           <div className="flex gap-4 mb-6">
             <div className="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-50 rounded-2xl overflow-hidden flex-shrink-0 shadow-inner">
               {product.images?.[0] ? (
-                <img
+                <AppImage
                   src={product.images[0]}
                   alt={product.name}
                   className="w-full h-full object-cover"
+                  widths={[192, 320, 640]}
+                  sizes="96px"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
@@ -225,10 +228,12 @@ export default function CartDrawer({ isOpen, onClose, product }: CartDrawerProps
                     {/* Thumbnail */}
                     <div className="w-14 h-14 bg-white rounded-xl overflow-hidden flex-shrink-0 shadow-sm">
                       {variantImage ? (
-                        <img
+                        <AppImage
                           src={variantImage}
                           alt={variant.name}
                           className="w-full h-full object-cover"
+                          widths={[96, 160]}
+                          sizes="56px"
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">

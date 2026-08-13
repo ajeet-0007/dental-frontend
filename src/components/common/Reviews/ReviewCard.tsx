@@ -2,6 +2,7 @@ import { Star, ThumbsUp, CheckCircle, Pencil, Trash2, X } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { reviewsApi } from '@/api'
+import AppImage from '../AppImage'
 
 interface ReviewCardProps {
   review: {
@@ -65,11 +66,12 @@ export default function ReviewCard({ review, onEdit, onDelete }: ReviewCardProps
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center">
             {review.user.avatar && !avatarFailed ? (
-              <img
+              <AppImage
                 src={review.user.avatar}
                 alt={`${review.user.firstName} ${review.user.lastName}`}
                 onError={() => setAvatarFailed(true)}
                 className="w-10 h-10 rounded-full object-cover"
+                responsive={false}
               />
             ) : (
               <span className="text-primary-700 font-medium">
@@ -154,10 +156,12 @@ export default function ReviewCard({ review, onEdit, onDelete }: ReviewCardProps
               onClick={() => setSelectedImage(image)}
               className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100 cursor-pointer hover:opacity-80 transition-opacity"
             >
-              <img
+              <AppImage
                 src={image}
                 alt={`Review image ${index + 1}`}
                 className="w-full h-full object-cover"
+                widths={[160, 320]}
+                sizes="80px"
               />
             </div>
           ))}

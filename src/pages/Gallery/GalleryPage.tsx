@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import api from "@/api";
 import { ArrowLeft, X, ChevronLeft, ChevronRight, FolderOpen, Image as ImageIcon } from "lucide-react";
 import Seo from "@/components/seo/Seo";
+import AppImage from "@/components/common/AppImage";
 
 interface GalleryAlbum {
   id: number;
@@ -133,11 +134,12 @@ export default function GalleryPage() {
                   onClick={() => openLightbox(index)}
                 >
                   <div className="aspect-square bg-gray-200 rounded-lg overflow-hidden">
-                    <img
+                    <AppImage
                       src={image.imageUrl}
                       alt={image.caption || currentAlbum.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      loading="lazy"
+                      widths={[200, 400, 640]}
+                      sizes="(min-width: 1024px) 300px, (min-width: 640px) 240px, 160px"
                     />
                   </div>
                   {image.caption && (
@@ -194,10 +196,12 @@ export default function GalleryPage() {
                 className="max-w-[90vw] max-h-[85vh]"
                 onClick={(e) => e.stopPropagation()}
               >
-                <img
+                <AppImage
                   src={images[lightboxIndex].imageUrl}
                   alt={images[lightboxIndex].caption || currentAlbum.title}
                   className="max-w-full max-h-[80vh] object-contain rounded-lg"
+                  widths={[400, 800, 1200, 1600]}
+                  sizes="85vw"
                 />
                 {images[lightboxIndex].caption && (
                   <p className="text-white text-center mt-4 text-sm">
@@ -251,11 +255,12 @@ export default function GalleryPage() {
                 >
                   <div className="aspect-video bg-gray-100 overflow-hidden">
                     {album.coverImage ? (
-                      <img
+                      <AppImage
                         src={album.coverImage}
                         alt={album.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        loading="lazy"
+                        widths={[200, 400, 640]}
+                        sizes="(min-width: 1024px) 400px, (min-width: 640px) 300px, 100vw"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">

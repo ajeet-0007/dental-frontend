@@ -8,6 +8,7 @@ import { useCartStore } from "@/stores/cartStore";
 import { useWishlistStore } from "@/stores/wishlistStore";
 import toast from "react-hot-toast";
 import { useSwipe } from "@/hooks/useSwipe";
+import AppImage from "./AppImage";
 
 const DEFAULT_IMAGE = "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=400&h=400&fit=crop";
 
@@ -175,16 +176,19 @@ export default function ProductCarousel({ products, onOpenCartDrawer }: ProductC
                 >
                   <div className="relative aspect-square bg-gray-100 overflow-hidden">
                     {product.images?.[0] ? (
-                      <img
+                      <AppImage
                         src={product.images[0]}
                         alt={product.name}
                         className="w-full h-full object-cover transition-transform duration-300 group-hover/card:scale-105"
+                        widths={[200, 400, 640]}
+                        sizes="(min-width: 1024px) 300px, (min-width: 640px) 250px, 160px"
                       />
                     ) : (
-                      <img
+                      <AppImage
                         src={DEFAULT_IMAGE}
                         alt={product.name}
                         className="w-full h-full object-cover"
+                        responsive={false}
                       />
                     )}
                     <div className={`absolute top-2 right-2 transition-opacity md:opacity-0 group-hover/card:opacity-100 ${isMobile ? 'opacity-100' : ''}`}>
