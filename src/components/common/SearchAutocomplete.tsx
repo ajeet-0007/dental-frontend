@@ -9,7 +9,7 @@ import {
 import { useNavigate, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Package, ArrowRight, X, Loader2 } from "lucide-react";
+import { Search, Package, ArrowRight, X, Loader2, Store, Tag, Layers, ChevronRight } from "lucide-react";
 import api from "@/api";
 import { formatPrice } from "@/utils/format";
 
@@ -24,6 +24,14 @@ interface SuggestionProduct {
   brand?: string;
 }
 
+interface SuggestionEntity {
+  id: number;
+  name: string;
+  slug: string;
+  logo?: string;
+  image?: string;
+}
+
 interface SearchAutocompleteProps {
   placeholder?: string;
   variant?: "desktop" | "mobile";
@@ -32,6 +40,52 @@ interface SearchAutocompleteProps {
 
 export interface SearchAutocompleteHandle {
   setValue: (value: string) => void;
+}
+
+const TYPEWRITER_PHRASES = [
+  "Search for products...",
+  "Search for brands...",
+  "Search for categories...",
+  'Try "aligners"...',
+  'Try "microbrush"...',
+];
+
+function useTypewriter(
+  phrases: string[],
+  typeSpeed = 60,
+  deleteSpeed = 30,
+  holdTime = 1600,
+) {
+  const [text, setText] = useState("");
+  const [phraseIndex, setPhraseIndex] = useState(0);
+  const [deleting, setDeleting] = useState(false);
+
+  useEffect(() => {
+    if (phrases.length === 0) return;
+    const current = phrases[phraseIndex % phrases.length];
+    let timeout: number;
+
+    if (!deleting && text === current) {
+      timeout = window.setTimeout(() => setDeleting(true), holdTime);
+    } else if (deleting && text === "") {
+      setDeleting(false);
+      setPhraseIndex((i) => (i + 1) % phrases.length);
+    } else {
+      timeout = window.setTimeout(
+        () => {
+          setText((prev) =>
+            deleting
+              ? current.slice(0, prev.length - 1)
+              : current.slice(0, prev.length + 1),
+          );
+        },
+        deleting ? deleteSpeed : typeSpeed,
+      );
+    }
+    return () => window.clearTimeout(timeout);
+  }, [text, deleting, phraseIndex, phrases, typeSpeed, deleteSpeed, holdTime]);
+
+  return text;
 }
 
 function highlight(text: string, query: string) {
@@ -50,6 +104,59 @@ function highlight(text: string, query: string) {
   );
 }
 
+function EntityRow({
+  label,
+  icon: Icon,
+  items,
+  base,
+  imageField,
+  onNavigate,
+}: {
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  items: SuggestionEntity[];
+  base: string;
+  imageField?: "logo" | "image";
+  onNavigate: () => void;
+}) {
+  return (
+    <div className="pt-3 pb-1">
+      <span className="px-5 text-xs font-bold text-gray-500 uppercase tracking-wide">
+        {label}
+      </span>
+      {items.map((item) => {
+        const imageSrc = imageField ? item[imageField] : undefined;
+        return (
+          <Link
+            key={item.id}
+            to={`${base}/${item.slug}`}
+            onClick={onNavigate}
+            className="flex items-center gap-3 px-5 py-2.5 text-left transition-colors hover:bg-gray-50"
+          >
+            <span className="w-10 h-10 rounded-xl bg-gray-100 overflow-hidden flex-shrink-0 border border-gray-200">
+              {imageSrc ? (
+                <img
+                  src={imageSrc}
+                  alt=""
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span className="w-full h-full flex items-center justify-center">
+                  <Icon className="h-4 w-4 text-gray-400" />
+                </span>
+              )}
+            </span>
+            <span className="flex-1 min-w-0 text-sm font-medium text-gray-700 truncate">
+              {item.name}
+            </span>
+            <ChevronRight className="h-4 w-4 text-gray-300 flex-shrink-0" />
+          </Link>
+        );
+      })}
+    </div>
+  );
+}
+
 const SearchAutocomplete = forwardRef<
   SearchAutocompleteHandle,
   SearchAutocompleteProps
@@ -61,8 +168,10 @@ const SearchAutocomplete = forwardRef<
   const [isOpen, setIsOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
   const [debounced, setDebounced] = useState("");
+  const [focused, setFocused] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const typedText = useTypewriter(TYPEWRITER_PHRASES);
 
   useImperativeHandle(ref, () => ({
     setValue: (v: string) => {
@@ -116,6 +225,17 @@ const SearchAutocomplete = forwardRef<
       : Array.isArray(popularResults)
         ? popularResults
         : popularResults?.products || [];
+
+  const brands: SuggestionEntity[] =
+    debounced.trim().length >= 2 ? searchResults?.brands || [] : [];
+  const categories: SuggestionEntity[] =
+    debounced.trim().length >= 2 ? searchResults?.categories || [] : [];
+  const departments: SuggestionEntity[] =
+    debounced.trim().length >= 2 ? searchResults?.departments || [] : [];
+
+  const isSearching = debounced.trim().length >= 2;
+  const hasEntityMatches =
+    brands.length > 0 || categories.length > 0 || departments.length > 0;
 
   const showDropdown = isOpen;
   const isLoading = debounced.trim().length >= 2 && searchQuery.isFetching;
@@ -178,15 +298,30 @@ const SearchAutocomplete = forwardRef<
             setIsOpen(true);
             setActiveIndex(-1);
           }}
-          onFocus={() => setIsOpen(true)}
+          onFocus={() => {
+            setIsOpen(true);
+            setFocused(true);
+          }}
+          onBlur={() => setFocused(false)}
           onKeyDown={onKeyDown}
-          placeholder={placeholder}
+          placeholder={!value && !focused ? "" : placeholder}
           className={
             isDesktop
               ? "w-full px-5 py-3 pl-12 pr-24 rounded-full bg-white border-2 border-gray-200 focus:border-primary-500 focus:outline-none focus:ring-4 focus:ring-primary-100 transition-all duration-200 text-sm placeholder-gray-400 shadow-sm"
               : "w-full px-3 py-1.5 pl-8 pr-16 rounded-full bg-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
           }
         />
+        {!value && !focused && (
+          <span
+            aria-hidden="true"
+            className={`absolute top-1/2 -translate-y-1/2 text-sm text-gray-400 pointer-events-none whitespace-nowrap overflow-hidden ${
+              isDesktop ? "left-12 right-16" : "left-8 right-12"
+            }`}
+          >
+            {typedText}
+            <span className="inline-block w-0.5 h-4 bg-gray-400 animate-pulse align-middle ml-0.5" />
+          </span>
+        )}
         <Search
           className={`absolute top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-primary-500 transition-colors ${
             isDesktop ? "left-4" : "left-2.5 h-4 w-4"
@@ -230,7 +365,7 @@ const SearchAutocomplete = forwardRef<
           >
             <div className="px-5 py-3 bg-gray-50 border-b border-gray-100">
               <span className="text-xs font-bold text-gray-500 uppercase tracking-wide">
-                {debounced.trim().length >= 2 ? "Suggestions" : "Popular Products"}
+                {isSearching ? "Search Results" : "Popular Products"}
               </span>
             </div>
 
@@ -240,8 +375,50 @@ const SearchAutocomplete = forwardRef<
                   <Loader2 className="h-5 w-5 animate-spin" />
                   <span className="text-sm">Searching products...</span>
                 </div>
-              ) : hasResults ? (
-                products.map((product, index) => {
+              ) : (
+                <>
+                  {isSearching && hasEntityMatches && (
+                    <div className="border-b border-gray-100 pb-1">
+                      {brands.length > 0 && (
+                        <EntityRow
+                          label="Brands"
+                          icon={Store}
+                          items={brands}
+                          base="/brands"
+                          imageField="logo"
+                          onNavigate={closeAndReset}
+                        />
+                      )}
+                      {categories.length > 0 && (
+                        <EntityRow
+                          label="Categories"
+                          icon={Tag}
+                          items={categories}
+                          base="/categories"
+                          imageField="image"
+                          onNavigate={closeAndReset}
+                        />
+                      )}
+                      {departments.length > 0 && (
+                        <EntityRow
+                          label="Departments"
+                          icon={Layers}
+                          items={departments}
+                          base="/departments"
+                          imageField="image"
+                          onNavigate={closeAndReset}
+                        />
+                      )}
+                    </div>
+                  )}
+                  {hasResults ? (
+                    <>
+                      {isSearching && (
+                        <div className="px-5 pt-3 pb-1 text-xs font-bold text-gray-500 uppercase tracking-wide">
+                          Products
+                        </div>
+                      )}
+                      {products.map((product, index) => {
                   const brandName =
                     product.brandEntity?.name || product.brand || "";
                   const hasMrp =
@@ -294,16 +471,21 @@ const SearchAutocomplete = forwardRef<
                       <ArrowRight className="h-4 w-4 text-gray-300 flex-shrink-0" />
                     </button>
                   );
-                })
-              ) : (
-                <div className="px-5 py-10 text-center">
-                  <Search className="h-10 w-10 text-gray-300 mx-auto mb-3" />
-                  <p className="text-gray-500 font-medium">
-                    {debounced.trim().length >= 2
-                      ? `No products found for "${trimmed}"`
-                      : "No products available"}
-                  </p>
-                </div>
+                      })}
+                    </>
+                  ) : (
+                    !hasEntityMatches && (
+                      <div className="px-5 py-10 text-center">
+                        <Search className="h-10 w-10 text-gray-300 mx-auto mb-3" />
+                        <p className="text-gray-500 font-medium">
+                          {isSearching
+                            ? `No results found for "${trimmed}"`
+                            : "No products available"}
+                        </p>
+                      </div>
+                    )
+                  )}
+                </>
               )}
             </div>
 

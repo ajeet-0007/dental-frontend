@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowRight, Package } from "lucide-react";
 import ProductCarousel from "./ProductCarousel";
@@ -90,20 +89,14 @@ export default function CollectionProductsSection({
         </div>
 
         <div className="space-y-8 md:space-y-10">
-          {sections.map((section, index) => {
+          {sections.map((section) => {
             const colorIndex = Math.abs(section.item.id - 1) % GRADIENTS.length;
             const gradientClass = GRADIENTS[colorIndex];
             const shadowClass = TEXT_SHADOWS[colorIndex];
             const thumb = section.item.logo || section.item.image;
 
             return (
-              <motion.div
-                key={section.item.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-40px" }}
-                transition={{ duration: 0.5, delay: index * 0.05 }}
-              >
+              <div key={section.item.id}>
                 <div className="relative rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300 border border-gray-100 bg-white">
                   <div className={`relative bg-gradient-to-r ${gradientClass} px-4 md:px-6 py-4 md:py-5`}>
                     <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_top_right,white,transparent_60%)]" />
@@ -151,7 +144,7 @@ export default function CollectionProductsSection({
                     />
                   </div>
                 </div>
-              </motion.div>
+              </div>
             );
           })}
         </div>
