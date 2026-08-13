@@ -13,6 +13,7 @@ interface CollectionItem {
 interface CollectionSection {
   item: CollectionItem;
   products: any[];
+  count?: number;
 }
 
 interface CollectionProductsSectionProps {
@@ -123,7 +124,7 @@ export default function CollectionProductsSection({
                           </h3>
                           <p className="text-white/80 text-xs md:text-sm mt-0.5 flex items-center gap-1">
                             <Package className="w-3.5 h-3.5" />
-                            {section.products.length} products
+                            {section.count ?? section.products.length} products
                           </p>
                         </div>
                       </div>

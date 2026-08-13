@@ -343,6 +343,7 @@ export default function Home() {
           sections={homepageCategorySections.map((s: any) => ({
             item: s.category,
             products: s.products,
+            count: s.count,
           }))}
           subtitle="Explore"
           title="Category Collections"
@@ -389,6 +390,7 @@ export default function Home() {
           sections={homepageBrandSections.map((s: any) => ({
             item: s.brand,
             products: s.products,
+            count: s.count,
           }))}
           subtitle="Featured Brands"
           title="Brand Collections"
@@ -435,6 +437,7 @@ export default function Home() {
           sections={homepageDepartmentSections.map((s: any) => ({
             item: s.department,
             products: s.products,
+            count: s.count,
           }))}
           subtitle="Browse"
           title="Department Collections"
