@@ -10,7 +10,6 @@ interface Department {
   name: string;
   slug: string;
   image?: string;
-  productCount?: number;
 }
 
 interface DepartmentCarouselProps {
@@ -134,11 +133,6 @@ export default function DepartmentCarousel({ departments, itemsPerPage = 6 }: De
                       <h3 className="font-semibold text-sm text-gray-700 leading-tight line-clamp-2 mt-2 group-hover/card:text-primary-600 transition-colors">
                         {department.name}
                       </h3>
-                      {department.productCount !== undefined && department.productCount > 0 && (
-                        <p className="text-gray-400 text-xs mt-0.5">
-                          {department.productCount} Products
-                        </p>
-                      )}
                     </div>
                   </div>
                 </Link>
