@@ -5,7 +5,7 @@ export const SITE_NAME = "Dentzoo";
 export const DEFAULT_TITLE = `${SITE_NAME} - Dental Products Online`;
 
 export const DEFAULT_DESCRIPTION =
-  "Dentzoo is an online dental store for dental equipment, instruments, materials, and consumables. Shop premium dental products at the best prices.";
+  "Dentzoo is India's online dental store for dental equipment, instruments, materials, and consumables from genuine 100% authentic brands. Shop at the best prices with fast delivery across India.";
 
 export const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.png`;
 
