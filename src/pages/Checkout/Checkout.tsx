@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 
 const PAYMENT_METHODS = [
-  { id: "card", name: "Credit/Debit Card", icon: CreditCard },
+  { id: "card", name: "Credit/Debit Card", icon: CreditCard, comingSoon: true },
   { id: "cod", name: "Cash on Delivery", icon: Banknote },
 ];
 
@@ -27,7 +27,7 @@ export default function Checkout() {
   const { items: cartItems, setCart, clearCart } = useCartStore();
   const [useNewAddress, setUseNewAddress] = useState(false);
   const [selectedAddressId, setSelectedAddressId] = useState<number | null>(null);
-  const [paymentMethod, setPaymentMethod] = useState("card");
+  const [paymentMethod, setPaymentMethod] = useState("cod");
   const [showDeleteModal, setShowDeleteModal] = useState<number | null>(null);
   const [formData, setFormData] = useState({
     name: "",
@@ -186,43 +186,14 @@ export default function Checkout() {
 
   const createOrderMutation = useMutation({
     mutationFn: async (data: any) => {
-      if (data.paymentMethod === "cod") {
-        const orderRes = await api.post("/orders", data);
-        return { order: orderRes.data, isCOD: true };
-      }
-
-      const paymentRes = await api.post("/payments/create-checkout-session", {
-        ...data,
-        items: displayCartItems.map((item: any) => ({
-          productId: item.productId || item.product?.id,
-          productVariantId: item.productVariantId || item.variant?.id,
-          productName: item.productName || item.product?.name,
-          productImage: item.productImage || item.variant?.image || item.product?.images?.[0],
-          sku: item.sku || item.product?.sku || '',
-          quantity: item.quantity,
-          unitPrice: item.variant?.sellingPrice || item.product?.sellingPrice,
-        })),
-        subtotal,
-        taxAmount: 0,
-        shippingAmount: 0,
-        totalAmount: total,
-      });
-
-      if (paymentRes.data.url) {
-        window.location.href = paymentRes.data.url;
-      }
-
-      return { isCOD: false };
+      const orderRes = await api.post("/orders", { ...data, paymentMethod: "cod" });
+      return { order: orderRes.data, isCOD: true };
     },
     onSuccess: (result) => {
-      if (result.isCOD) {
-        toast.success("Order placed successfully!");
-        clearCart();
-        queryClient.invalidateQueries({ queryKey: ["cart"] });
-        navigate(`/orders/${result.order.id}`);
-      } else {
-        toast.success("Redirecting to payment...");
-      }
+      toast.success("Order placed successfully!");
+      clearCart();
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+      navigate(`/orders/${result.order.id}`);
     },
     onError: () => toast.error("Failed to create order"),
   });
@@ -722,26 +693,35 @@ export default function Checkout() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {PAYMENT_METHODS.map((method) => {
                     const Icon = method.icon;
+                    const isSelected = paymentMethod === method.id;
                     return (
                       <button
                         key={method.id}
-                        onClick={() => setPaymentMethod(method.id)}
+                        onClick={() => !method.comingSoon && setPaymentMethod(method.id)}
+                        disabled={method.comingSoon}
                         className={`flex items-center gap-3 p-4 md:p-5 border rounded-2xl transition-all duration-300 ${
-                          paymentMethod === method.id
-                            ? "border-primary-500 ring-2 ring-primary-500/20 bg-primary-50/50 shadow-md shadow-primary-500/10"
-                            : "border-gray-100 hover:border-gray-200 hover:shadow-md hover:shadow-gray-200/50 bg-white"
+                          method.comingSoon
+                            ? "border-gray-100 bg-gray-50 opacity-60 cursor-not-allowed"
+                            : isSelected
+                              ? "border-primary-500 ring-2 ring-primary-500/20 bg-primary-50/50 shadow-md shadow-primary-500/10"
+                              : "border-gray-100 hover:border-gray-200 hover:shadow-md hover:shadow-gray-200/50 bg-white"
                         }`}
                       >
                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
-                          paymentMethod === method.id
-                            ? "bg-gradient-to-br from-primary-500 to-blue-500 shadow-md shadow-primary-500/20"
-                            : "bg-gray-100"
+                          method.comingSoon
+                            ? "bg-gray-200"
+                            : isSelected
+                              ? "bg-gradient-to-br from-primary-500 to-blue-500 shadow-md shadow-primary-500/20"
+                              : "bg-gray-100"
                         }`}>
-                          <Icon className={`w-5 h-5 ${paymentMethod === method.id ? "text-white" : "text-gray-400"}`} />
+                          <Icon className={`w-5 h-5 ${method.comingSoon ? "text-gray-400" : isSelected ? "text-white" : "text-gray-400"}`} />
                         </div>
                         <div className="text-left">
-                          <span className={`font-semibold text-sm ${paymentMethod === method.id ? "text-primary-700" : "text-gray-900"}`}>{method.name}</span>
-                          {method.id === "cod" && (
+                          <span className={`font-semibold text-sm ${method.comingSoon ? "text-gray-400" : isSelected ? "text-primary-700" : "text-gray-900"}`}>{method.name}</span>
+                          {method.comingSoon && (
+                            <p className="text-xs text-gray-400 font-medium mt-0.5">Coming Soon</p>
+                          )}
+                          {method.id === "cod" && !method.comingSoon && (
                             <p className="text-xs text-emerald-600 font-medium mt-0.5">No extra charges</p>
                           )}
                         </div>
