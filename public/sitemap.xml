@@ -2,45 +2,723 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.dentzoo.com/</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-08-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.dentzoo.com/products</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-08-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.dentzoo.com/categories</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-08-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.dentzoo.com/departments</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-08-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.dentzoo.com/brands</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-08-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.dentzoo.com/help</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-08-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.4</priority>
   </url>
   <url>
     <loc>https://www.dentzoo.com/gallery</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-08-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-lc-cal-paste-light-cure-radiopaque-calcium-hydroxide-paste-dentzoo</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-fine-grain-48-percent-silver-alloy-1</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-a-silicone-bite-registration-impression-material</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-accurex-chromatic-alginate-impression-material</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-green-impression-tracing-sticks</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-bond-7-7th-generation-light-cure-bonding-agent-dentzoo</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-re-core-flowable-dual-curing-core-build-up-composite-dentzoo</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-sil-ionomer-silver-reinforced-radiopaque-glass-ionomer-restorative-material-dentzoo</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-zinox-extra-pure-arsenic-free-zinc-oxide-powder-dentzoo</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-cavibond-polymer-reinforced-zinc-oxide-eugenol-cement-dentzoo</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-nano-fill-kit-light-cure-nano-hybrid-universal-restorative-composite-kit-dentzoo</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-dx-seal-light-cure-pit-fissure-sealant-dentzoo</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-compo-flow-light-cure-nano-hybrid-flowable-composite-dentzoo</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-bond-5-5th-generation-light-cure-bonding-agent-dentzoo</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-root-seal-self-cure-root-canal-sealing-material-dentzoo-1</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-lc-restorative-plus-light-cure-glass-ionomer-composite-cement-dentzoo</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-lute-plus-fine-particle-glass-ionomer-luting-cement-dentzoo</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-bond-duo-dual-curing-resin-based-composite-adhesive-luting-cement-dentzoo</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-rc-clean-d-limonene-gutta-percha-solvent-dentzoo</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-caviact-gel-37-phosphoric-acid-tooth-etching-gel-dentzoo</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-zinc-pro-fine-particle-zinc-phosphate-cement-dentzoo</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-polycarboxylate-cement-dentzoo</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-iodoform-powder-dentzoo</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-cold-mould-seal-dentzoo</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-heat-cure-powder-dentzoo</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-gum-astringent-analgesic</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-2-percent-chlorhexidine-solution</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-bio-resorbable-fibre-formulated-dry-socket-paste-1</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-camphor-mono-chlorophenol-solution-1</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-pulp-devitalizing-solution-1</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-antibacterial-zinc-oxide-eugenol-root-canal-sealant-1</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-root-canal-obturation-cement-1</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-calcium-hydroxide-fine-powder-1</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-compo-flow-light-cure-nano-hybrid-flowable-composite-kit-4x2g</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-p-devit-pulp-devitalizing-paste-6g-jar</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-compo-bulk-flow-light-cure-flowable-composite-2g</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-nano-fill-light-cure-universal-nano-hybrid-composite-4g</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-antiseptic-analgesic-dressing-post-extraction-care</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-strontium-silicate-based-bioceramic-root-canal-sealer</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-calci-paste-plus-calcium-hydroxide-barium-sulphate-2x2g</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-self-cure-temporary-crown-and-bridge-material</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-nano-paraformaldehyde-pulp-devitalizing-paste</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-17-percent-edta-with-10-percent-carbamide-peroxide-gel</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-calcium-hydroxide-with-iodoform-paste</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-thermoplastic-impression-compound</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-mta-for-root-and-pulp-treatment</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-pure-oil-of-cloves</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-high-strength-copper-amalgam-pellets</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-restorative-radiopaque-glass-ionomer-restorative-material</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-fine-grain-48-percent-silver-alloy</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-long-term-non-eugenol-temporary-luting-cement</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-gingival-retraction-haemostatic-liquid</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-gingival-retraction-haemostatic-gel</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-light-cure-temporary-crown-and-bridge-putty</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-short-term-non-eugenol-temporary-luting-cement</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-non-eugenol-zinc-sulphate-temporary-filling-material</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-light-cure-temporary-filling-material</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-a-silicone-hand-mix-impression-putty</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-a-silicone-light-body-impression-material</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-analgesic-antiseptic-solution</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-light-curing-gingiva-barrier-bleaching-resin</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-advanced-formula-rapid-in-office-whitening-system</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-prophylaxis-paste-with-fluoride</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-topical-acidulated-phosphate-fluoride-1-23-percent-gel</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-cavity-protective-varnish-with-fluoride</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-zinc-oxide-eugenol-impression-paste</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-non-chromatic-alginate-impression-material</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-a-silicone-gingiva-reproduction-impression-material</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/pyrax-a-silicone-transparent-impression-material</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/appledental-smart-endo-pro-2-in-1-endomotor-built-in-apex-locator</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/appledental-eco-sensor-1-5-digital-dental-x-ray-imaging-system-rvg</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/appledental-dental-rvg-eco-sensor-positioner-holder</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/appledent-standard-head-push-button-air-rotor-hand-piece</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/appledent-dental-intra-oral-camera-with-17-inch-led-monitor</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/appledental-touch-screen-apex-locator-eco-apex</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/appledental-the-1st-chair-of-dentists-clinic</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/appledental-super-torque-push-button-45-degree-handpiece</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/appledental-super-implant-motor</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/appledental-mini-head-push-button-mu</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/appledental-micro-camera-3-in-1</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/appledental-low-speed-contra-angle-handpiece-straight-handpiece-air-motor</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/appledental-light-cure-led-curing-light-1-sec-curved</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/appledental-fiber-optic-implant-handpiece</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/appledental-endo-motor-with-led-light</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/appledental-electric-micro-motor</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/appledental-dental-endomotor-handpiece-head-16-1</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/woodpecker-surgic-smart-piezosurgery-unit</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/woodpecker-uds-e-led-ultrasonic-scaler-8-tips-free</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/woodpecker-endopace-brushless-endomotor</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/woodpecker-ai-ray-portable-x-ray-machine</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/woodpecker-led-curing-light-intensity-meter-lm-1</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/woodpecker-i-scan-wireless-touchscreen-phosphor-plate-scanner</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/woodpecker-hw-5-led-optic-scaler-handpiece-1</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/woodpecker-fi-e-gutta-percha-backfill-obturation-1</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/woodpecker-fi-p-plus-gutta-percha-downpack-1</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/woodpecker-fi-p-plus-fi-e-gutta-percha-obturation-1</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/woodpecker-medical-goggle-mg-1-1</loc>
+    <lastmod>2026-08-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/woodpecker-ultrasonic-scaler-air-polisher-pt-a-1</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/woodpecker-u-600-led-ultrasonic-scaler-1</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/woodpecker-hb-1l-piezo-bone-surgery-handpiece-1</loc>
+    <lastmod>2026-08-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/woodpecker-dm-innotaper-niti-gold-rotary-files-25mm-assorted-pack-of-6</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/woodpecker-scaler-tip-gd3-for-dte-satelec-scalers</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/woodpecker-scaler-tip-e3-for-uds-ems-scalers</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/woodpecker-scaler-tip-g10-for-uds-ems-scalers</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/woodpecker-scaler-tip-gd9-for-dte-satelec-scalers</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/woodpecker-scaler-tip-g4-for-uds-ems-scalers</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/woodpecker-scaler-tip-p1-for-uds-ems-scalers</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/woodpecker-scaler-tip-gd1-for-dte-satelec-scalers</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/woodpecker-scaler-tip-ed1-for-dte-satelec-scalers</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/woodpecker-scaler-tip-g8-for-uds-ems-scalers</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/woodpecker-scaler-tip-ed2-for-dte-satelec-scalers</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/woodpecker-scaler-tip-p3-for-uds-ems-scalers</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/woodpecker-scaler-tip-torque-wrench</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://www.dentzoo.com/products/cartridge-for-apple-dental-led-airotor-super-torque-tu</loc>
@@ -50,13 +728,13 @@
   </url>
   <url>
     <loc>https://www.dentzoo.com/products/apple-dental-air-motor-engine</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-08-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://www.dentzoo.com/products/apple-dental-contra-angle-push-button-handpiece</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-08-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -122,7 +800,7 @@
   </url>
   <url>
     <loc>https://www.dentzoo.com/products/woodpecker-motopex-brushless-endomotor</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-08-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -176,7 +854,7 @@
   </url>
   <url>
     <loc>https://www.dentzoo.com/products/woodpecker-endomatic-endomotor</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-08-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -230,7 +908,7 @@
   </url>
   <url>
     <loc>https://www.dentzoo.com/products/woodpecker-e-com-cordless-endomotor</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-08-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -326,7 +1004,7 @@
   </url>
   <url>
     <loc>https://www.dentzoo.com/products/woodpecker-endomotor-contra-angle-handpiece-heads</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-08-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -338,13 +1016,13 @@
   </url>
   <url>
     <loc>https://www.dentzoo.com/products/woodpecker-rta-endo-space-brushless-endomotor-with-in-built-apex-locator</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-08-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://www.dentzoo.com/products/woodpecker-rta-minimotor-brushless-endomotor</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-08-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -524,13 +1202,13 @@
   </url>
   <url>
     <loc>https://www.dentzoo.com/products/nsk-mp-y-endomotor-miniature-head-c547001</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-08-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://www.dentzoo.com/products/nsk-endo-mate-dt-endomotor-y141124</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-08-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -638,13 +1316,13 @@
   </url>
   <url>
     <loc>https://www.dentzoo.com/products/nsk-endomate-tc2-endomotor-with-mpas-1-16</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-08-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://www.dentzoo.com/products/nsk-endomate-dt-endomotor-with-16-1-mpas-head-y141121</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-08-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -805,18 +1483,6 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.dentzoo.com/products/gc-impreceed-alginate-powder-impression-material-1</loc>
-    <lastmod>2026-08-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://www.dentzoo.com/products/gc-gold-label-9-posterior-restorative-gic-1</loc>
-    <lastmod>2026-08-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://www.dentzoo.com/products/gc-solare-universal-bond</loc>
     <lastmod>2026-08-11</lastmod>
     <changefreq>weekly</changefreq>
@@ -884,18 +1550,6 @@
   </url>
   <url>
     <loc>https://www.dentzoo.com/products/gc-gold-label-9-extra-capsules-pack-of-30</loc>
-    <lastmod>2026-08-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://www.dentzoo.com/products/gc-solare-x-composite-5gm</loc>
-    <lastmod>2026-08-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://www.dentzoo.com/products/gc-g-aenial-posterior</loc>
     <lastmod>2026-08-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
@@ -974,13 +1628,13 @@
   </url>
   <url>
     <loc>https://www.dentzoo.com/products/3m-espe-penta-elastomer-syringe-set-without-brush</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-08-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://www.dentzoo.com/products/3m-espe-express-xt-vps-impression-material-refills</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-08-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1304,13 +1958,13 @@
   </url>
   <url>
     <loc>https://www.dentzoo.com/products/nsk-varios-ultrasonic-scaler-tip-g2-z217102-2</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-08-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://www.dentzoo.com/products/nsk-varios-ultrasonic-scaler-tip-g3-z217103-2</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-08-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1496,19 +2150,19 @@
   </url>
   <url>
     <loc>https://www.dentzoo.com/products/20.%20nsk-mpas-f20r-endomotor-head-y110044</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-08-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://www.dentzoo.com/products/19.%20nsk-prophy-mate-neo-dental-air-polisher-pmng-ptl-p</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-08-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://www.dentzoo.com/products/18.%20nsk-varios-570eu-ultrasonic-scaler-with-3-tips-y1001436</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-08-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1544,19 +2198,19 @@
   </url>
   <url>
     <loc>https://www.dentzoo.com/products/12.%20nsk-varios-970-ultrasonic-scaler-with-3-tips-y1001175</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-08-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://www.dentzoo.com/products/11.%20nsk-varios-970-lux-led-ultrasonic-scaler-with-3-tips</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-08-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://www.dentzoo.com/products/10.%20nsk-varios-370eu-ultrasonic-scaler-complete-set</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-08-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1916,7 +2570,7 @@
   </url>
   <url>
     <loc>https://www.dentzoo.com/products/ammdent-infibra-fiber-splint</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-08-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1958,7 +2612,7 @@
   </url>
   <url>
     <loc>https://www.dentzoo.com/products/ammdent-glass-fiber-post</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-08-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -2396,7 +3050,7 @@
   </url>
   <url>
     <loc>https://www.dentzoo.com/products/oro-endo-box</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-08-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -2546,7 +3200,7 @@
   </url>
   <url>
     <loc>https://www.dentzoo.com/products/orikam-e-connect-cordless-endomotor</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-08-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -2930,7 +3584,7 @@
   </url>
   <url>
     <loc>https://www.dentzoo.com/products/Prevest%20Denpro%20Oratemp%20C%26B</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-08-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -3128,7 +3782,7 @@
   </url>
   <url>
     <loc>https://www.dentzoo.com/products/woodpecker-rta-d1-ultrasonic-scaler</loc>
-    <lastmod>2026-07-22</lastmod>
+    <lastmod>2026-08-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -3170,12 +3824,6 @@
   </url>
   <url>
     <loc>https://www.dentzoo.com/products/prevest-denpro-fusion-universal-composite-intro-kit</loc>
-    <lastmod>2026-07-07</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://www.dentzoo.com/products/prevest-hemostal-liquid</loc>
     <lastmod>2026-07-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
@@ -3367,14 +4015,50 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://www.dentzoo.com/categories/dental</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/categories/dental%20xrays</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/categories/apex</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/categories/r</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/categories/e</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/categories/u</loc>
+    <lastmod>2026-08-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.dentzoo.com/categories/intracanal%20medicament</loc>
-    <lastmod>2026-08-04</lastmod>
+    <lastmod>2026-08-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://www.dentzoo.com/categories/d</loc>
-    <lastmod>2026-08-04</lastmod>
+    <lastmod>2026-08-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -3415,14 +4099,8 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.dentzoo.com/categories/xray-imaging</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://www.dentzoo.com/categories/composite</loc>
-    <lastmod>2026-07-22</lastmod>
+    <lastmod>2026-08-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -3469,6 +4147,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://www.dentzoo.com/categories/xray-imaging</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.dentzoo.com/categories/o</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
@@ -3493,14 +4177,14 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.dentzoo.com/categories/general-dentistry</loc>
-    <lastmod>2026-08-03</lastmod>
+    <loc>https://www.dentzoo.com/categories/dental-floss</loc>
+    <lastmod>2026-05-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.dentzoo.com/categories/dental-floss</loc>
-    <lastmod>2026-05-15</lastmod>
+    <loc>https://www.dentzoo.com/categories/general-dentistry</loc>
+    <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -3752,7 +4436,7 @@
   </url>
   <url>
     <loc>https://www.dentzoo.com/brands/woodpecker</loc>
-    <lastmod>2026-05-11</lastmod>
+    <lastmod>2026-08-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -3770,7 +4454,7 @@
   </url>
   <url>
     <loc>https://www.dentzoo.com/brands/pyrex</loc>
-    <lastmod>2026-05-11</lastmod>
+    <lastmod>2026-08-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>

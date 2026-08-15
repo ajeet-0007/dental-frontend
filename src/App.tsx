@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { QueryClientProvider, dehydrate } from "@tanstack/react-query";
 import { HelmetProvider } from "react-helmet-async";
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { queryClient } from "./queryClient";
 import Seo from "./components/seo/Seo";
 import { Toaster } from "react-hot-toast";
@@ -9,57 +9,59 @@ import Layout from "./components/layout/Layout";
 import Home from "./pages/Home/Home";
 import Products from "./pages/Products/Products";
 import ProductDetail from "./pages/ProductDetail/ProductDetail";
-import HowToUseVideo from "./pages/ProductDetail/HowToUseVideo";
-import Cart from "./pages/Cart/Cart";
-import Checkout from "./pages/Checkout/Checkout";
-import PaymentSuccess from "./pages/Checkout/PaymentSuccess";
-import Orders from "./pages/Orders/Orders";
-import OrderDetail from "./pages/Orders/OrderDetail";
-import UserProfile from "./pages/UserProfile/UserProfile";
-import Wishlist from "./pages/Wishlist/Wishlist";
-import HelpSupport from "./pages/HelpSupport/HelpSupport";
-import Login from "./pages/Auth/Login";
-import Register from "./pages/Auth/Register";
-import AuthCallback from "./pages/Auth/AuthCallback";
-import ForgotPassword from "./pages/Auth/ForgotPassword";
+import ScrollToTop from "./components/ScrollToTop";
+import NotFound from "./pages/NotFound/NotFound";
 import Departments from "./pages/Departments/Departments";
 import Brands from "./pages/Brands/Brands";
 import Categories from "./pages/Categories/Categories";
-import { useAuthStore } from "./stores/authStore";
-import { useCartStore } from "./stores/cartStore";
-import api from "./api";
-import AdminLayout from "./pages/Admin/AdminLayout";
-import AdminDashboard from "./pages/Admin/AdminDashboard";
-import AdminOrders from "./pages/Admin/AdminOrders";
-import AdminProducts from "./pages/Admin/AdminProducts";
-import AdminProductFilters from "./pages/Admin/AdminProductFilters";
-import AdminCategories from "./pages/Admin/AdminCategories";
-import AdminDepartments from "./pages/Admin/AdminDepartments";
-import AdminBrands from "./pages/Admin/AdminBrands";
-import AdminHomepageBrands from "./pages/Admin/AdminHomepageBrands";
-import AdminHomepageCategories from "./pages/Admin/AdminHomepageCategories";
-import AdminHomepageDepartments from "./pages/Admin/AdminHomepageDepartments";
-import AdminBanners from "./pages/Admin/AdminBanners";
-import AdminUsers from "./pages/Admin/AdminUsers";
-import AdminPayments from "./pages/Admin/AdminPayments";
-import AdminInventory from "./pages/Admin/AdminInventory";
-import AdminLogin from "./pages/Admin/AdminLogin";
-import AdminOrderDetail from "./pages/Admin/AdminOrderDetail";
-import AdminShipping from "./pages/Admin/AdminShipping";
-import AdminBulkUpload from "./pages/Admin/AdminBulkUpload";
-import AdminEntityBulkUpload from "./pages/Admin/AdminEntityBulkUpload";
-import AdminVerification from "./pages/Admin/AdminVerification";
-import AdminLogs from "./pages/Admin/AdminLogs";
-import AdminLogDetail from "./pages/Admin/AdminLogDetail";
-import AdminGallery from "./pages/Admin/AdminGallery";
-import ScrollToTop from "./components/ScrollToTop";
-import Returns from "./pages/Returns/Returns";
-import ReturnDetail from "./pages/Returns/ReturnDetail";
-import InitiateReturn from "./pages/Returns/InitiateReturn";
-import { GalleryPage } from "./pages/Gallery";
+import HelpSupport from "./pages/HelpSupport/HelpSupport";
 import BrandDetail from "./pages/BrandDetail/BrandDetail";
 import CategoryDetail from "./pages/CategoryDetail/CategoryDetail";
 import DepartmentDetail from "./pages/DepartmentDetail/DepartmentDetail";
+import { GalleryPage } from "./pages/Gallery";
+import { useAuthStore } from "./stores/authStore";
+import { useCartStore } from "./stores/cartStore";
+import api from "./api";
+
+const Cart = lazy(() => import("./pages/Cart/Cart"));
+const Checkout = lazy(() => import("./pages/Checkout/Checkout"));
+const PaymentSuccess = lazy(() => import("./pages/Checkout/PaymentSuccess"));
+const Orders = lazy(() => import("./pages/Orders/Orders"));
+const OrderDetail = lazy(() => import("./pages/Orders/OrderDetail"));
+const UserProfile = lazy(() => import("./pages/UserProfile/UserProfile"));
+const Wishlist = lazy(() => import("./pages/Wishlist/Wishlist"));
+const HowToUseVideo = lazy(() => import("./pages/ProductDetail/HowToUseVideo"));
+const Returns = lazy(() => import("./pages/Returns/Returns"));
+const ReturnDetail = lazy(() => import("./pages/Returns/ReturnDetail"));
+const InitiateReturn = lazy(() => import("./pages/Returns/InitiateReturn"));
+const Login = lazy(() => import("./pages/Auth/Login"));
+const Register = lazy(() => import("./pages/Auth/Register"));
+const AuthCallback = lazy(() => import("./pages/Auth/AuthCallback"));
+const ForgotPassword = lazy(() => import("./pages/Auth/ForgotPassword"));
+const AdminLayout = lazy(() => import("./pages/Admin/AdminLayout"));
+const AdminDashboard = lazy(() => import("./pages/Admin/AdminDashboard"));
+const AdminOrders = lazy(() => import("./pages/Admin/AdminOrders"));
+const AdminProducts = lazy(() => import("./pages/Admin/AdminProducts"));
+const AdminProductFilters = lazy(() => import("./pages/Admin/AdminProductFilters"));
+const AdminCategories = lazy(() => import("./pages/Admin/AdminCategories"));
+const AdminDepartments = lazy(() => import("./pages/Admin/AdminDepartments"));
+const AdminBrands = lazy(() => import("./pages/Admin/AdminBrands"));
+const AdminHomepageBrands = lazy(() => import("./pages/Admin/AdminHomepageBrands"));
+const AdminHomepageCategories = lazy(() => import("./pages/Admin/AdminHomepageCategories"));
+const AdminHomepageDepartments = lazy(() => import("./pages/Admin/AdminHomepageDepartments"));
+const AdminBanners = lazy(() => import("./pages/Admin/AdminBanners"));
+const AdminUsers = lazy(() => import("./pages/Admin/AdminUsers"));
+const AdminPayments = lazy(() => import("./pages/Admin/AdminPayments"));
+const AdminInventory = lazy(() => import("./pages/Admin/AdminInventory"));
+const AdminLogin = lazy(() => import("./pages/Admin/AdminLogin"));
+const AdminOrderDetail = lazy(() => import("./pages/Admin/AdminOrderDetail"));
+const AdminShipping = lazy(() => import("./pages/Admin/AdminShipping"));
+const AdminBulkUpload = lazy(() => import("./pages/Admin/AdminBulkUpload"));
+const AdminEntityBulkUpload = lazy(() => import("./pages/Admin/AdminEntityBulkUpload"));
+const AdminVerification = lazy(() => import("./pages/Admin/AdminVerification"));
+const AdminLogs = lazy(() => import("./pages/Admin/AdminLogs"));
+const AdminLogDetail = lazy(() => import("./pages/Admin/AdminLogDetail"));
+const AdminGallery = lazy(() => import("./pages/Admin/AdminGallery"));
 // import ChatPage from "./pages/Chat/ChatPage";
 
 const PRIVATE_PATH_PATTERN =
@@ -70,6 +72,14 @@ function RouteSeo() {
   const isPrivate = PRIVATE_PATH_PATTERN.test(location.pathname);
   if (!isPrivate) return null;
   return <Seo noindex />;
+}
+
+function PageLoader() {
+  return (
+    <div className="min-h-[40vh] flex items-center justify-center">
+      <div className="w-10 h-10 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
+    </div>
+  );
 }
 
 function App() {
@@ -109,6 +119,7 @@ function App() {
         <BrowserRouter>
         <ScrollToTop />
         <RouteSeo />
+        <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
@@ -134,6 +145,7 @@ function App() {
             <Route path="help" element={<HelpSupport />} />
             <Route path="gallery" element={<GalleryPage />} />
             <Route path="gallery/:slug" element={<GalleryPage />} />
+            <Route path="*" element={<NotFound />} />
             {/* <Route path="chat" element={<ChatPage />} /> */}
           </Route>
           <Route path="/login" element={<Login />} />
@@ -166,6 +178,7 @@ function App() {
             <Route path="gallery" element={<AdminGallery />} />
           </Route>
         </Routes>
+        </Suspense>
         </BrowserRouter>
       </HelmetProvider>
     </QueryClientProvider>

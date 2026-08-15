@@ -11,7 +11,7 @@ export default defineConfig({
       devOptions: {
         enabled: true,
       },
-      includeAssets: ['DentZoo_Logo.svg', 'offline.html'],
+      includeAssets: ['DentZoo_Logo.svg', 'dentzoo-logo.png', 'favicon.png', 'offline.html'],
       manifest: {
         name: 'Dentzoo - Dental Products Online',
         short_name: 'Dentzoo',

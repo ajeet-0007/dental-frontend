@@ -106,7 +106,7 @@ export default function HeroCarousel({ banners }: HeroCarouselProps) {
           transition={{ duration: 0.5 }}
           className="relative w-full"
           style={{
-            aspectRatio: aspectRatios[currentBanner.id] || "auto",
+            aspectRatio: aspectRatios[currentBanner.id] || "16/7",
           }}
         >
           <Link

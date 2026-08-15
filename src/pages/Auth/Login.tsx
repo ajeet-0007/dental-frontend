@@ -142,7 +142,7 @@ export default function Login() {
         <div className="relative z-10 p-8 flex flex-col justify-between w-full">
           <div>
             <div className="flex items-center gap-3">
-              <img src="/Gemini_Generated_Image_r3bztgr3bztgr3bz.png" alt="Dentzoo" className="h-12 w-auto" />
+              <img src="/dentzoo-logo.png" alt="Dentzoo" width="240" height="190" className="h-12 w-auto" />
               <p className="text-primary-200 text-xs">Your Trusted Dental Partner</p>
             </div>
           </div>
@@ -193,7 +193,7 @@ export default function Login() {
         <div className="w-full max-w-md">
           {/* Mobile Logo */}
             <div className="lg:hidden text-center mb-8">
-              <img src="/Gemini_Generated_Image_r3bztgr3bztgr3bz.png" alt="Dentzoo" className="h-12 w-auto mx-auto" />
+              <img src="/dentzoo-logo.png" alt="Dentzoo" width="240" height="190" className="h-12 w-auto mx-auto" />
             </div>
 
           <div className="bg-white rounded-2xl shadow-xl shadow-gray-200/50 p-6 lg:p-8">

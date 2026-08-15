@@ -130,6 +130,10 @@ export default function Home() {
         jsonLd={[buildOrganizationJsonLd(), buildWebSiteJsonLd()]}
       />
     <div>
+      <h1 className="sr-only">
+        Dentzoo - India's Online Dental Store for Dental Equipment, Instruments,
+        Materials &amp; Consumables
+      </h1>
       {/* Hero Banner Carousel */}
       {banners.length > 0 && (
         <section className="py-4">

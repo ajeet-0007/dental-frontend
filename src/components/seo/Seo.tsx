@@ -1,6 +1,7 @@
 import { Helmet } from "react-helmet-async";
 import {
   SITE_NAME,
+  SITE_URL,
   DEFAULT_TITLE,
   DEFAULT_DESCRIPTION,
   DEFAULT_OG_IMAGE,
@@ -18,6 +19,15 @@ interface SeoProps {
   jsonLd?: object | object[];
 }
 
+function currentPath(): string {
+  if (typeof window === "undefined") return "/";
+  const { pathname } = window.location;
+  if (pathname.length > 1 && pathname.endsWith("/")) {
+    return pathname.slice(0, -1);
+  }
+  return pathname || "/";
+}
+
 export default function Seo({
   title,
   description,
@@ -30,7 +40,7 @@ export default function Seo({
   const pageTitle = title ? buildTitle(title) : DEFAULT_TITLE;
   const pageDescription = description || DEFAULT_DESCRIPTION;
   const pageImage = image || DEFAULT_OG_IMAGE;
-  const canonicalUrl = canonical ? absoluteUrl(canonical) : undefined;
+  const canonicalUrl = canonical ? absoluteUrl(canonical) : `${SITE_URL}${currentPath()}`;
   const robots = noindex ? "noindex, nofollow" : undefined;
 
   return (
@@ -42,12 +52,12 @@ export default function Seo({
       ) : (
         <meta name="robots" content="index, follow" />
       )}
-      {canonicalUrl ? <link rel="canonical" href={canonicalUrl} /> : null}
+      <link rel="canonical" href={canonicalUrl} />
 
       <meta property="og:site_name" content={SITE_NAME} />
       <meta property="og:title" content={pageTitle} />
       <meta property="og:description" content={pageDescription} />
-      {canonicalUrl ? <meta property="og:url" content={canonicalUrl} /> : null}
+      <meta property="og:url" content={canonicalUrl} />
       <meta property="og:image" content={pageImage} />
       <meta property="og:type" content={type} />
 
