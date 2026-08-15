@@ -14,12 +14,10 @@
     <meta name="robots" content="index, follow" />
     <meta name="author" content="Dentzoo" />
     <meta name="geo.region" content="IN" />
-    <link rel="canonical" href="https://www.dentzoo.com/" />
 
     <meta property="og:site_name" content="Dentzoo" />
     <meta property="og:title" content="Dentzoo - India's Online Dental Store for Equipment" />
     <meta property="og:description" content="Dentzoo is an online dental store for dental equipment, instruments, materials, and consumables from genuine 100% authentic brands." />
-    <meta property="og:url" content="https://www.dentzoo.com/" />
     <meta property="og:image" content="https://www.dentzoo.com/og-image.png" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="en_IN" />
@@ -55,6 +53,30 @@
         "query-input": "required name=search_term_string"
       }
     }
+    </script>
+
+    <script>
+      (function () {
+        var canonical = document.querySelector('link[rel="canonical"]');
+        if (!canonical) {
+          canonical = document.createElement("link");
+          canonical.setAttribute("rel", "canonical");
+          document.head.appendChild(canonical);
+        }
+        var href = window.location.origin + window.location.pathname;
+        if (href.length > 1 && href.charAt(href.length - 1) === "/") {
+          href = href.slice(0, -1);
+        }
+        canonical.setAttribute("href", href);
+
+        var ogUrl = document.querySelector('meta[property="og:url"]');
+        if (!ogUrl) {
+          ogUrl = document.createElement("meta");
+          ogUrl.setAttribute("property", "og:url");
+          document.head.appendChild(ogUrl);
+        }
+        ogUrl.setAttribute("content", href);
+      })();
     </script>
   </head>
   <body>
