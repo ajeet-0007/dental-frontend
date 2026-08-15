@@ -3,6 +3,7 @@ import { Star, X, Upload, Loader2 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import toast from 'react-hot-toast'
 import { useAuthStore } from '@/stores/authStore'
+import { Link } from 'react-router-dom'
 import { reviewsApi } from '@/api'
 import api from '@/api'
 
@@ -169,12 +170,12 @@ export default function ReviewForm({ productId, editReview, onSuccess, onClose }
       {!isAuthenticated ? (
         <div className="text-center py-8">
           <p className="text-gray-600 mb-4">Please login to write a review</p>
-          <a
-            href="/login"
+          <Link
+            to="/login"
             className="inline-block px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
           >
             Login
-          </a>
+          </Link>
         </div>
       ) : (
         <form onSubmit={handleSubmit}>

@@ -1,6 +1,6 @@
 import { Outlet, Link, useNavigate } from 'react-router-dom'
 import { ShoppingCart, User, Menu, X, Package, Heart, Mic, MicOff, Mail, Phone, MapPin, Instagram, Facebook, Twitter, Youtube, Linkedin } from 'lucide-react'
-import { useState, useRef } from 'react'
+import { Suspense, useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuthStore } from '@/stores/authStore'
 import { useCartStore } from '@/stores/cartStore'
@@ -389,7 +389,15 @@ export default function Layout() {
       <BackButton />
       <Breadcrumbs />
       <main className="flex-1 pb-20 md:pb-0">
-        <Outlet />
+        <Suspense
+          fallback={
+            <div className="min-h-[40vh] flex items-center justify-center">
+              <div className="w-10 h-10 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
+            </div>
+          }
+        >
+          <Outlet />
+        </Suspense>
       </main>
 
       <BottomNav />

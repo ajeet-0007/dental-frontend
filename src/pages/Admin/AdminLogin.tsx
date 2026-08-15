@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useAuthStore } from "@/stores/authStore";
 import api from "@/api";
@@ -91,9 +91,9 @@ export default function AdminLogin() {
         </form>
 
         <p className="text-center text-sm text-gray-500 mt-6">
-          <a href="/" className="text-primary-600 hover:text-primary-700">
+          <Link to="/" className="text-primary-600 hover:text-primary-700">
             Back to Store
-          </a>
+          </Link>
         </p>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { MessageSquare, Star, ChevronDown, Edit } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import toast from 'react-hot-toast'
 import { reviewsApi } from '@/api'
@@ -120,12 +121,12 @@ export default function ReviewsSection({ productId }: ReviewsSectionProps) {
                 Edit Your Review
               </button>
             ) : !isAuthenticated ? (
-              <a
-                href="/login"
+              <Link
+                to="/login"
                 className="block w-full py-3 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-colors text-center"
               >
                 Login to Write a Review
-              </a>
+              </Link>
             ) : (
               <button
                 onClick={() => setShowForm(!showForm)}

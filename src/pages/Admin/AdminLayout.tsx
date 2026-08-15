@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/stores/authStore";
 import Seo from "@/components/seo/Seo";
@@ -182,7 +182,15 @@ export default function AdminLayout() {
 
         {/* Page content */}
         <main className="p-6">
-          <Outlet />
+          <Suspense
+            fallback={
+              <div className="flex items-center justify-center py-24">
+                <div className="w-10 h-10 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
+              </div>
+            }
+          >
+            <Outlet />
+          </Suspense>
         </main>
       </div>
     </div>

@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import api from "@/api";
 import { useAuthStore } from "@/stores/authStore";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { formatPrice } from "@/utils/format";
 import {
   Package,
@@ -168,12 +168,12 @@ export default function AdminDashboard() {
             <h2 className="text-lg font-semibold text-gray-900">
               Recent Orders
             </h2>
-            <a
-              href="/admin/orders"
+            <Link
+              to="/admin/orders"
               className="text-sm text-primary-600 hover:text-primary-700"
             >
               View All
-            </a>
+            </Link>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -230,12 +230,12 @@ export default function AdminDashboard() {
             <h2 className="text-lg font-semibold text-gray-900">
               Top Selling Products
             </h2>
-            <a
-              href="/admin/products"
+            <Link
+              to="/admin/products"
               className="text-sm text-primary-600 hover:text-primary-700"
             >
               View All
-            </a>
+            </Link>
           </div>
           <div className="space-y-4">
             {topProducts.map((product: any, index: number) => (
