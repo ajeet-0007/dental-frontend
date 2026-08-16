@@ -21,15 +21,16 @@ export default function AdminLogin() {
       const response = await api.post("/auth/login", { email, password }, {
         headers: { Recaptcha: captchaToken },
       });
-      const { user, accessToken, refreshToken } = response.data;
+      const { user } = response.data;
 
       if (user.role !== "admin") {
         toast.error("Access denied. Admin privileges required.");
+        api.post("/auth/logout").catch(() => {});
         setLoading(false);
         return;
       }
 
-      setAuth(user, accessToken, refreshToken);
+      setAuth(user);
       toast.success("Welcome back!");
       navigate("/admin");
     } catch (error: any) {

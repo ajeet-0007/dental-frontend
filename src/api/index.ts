@@ -4,18 +4,13 @@ export const BASE_URL = `${import.meta.env.VITE_API_URL}/api`
 
 const api = axios.create({
   baseURL: BASE_URL,
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },
 })
 
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('accessToken')
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
-  }
-  return config
-})
+let refreshPromise: Promise<unknown> | null = null
 
 api.interceptors.response.use(
   (response) => response,
@@ -24,17 +19,22 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true
       try {
-        const refreshToken = localStorage.getItem('refreshToken')
-        const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/refresh`, { refreshToken })
-        const { accessToken, refreshToken: newRefreshToken } = response.data
-        localStorage.setItem('accessToken', accessToken)
-        localStorage.setItem('refreshToken', newRefreshToken)
-        originalRequest.headers.Authorization = `Bearer ${accessToken}`
+        if (!refreshPromise) {
+          refreshPromise = axios
+            .post(`${BASE_URL}/auth/refresh`, {}, { withCredentials: true })
+            .finally(() => {
+              refreshPromise = null
+            })
+        }
+        await refreshPromise
         return api(originalRequest)
       } catch (refreshError) {
         localStorage.removeItem('accessToken')
         localStorage.removeItem('refreshToken')
-        window.location.href = '/login'
+        localStorage.removeItem('auth-storage')
+        if (window.location.pathname !== '/login') {
+          window.location.href = '/login'
+        }
         return Promise.reject(refreshError)
       }
     }

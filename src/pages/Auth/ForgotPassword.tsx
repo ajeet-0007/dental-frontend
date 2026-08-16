@@ -14,6 +14,7 @@ export default function ForgotPassword() {
   const { setAuth } = useAuthStore()
   const [step, setStep] = useState<ForgotStep>('email')
   const [email, setEmail] = useState('')
+  const [otpCode, setOtpCode] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -57,8 +58,8 @@ export default function ForgotPassword() {
     mutationFn: (data: { email: string; code: string; newPassword: string }) =>
       api.post('/auth/reset-password', data),
     onSuccess: (response) => {
-      const { user, accessToken, refreshToken } = response.data
-      setAuth(user, accessToken, refreshToken)
+      const { user } = response.data
+      setAuth(user)
       setStep('success')
     },
     onError: (error: any) => {
@@ -88,13 +89,18 @@ export default function ForgotPassword() {
 
   const handleVerifyOtp = (code: string) => {
     setError('')
+    setOtpCode(code)
     verifyOtpMutation.mutate({ email, code })
   }
 
   const handleResetPassword = () => {
     setError('')
-    if (!newPassword || newPassword.length < 6) {
-      setError('Password must be at least 6 characters')
+    if (!newPassword || newPassword.length < 8) {
+      setError('Password must be at least 8 characters')
+      return
+    }
+    if (!/[a-z]/.test(newPassword) || !/[A-Z]/.test(newPassword) || !/\d/.test(newPassword)) {
+      setError('Password must include uppercase, lowercase and a number')
       return
     }
     if (newPassword !== confirmPassword) {
@@ -103,7 +109,7 @@ export default function ForgotPassword() {
     }
     resetPasswordMutation.mutate({
       email,
-      code: '',
+      code: otpCode,
       newPassword,
     })
   }
@@ -308,7 +314,7 @@ export default function ForgotPassword() {
                       <input
                         type={showPassword ? 'text' : 'password'}
                         required
-                        minLength={6}
+                        minLength={8}
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
                         placeholder="Enter new password"
@@ -322,7 +328,7 @@ export default function ForgotPassword() {
                         {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </button>
                     </div>
-                    <p className="mt-2 text-xs text-gray-500">Minimum 6 characters</p>
+                    <p className="mt-2 text-xs text-gray-500">Minimum 8 characters with uppercase, lowercase and a number</p>
                   </div>
 
                   <div>
@@ -336,7 +342,7 @@ export default function ForgotPassword() {
                       <input
                         type={showPassword ? 'text' : 'password'}
                         required
-                        minLength={6}
+                        minLength={8}
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         placeholder="Confirm new password"

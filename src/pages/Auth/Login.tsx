@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
 import api from '@/api'
 import { useAuthStore } from '@/stores/authStore'
@@ -26,7 +26,6 @@ type OtpStep = 'email' | 'otp'
 export default function Login() {
   const navigate = useNavigate()
   const { setAuth } = useAuthStore()
-  const [searchParams] = useSearchParams()
   const [loginMode, setLoginMode] = useState<LoginMode>('password')
   const [otpStep, setOtpStep] = useState<OtpStep>('email')
   const [email, setEmail] = useState('')
@@ -39,19 +38,6 @@ export default function Login() {
   })
   const [error, setError] = useState('')
   const [showPassword, setShowPassword] = useState(false)
-
-  useEffect(() => {
-    const token = searchParams.get('token')
-    if (token) {
-      try {
-        const decoded = JSON.parse(atob(token))
-        setAuth(decoded.user, decoded.accessToken, decoded.refreshToken)
-        navigate('/')
-      } catch (err) {
-        console.error('Failed to parse auth token')
-      }
-    }
-  }, [searchParams])
 
   useEffect(() => {
     if (countdown > 0) {
@@ -70,8 +56,8 @@ export default function Login() {
         headers: { Recaptcha: captchaToken },
       }),
     onSuccess: (response) => {
-      const { user, accessToken, refreshToken } = response.data
-      setAuth(user, accessToken, refreshToken)
+      const { user } = response.data
+      setAuth(user)
       navigate('/')
     },
     onError: () => {
@@ -97,8 +83,8 @@ export default function Login() {
     mutationFn: (data: { email: string; code: string; type: string }) =>
       api.post('/auth/verify-otp', data),
     onSuccess: (response) => {
-      const { user, accessToken, refreshToken } = response.data
-      setAuth(user, accessToken, refreshToken)
+      const { user } = response.data
+      setAuth(user)
       navigate('/')
     },
     onError: (error: any) => {

@@ -1,28 +1,24 @@
 import { useEffect } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/stores/authStore'
+import api from '@/api'
 import { Loader2 } from 'lucide-react'
 
 export default function AuthCallback() {
   const navigate = useNavigate()
   const { setAuth } = useAuthStore()
-  const [searchParams] = useSearchParams()
 
   useEffect(() => {
-    const token = searchParams.get('token')
-    if (token) {
-      try {
-        const decoded = JSON.parse(atob(token))
-        setAuth(decoded.user, decoded.accessToken, decoded.refreshToken)
+    api
+      .get('/auth/me')
+      .then((response) => {
+        setAuth(response.data)
         navigate('/')
-      } catch (err) {
-        console.error('Failed to parse auth token:', err)
+      })
+      .catch(() => {
         navigate('/login')
-      }
-    } else {
-      navigate('/login')
-    }
-  }, [searchParams])
+      })
+  }, [navigate, setAuth])
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">

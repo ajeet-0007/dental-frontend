@@ -83,7 +83,7 @@ function PageLoader() {
 }
 
 function App() {
-  const { isAuthenticated, token, hydrate } = useAuthStore();
+  const { isAuthenticated, hydrate } = useAuthStore();
   const { setCart } = useCartStore();
 
   useEffect(() => {
@@ -98,7 +98,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (isAuthenticated && token) {
+    if (isAuthenticated) {
       api
         .get("/cart")
         .then((res) => {
@@ -110,7 +110,7 @@ function App() {
     } else {
       setCart([], 0);
     }
-  }, [isAuthenticated, token, setCart]);
+  }, [isAuthenticated, setCart]);
 
   return (
     <QueryClientProvider client={queryClient}>

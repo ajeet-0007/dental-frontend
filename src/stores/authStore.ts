@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import api from '@/api'
 
 interface User {
   id: string
@@ -17,60 +18,43 @@ interface User {
 
 interface AuthState {
   user: User | null
-  accessToken: string | null
-  refreshToken: string | null
   isAuthenticated: boolean
-  token: string | null
-  setAuth: (user: User, accessToken: string, refreshToken: string) => void
+  setAuth: (user: User) => void
   setUser: (user: User) => void
   logout: () => void
-  hydrate: () => void
+  hydrate: () => Promise<void>
 }
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       user: null,
-      accessToken: null,
-      refreshToken: null,
       isAuthenticated: false,
-      get token() {
-        return get().accessToken
-      },
-      setAuth: (user, accessToken, refreshToken) => {
-        localStorage.setItem('accessToken', accessToken)
-        localStorage.setItem('refreshToken', refreshToken)
-        set({ user, accessToken, refreshToken, isAuthenticated: true })
+      setAuth: (user) => {
+        set({ user, isAuthenticated: true })
       },
       setUser: (user) => set({ user }),
       logout: () => {
+        set({ user: null, isAuthenticated: false })
         localStorage.removeItem('accessToken')
         localStorage.removeItem('refreshToken')
-        set({ user: null, accessToken: null, refreshToken: null, isAuthenticated: false })
+        api.post('/auth/logout').catch(() => {})
       },
-      hydrate: () => {
-        const accessToken = localStorage.getItem('accessToken')
-        const refreshToken = localStorage.getItem('refreshToken')
-        const userStr = localStorage.getItem('auth-storage')
-        if (accessToken && refreshToken && userStr) {
-          try {
-            const { state } = JSON.parse(userStr)
-            if (state?.user && state?.isAuthenticated) {
-              set({ 
-                user: state.user, 
-                accessToken, 
-                refreshToken, 
-                isAuthenticated: true 
-              })
-            }
-          } catch (e) {
-            // ignore parse errors
-          }
+      hydrate: async () => {
+        try {
+          const response = await api.get('/auth/me')
+          set({ user: response.data, isAuthenticated: true })
+        } catch {
+          set({ user: null, isAuthenticated: false })
         }
       },
     }),
     {
       name: 'auth-storage',
+      partialize: (state) => ({
+        user: state.user,
+        isAuthenticated: state.isAuthenticated,
+      }),
     }
   )
 )

@@ -52,8 +52,8 @@ export default function Register() {
     mutationFn: (data: { email: string; code: string; type: string }) =>
       api.post('/auth/verify-otp', data),
     onSuccess: (response) => {
-      const { user, accessToken, refreshToken } = response.data
-      setAuth(user, accessToken, refreshToken)
+      const { user } = response.data
+      setAuth(user)
       setShowOtpModal(false)
       navigate('/')
     },
@@ -258,7 +258,7 @@ export default function Register() {
                   <input
                     type={showPassword ? 'text' : 'password'}
                     required
-                    minLength={6}
+                    minLength={8}
                     value={formData.password}
                     onChange={(e) =>
                       setFormData({ ...formData, password: e.target.value })
@@ -274,7 +274,9 @@ export default function Register() {
                     {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                   </button>
                 </div>
-                <p className="mt-2 text-xs text-gray-500">Minimum 6 characters</p>
+                <p className="mt-2 text-xs text-gray-500">
+                  Minimum 8 characters with uppercase, lowercase and a number
+                </p>
               </div>
 
               <div className="flex justify-center">
