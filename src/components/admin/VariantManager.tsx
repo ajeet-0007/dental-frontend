@@ -348,7 +348,6 @@ export default function VariantManager({ productId, onClose, onVariantsChange }:
     e.preventDefault();
     const data = {
       ...formData,
-      productId,
       sellingPrice: Number(formData.sellingPrice) || 0,
       mrp: Number(formData.mrp) || 0,
       weight: Number(formData.weight) || 0,
@@ -358,7 +357,7 @@ export default function VariantManager({ productId, onClose, onVariantsChange }:
     if (editingVariant?.id) {
       updateMutation.mutate({ id: editingVariant.id, data });
     } else {
-      createMutation.mutate(data);
+      createMutation.mutate({ ...data, productId });
     }
   };
 
