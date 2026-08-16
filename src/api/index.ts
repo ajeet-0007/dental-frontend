@@ -32,7 +32,8 @@ api.interceptors.response.use(
         localStorage.removeItem('accessToken')
         localStorage.removeItem('refreshToken')
         localStorage.removeItem('auth-storage')
-        if (window.location.pathname !== '/login') {
+        const isSessionHydration = (originalRequest.url || '').startsWith('/auth/me')
+        if (!isSessionHydration && window.location.pathname !== '/login') {
           window.location.href = '/login'
         }
         return Promise.reject(refreshError)
