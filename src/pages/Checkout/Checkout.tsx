@@ -12,7 +12,7 @@ import {
   Plus, Check, ShoppingCart, MapPin, Loader2,
   Trash2, Home, Phone, CreditCard, Banknote,
   X, ArrowRight, Package, Star, CheckCircle, Shield,
-  Truck, ShieldCheck
+  Truck
 } from "lucide-react";
 
 const PAYMENT_METHODS = [
@@ -23,7 +23,7 @@ const PAYMENT_METHODS = [
 export default function Checkout() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { isAuthenticated, user } = useAuthStore();
+  const { isAuthenticated } = useAuthStore();
   const { items: cartItems, setCart, clearCart } = useCartStore();
   const [useNewAddress, setUseNewAddress] = useState(false);
   const [selectedAddressId, setSelectedAddressId] = useState<number | null>(null);
@@ -128,11 +128,12 @@ export default function Checkout() {
     enabled: isAuthenticated,
   });
 
-  const { data: verificationData } = useQuery({
-    queryKey: ['professional-verification-status'],
-    queryFn: () => api.get('/profile/verification'),
-    enabled: isAuthenticated,
-  });
+  // TEMPORARILY DISABLED: verification query commented out
+  // const { data: verificationData } = useQuery({
+  //   queryKey: ['professional-verification-status'],
+  //   queryFn: () => api.get('/profile/verification'),
+  //   enabled: isAuthenticated,
+  // });
 
   const addresses = addressesData?.data || [];
   const serverCartItems = cartData?.data || [];
@@ -297,40 +298,41 @@ export default function Checkout() {
     );
   }
 
-  const isVerified = verificationData?.data?.verified ?? user?.isProfessionalVerified;
+  // TEMPORARILY DISABLED: verification enforcement commented out
+  // const isVerified = verificationData?.data?.verified ?? user?.isProfessionalVerified;
+  //
+  // const isStudentOnlyCart = displayCartItems.length > 0 && displayCartItems.every(
+  //   (item: any) => item.product.category?.slug === 'student-section'
+  // );
 
-  const isStudentOnlyCart = displayCartItems.length > 0 && displayCartItems.every(
-    (item: any) => item.product.category?.slug === 'student-section'
-  );
-
-  if (isAuthenticated && !isVerified && !isStudentOnlyCart) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 flex items-center justify-center">
-        <div className="text-center max-w-md mx-auto px-4">
-          <div className="w-24 h-24 bg-gradient-to-br from-amber-100 to-amber-50 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-inner">
-            <Shield className="w-12 h-12 text-amber-500" />
-          </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Professional Verification Required</h2>
-          <p className="text-sm text-gray-500 mb-2">
-            Only verified dental professionals can place orders.
-          </p>
-          <p className="text-xs text-gray-400 mb-8">
-            Verify your dental credentials to unlock checkout and start ordering products.
-          </p>
-          <button
-            onClick={() => {
-              sessionStorage.setItem('redirectAfterVerification', '/checkout');
-              navigate('/profile?section=verification');
-            }}
-            className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-2xl font-semibold text-sm hover:from-amber-600 hover:to-orange-700 transition-all shadow-lg shadow-amber-500/30 hover:shadow-xl hover:shadow-amber-500/40"
-          >
-            <ShieldCheck className="h-5 w-5" />
-            Verify Now
-          </button>
-        </div>
-      </div>
-    );
-  }
+  // if (isAuthenticated && !isVerified && !isStudentOnlyCart) {
+  //   return (
+  //     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 flex items-center justify-center">
+  //       <div className="text-center max-w-md mx-auto px-4">
+  //         <div className="w-24 h-24 bg-gradient-to-br from-amber-100 to-amber-50 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-inner">
+  //           <Shield className="w-12 h-12 text-amber-500" />
+  //         </div>
+  //         <h2 className="text-2xl font-bold text-gray-900 mb-2">Professional Verification Required</h2>
+  //         <p className="text-sm text-gray-500 mb-2">
+  //           Only verified dental professionals can place orders.
+  //         </p>
+  //         <p className="text-xs text-gray-400 mb-8">
+  //           Verify your dental credentials to unlock checkout and start ordering products.
+  //         </p>
+  //         <button
+  //           onClick={() => {
+  //             sessionStorage.setItem('redirectAfterVerification', '/checkout');
+  //             navigate('/profile?section=verification');
+  //           }}
+  //           className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-2xl font-semibold text-sm hover:from-amber-600 hover:to-orange-700 transition-all shadow-lg shadow-amber-500/30 hover:shadow-xl hover:shadow-amber-500/40"
+  //         >
+  //           <ShieldCheck className="h-5 w-5" />
+  //           Verify Now
+  //         </button>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   if (addressesLoading) {
     return (

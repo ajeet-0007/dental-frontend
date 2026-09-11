@@ -18,17 +18,19 @@ const DEFAULT_IMAGE =
 export default function Cart() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { isAuthenticated, user } = useAuthStore();
+  const { isAuthenticated } = useAuthStore();
   const { items, removeItem, updateQuantity, setCart } = useCartStore();
   const [cartDrawerProduct, setCartDrawerProduct] = useState<any>(null);
   const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false);
-  const { data: verificationData } = useQuery({
-    queryKey: ['professional-verification-status'],
-    queryFn: () => api.get('/profile/verification'),
-    enabled: isAuthenticated,
-  });
+  // TEMPORARILY DISABLED: verification query commented out
+  // const { data: verificationData } = useQuery({
+  //   queryKey: ['professional-verification-status'],
+  //   queryFn: () => api.get('/profile/verification'),
+  //   enabled: isAuthenticated,
+  // });
 
-  const isVerified = verificationData?.data?.verified ?? user?.isProfessionalVerified;
+  // TEMPORARILY DISABLED: verification enforcement commented out
+  const isVerified = true;
 
   const { data, isLoading, isFetching } = useQuery({
     queryKey: ["cart"],
