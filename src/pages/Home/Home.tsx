@@ -32,8 +32,6 @@ export default function Home() {
   const { data: productsData } = useQuery({
     queryKey: ["products", "featured"],
     queryFn: () => api.get("/products/featured?limit=20"),
-    staleTime: 0,
-    refetchOnWindowFocus: true,
   });
 
   const { data: topSellingData } = useQuery({

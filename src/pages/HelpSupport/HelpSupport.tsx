@@ -125,7 +125,7 @@ export default function HelpSupport() {
             </div>
             <div className="flex-1">
               <p className="text-xs font-semibold text-emerald-600 uppercase tracking-wider mb-0.5">Call Us</p>
-              <p className="text-sm font-medium text-gray-900">+91 8979353136</p>
+              <p className="text-sm font-medium text-gray-900">+91 9275226030</p>
             </div>
             <div className="flex items-center gap-1.5 text-xs text-gray-500">
               <Clock className="w-3.5 h-3.5" />

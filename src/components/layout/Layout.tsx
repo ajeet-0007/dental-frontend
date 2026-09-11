@@ -494,8 +494,8 @@ export default function Layout() {
                 </li>
                 <li className="flex items-center gap-3">
                   <Phone className="w-4 h-4 text-primary-400 flex-shrink-0" />
-                  <a href="tel:+918979353136" className="text-gray-300 hover:text-white text-sm transition-colors">
-                    +91 8979353136
+                  <a href="tel:+919275226030" className="text-gray-300 hover:text-white text-sm transition-colors">
+                    +91 9275226030
                   </a>
                 </li>
                 <li className="flex items-center gap-3">

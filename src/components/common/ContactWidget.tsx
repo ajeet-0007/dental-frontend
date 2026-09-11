@@ -2,8 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Phone, X } from "lucide-react";
 
-const PHONE_NUMBER = "+918979353136";
-const WHATSAPP_NUMBER = "918979353136";
+const PHONE_NUMBER = "+919275226030";
+const WHATSAPP_NUMBER = "919275226030";
 
 export default function ContactWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -57,14 +57,14 @@ export default function ContactWidget() {
               transition={{ type: "spring", stiffness: 320, damping: 24, delay: 0.12 }}
               className="flex items-center gap-3 bg-white rounded-2xl pl-3 pr-5 py-2.5 shadow-lg shadow-black/10 ring-1 ring-black/5 hover:shadow-xl hover:-translate-y-0.5 transition-all group"
               aria-label="Call now"
-              title="Call +91 8979353136"
+              title="Call +91 9275226030"
             >
               <span className="relative flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-md shadow-blue-500/40">
                 <Phone className="h-5 w-5" fill="currentColor" />
               </span>
               <span className="text-left">
                 <span className="block text-sm font-semibold text-gray-800">Call Now</span>
-                <span className="block text-xs text-gray-500">+91 8979353136</span>
+                <span className="block text-xs text-gray-500">+91 9275226030</span>
               </span>
             </motion.a>
           </>
