@@ -22,6 +22,7 @@ import {
   Bug,
   Filter,
   BadgePercent,
+  Stethoscope,
 } from "lucide-react";
 
 const adminNavItems = [
@@ -36,6 +37,7 @@ const adminNavItems = [
   { label: "Homepage Departments", path: "/admin/homepage-departments", icon: Layers },
   { label: "Banners", path: "/admin/banners", icon: Image },
   { label: "Gallery", path: "/admin/gallery", icon: Image },
+  { label: "Advice Requests", path: "/admin/advice-requests", icon: Stethoscope },
   { label: "Orders", path: "/admin/orders", icon: ShoppingCart },
   { label: "Shipping", path: "/admin/shipping", icon: Truck },
   { label: "Payments", path: "/admin/payments", icon: DollarSign },

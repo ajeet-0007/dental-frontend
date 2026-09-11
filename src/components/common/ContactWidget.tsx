@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Phone, X } from "lucide-react";
+import { Phone, X, Wrench } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const PHONE_NUMBER = "+919275226030";
 const WHATSAPP_NUMBER = "919275226030";
@@ -67,6 +68,30 @@ export default function ContactWidget() {
                 <span className="block text-xs text-gray-500">+91 9275226030</span>
               </span>
             </motion.a>
+
+            <motion.div
+              key="advice"
+              initial={{ opacity: 0, y: 20, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 20, scale: 0.9 }}
+              transition={{ type: "spring", stiffness: 320, damping: 24, delay: 0.19 }}
+            >
+              <Link
+                to="/free-advice"
+                onClick={() => setIsOpen(false)}
+                className="flex items-center gap-3 bg-white rounded-2xl pl-3 pr-5 py-2.5 shadow-lg shadow-black/10 ring-1 ring-black/5 hover:shadow-xl hover:-translate-y-0.5 transition-all group"
+                aria-label="Get free equipment advice"
+                title="Free Equipment Advice"
+              >
+                <span className="relative flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-white shadow-md shadow-amber-500/40">
+                  <Wrench className="h-5 w-5" />
+                </span>
+                <span className="text-left">
+                  <span className="block text-sm font-semibold text-gray-800">Free Advice</span>
+                  <span className="block text-xs text-gray-500">Experts</span>
+                </span>
+              </Link>
+            </motion.div>
           </>
         )}
       </AnimatePresence>

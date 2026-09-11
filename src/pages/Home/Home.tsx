@@ -7,7 +7,7 @@ import {
   Package, Shield, Truck, CreditCard,
   Sparkles, LayoutGrid, Store, Stethoscope,
   Flame, Trophy, BadgeCheck, Award, Stamp, ShieldCheck, History,
-  GraduationCap
+  GraduationCap, Wrench, ArrowRight
 } from "lucide-react";
 import ProductCarousel from "@/components/common/ProductCarousel";
 import CategoryCarousel from "@/components/common/CategoryCarousel";
@@ -246,6 +246,93 @@ export default function Home() {
                 <p className="text-sm text-gray-500">7-Day Return Policy</p>
               </div>
             </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Free Equipment Advice Promo */}
+      <section className="py-3 md:py-14">
+        <div className="container mx-auto px-4">
+          {/* Mobile: slim banner */}
+          <Link
+            to="/free-advice"
+            className="md:hidden flex items-center gap-3 rounded-2xl bg-gradient-to-r from-primary-600 via-blue-600 to-indigo-700 p-3 pl-4 shadow-lg shadow-primary-500/20 active:scale-[0.99] transition-transform"
+          >
+            <span className="w-10 h-10 shrink-0 rounded-full bg-gradient-to-br from-white/25 to-white/10 border border-white/30 backdrop-blur-sm flex items-center justify-center shadow-md shadow-black/10">
+              <Wrench className="w-[18px] h-[18px] text-white drop-shadow-sm" strokeWidth={2} />
+            </span>
+            <span className="flex-1 min-w-0">
+              <span className="block text-[13px] font-bold text-white truncate">
+                Free Equipment Advice
+              </span>
+              <span className="block text-[11px] text-blue-100 truncate">
+                Expert tips to repair &amp; use — 100% Free
+              </span>
+            </span>
+            <span className="w-6 h-6 shrink-0 rounded-full bg-white/20 flex items-center justify-center">
+              <ArrowRight className="w-3.5 h-3.5 text-white" />
+            </span>
+          </Link>
+
+          {/* Desktop: full banner */}
+          <div className="hidden md:block">
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-primary-600 via-blue-600 to-indigo-700 p-8 md:p-12">
+              <div className="absolute -top-20 -right-20 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
+              <div className="absolute -bottom-24 -left-16 w-72 h-72 bg-amber-400/20 rounded-full blur-3xl" />
+              <div className="relative flex flex-col lg:flex-row lg:items-center gap-8">
+                <div className="flex-1 text-center lg:text-left">
+                  <motion.span
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="inline-flex items-center gap-2 px-4 py-1.5 bg-amber-400 text-gray-900 text-xs font-semibold uppercase tracking-widest rounded-full mb-4"
+                  >
+                    <Wrench className="w-4 h-4" />
+                    100% Free · For Doctors
+                  </motion.span>
+                  <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
+                    Free Equipment Advice for{" "}
+                    <span className="text-amber-300">Doctors</span>
+                  </h2>
+                  <p className="mt-3 text-blue-100 md:text-lg leading-relaxed max-w-2xl mx-auto lg:mx-0">
+                    Facing a problem with your autoclave, X-ray, suction motor or
+                    handpiece? Our experts give you{" "}
+                    <span className="font-semibold text-white">
+                      free advice to repair, use and maintain
+                    </span>{" "}
+                    your dental equipment — no charges, no obligations.
+                  </p>
+                  <Link
+                    to="/free-advice"
+                    className="mt-6 inline-flex items-center gap-2 px-6 py-3 bg-white text-primary-700 font-semibold rounded-xl hover:bg-amber-400 hover:text-gray-900 transition-colors shadow-lg group"
+                  >
+                    Get Free Advice
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                </div>
+                <div className="grid grid-cols-3 gap-3 md:gap-4 lg:w-2/5">
+                  {[
+                    { value: '₹0', label: 'Advice Cost' },
+                    { value: 'Expert', label: 'Technicians' },
+                    { value: 'Quick', label: 'Response' },
+                  ].map((item, index) => (
+                    <motion.div
+                      key={item.label}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: index * 0.1 }}
+                      className="bg-white/15 backdrop-blur border border-white/20 rounded-2xl p-4 text-center"
+                    >
+                      <p className="text-xl md:text-2xl font-bold text-white">
+                        {item.value}
+                      </p>
+                      <p className="text-xs text-blue-100 mt-1">{item.label}</p>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

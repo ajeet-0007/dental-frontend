@@ -63,6 +63,7 @@ async function main() {
     { loc: `${SITE_URL}/departments`, changefreq: "weekly", priority: "0.7" },
     { loc: `${SITE_URL}/brands`, changefreq: "weekly", priority: "0.7" },
     { loc: `${SITE_URL}/help`, changefreq: "monthly", priority: "0.4" },
+    { loc: `${SITE_URL}/free-advice`, changefreq: "monthly", priority: "0.7" },
     { loc: `${SITE_URL}/gallery`, changefreq: "weekly", priority: "0.4" },
   ];
 

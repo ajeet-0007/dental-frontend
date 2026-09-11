@@ -1,5 +1,5 @@
 import { Outlet, Link, useNavigate } from 'react-router-dom'
-import { ShoppingCart, User, Menu, X, Package, Heart, Mic, MicOff, Mail, Phone, MapPin, Instagram, Facebook, Twitter, Youtube, Linkedin } from 'lucide-react'
+import { ShoppingCart, User, Menu, X, Package, Heart, Mic, MicOff, Mail, Phone, MapPin, Instagram, Facebook, Twitter, Youtube, Linkedin, Wrench } from 'lucide-react'
 import { Suspense, useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuthStore } from '@/stores/authStore'
@@ -348,6 +348,14 @@ export default function Layout() {
                   >
                     <ShoppingCart className="h-5 w-5" />
                     Products
+                  </Link>
+                  <Link
+                    to="/free-advice"
+                    className="flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:text-primary-600 rounded-lg hover:bg-gray-50 transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Wrench className="h-5 w-5" />
+                    Free Equipment Advice
                   </Link>
                   <Link
                     to="/departments"

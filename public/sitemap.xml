@@ -2,45 +2,159 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.dentzoo.com/</loc>
-    <lastmod>2026-08-29</lastmod>
+    <lastmod>2026-09-11</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.dentzoo.com/products</loc>
-    <lastmod>2026-08-29</lastmod>
+    <lastmod>2026-09-11</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.dentzoo.com/categories</loc>
-    <lastmod>2026-08-29</lastmod>
+    <lastmod>2026-09-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.dentzoo.com/departments</loc>
-    <lastmod>2026-08-29</lastmod>
+    <lastmod>2026-09-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.dentzoo.com/brands</loc>
-    <lastmod>2026-08-29</lastmod>
+    <lastmod>2026-09-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.dentzoo.com/help</loc>
-    <lastmod>2026-08-29</lastmod>
+    <lastmod>2026-09-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.4</priority>
   </url>
   <url>
+    <loc>https://www.dentzoo.com/free-advice</loc>
+    <lastmod>2026-09-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://www.dentzoo.com/gallery</loc>
-    <lastmod>2026-08-29</lastmod>
+    <lastmod>2026-09-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-tooth-pecker-pack-of-12-25pcs-per-pack</loc>
+    <lastmod>2026-09-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-clanden-denture-cleansing-paste-80-gms-pack-of-6</loc>
+    <lastmod>2026-09-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-denture-brush-pack-of-12</loc>
+    <lastmod>2026-09-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-interdental-flexible-proxa-brush-size-2-pack-of-6</loc>
+    <lastmod>2026-09-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-threader-floss-5-mts-floss-5-pcs-threader-tip</loc>
+    <lastmod>2026-09-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-hoppy-kids-toothbrush-pack-of-12</loc>
+    <lastmod>2026-09-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-floss-pack-of-12</loc>
+    <lastmod>2026-09-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-unique-brush-pack-of-1</loc>
+    <lastmod>2026-09-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-floss-holder-pack-of-12</loc>
+    <lastmod>2026-09-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-flosser-pack-of-10-box-1-box-contains-40pcs</loc>
+    <lastmod>2026-09-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-unique-brush-pack-of-12</loc>
+    <lastmod>2026-09-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-interdental-original-pack-of-12</loc>
+    <lastmod>2026-09-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-ortho-mb-brush-pack-of-12-1</loc>
+    <lastmod>2026-09-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-interdental-refills-pack-of-12</loc>
+    <lastmod>2026-09-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-proxa-interdental-angular-brushes</loc>
+    <lastmod>2026-09-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/keeper-99-no-multipurpose-plastic-storage-box-dentzoo</loc>
+    <lastmod>2026-09-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/dentsply-protaper-gold-rotary-files-refills-25mm-pack-of-6-dentzoo</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/dentsply-protaper-gold-rotary-files-refills-21mm-pack-of-6-dentzoo</loc>
+    <lastmod>2026-08-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://www.dentzoo.com/products/dentsply-palodent-v3-single-ring-refill-1</loc>
@@ -91,12 +205,6 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.dentzoo.com/products/dentsply-protaper-gold-rotary-files-25mm-pack-of-6</loc>
-    <lastmod>2026-08-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://www.dentzoo.com/products/dentsply-proglider-rotary-files</loc>
     <lastmod>2026-08-27</lastmod>
     <changefreq>weekly</changefreq>
@@ -122,12 +230,6 @@
   </url>
   <url>
     <loc>https://www.dentzoo.com/products/dentsply-m-access-k-files-31mm</loc>
-    <lastmod>2026-08-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://www.dentzoo.com/products/dentsply-protaper-gold-rotary-files-31mm-pack-of-6</loc>
     <lastmod>2026-08-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>

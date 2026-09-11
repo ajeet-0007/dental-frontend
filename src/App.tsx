@@ -62,6 +62,8 @@ const AdminVerification = lazy(() => import("./pages/Admin/AdminVerification"));
 const AdminLogs = lazy(() => import("./pages/Admin/AdminLogs"));
 const AdminLogDetail = lazy(() => import("./pages/Admin/AdminLogDetail"));
 const AdminGallery = lazy(() => import("./pages/Admin/AdminGallery"));
+const AdminAdviceRequests = lazy(() => import("./pages/Admin/AdminAdviceRequests"));
+const FreeAdvice = lazy(() => import("./pages/FreeAdvice/FreeAdvice"));
 // import ChatPage from "./pages/Chat/ChatPage";
 
 const PRIVATE_PATH_PATTERN =
@@ -143,6 +145,7 @@ function App() {
             <Route path="profile" element={<UserProfile />} />
             <Route path="wishlist" element={<Wishlist />} />
             <Route path="help" element={<HelpSupport />} />
+            <Route path="free-advice" element={<FreeAdvice />} />
             <Route path="gallery" element={<GalleryPage />} />
             <Route path="gallery/:slug" element={<GalleryPage />} />
             <Route path="*" element={<NotFound />} />
@@ -176,6 +179,7 @@ function App() {
             <Route path="logs/:id" element={<AdminLogDetail />} />
             <Route path="verification" element={<AdminVerification />} />
             <Route path="gallery" element={<AdminGallery />} />
+            <Route path="advice-requests" element={<AdminAdviceRequests />} />
           </Route>
         </Routes>
         </Suspense>
