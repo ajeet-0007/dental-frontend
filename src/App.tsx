@@ -69,10 +69,14 @@ const FreeAdvice = lazy(() => import("./pages/FreeAdvice/FreeAdvice"));
 const PRIVATE_PATH_PATTERN =
   /^\/(login|register|forgot-password|auth\/callback|admin|cart|checkout|payment-success|orders|returns|profile|wishlist)(\/|$)/;
 
+const PUBLIC_PATH_PATTERN =
+  /^\/(products|brands|categories|departments|gallery)(\/|$)|^\/(help|free-advice)$/;
+
 function RouteSeo() {
   const location = useLocation();
   const isPrivate = PRIVATE_PATH_PATTERN.test(location.pathname);
-  if (!isPrivate) return null;
+  const isPublic = location.pathname === "/" || PUBLIC_PATH_PATTERN.test(location.pathname);
+  if (!isPrivate && isPublic) return null;
   return <Seo noindex />;
 }
 

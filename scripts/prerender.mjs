@@ -59,6 +59,111 @@ function writeHtml(pathname, html) {
   writeFileSync(filePath, html);
 }
 
+function humanizeSegment(value) {
+  return decodeURIComponent(value)
+    .replace(/[-_]+/g, " ")
+    .replace(/\b\w/g, (ch) => ch.toUpperCase());
+}
+
+function normalizePath(pathname) {
+  if (pathname === "/") return "/";
+  return pathname.replace(/\/+$/, "") || "/";
+}
+
+function escapeHtml(value = "") {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
+function seoForPath(pathname, origin) {
+  const path = normalizePath(pathname);
+  const [first, second] = path.split("/").filter(Boolean);
+
+  let title;
+  let description;
+
+  switch (path) {
+    case "/":
+      title = "Dentzoo - India's Online Dental Store for Equipment";
+      break;
+    case "/products":
+      title = "Buy Dental Products Online | Dentzoo";
+      break;
+    case "/brands":
+      title = "Browse Dental Products by Brand | Dentzoo";
+      break;
+    case "/categories":
+      title = "Shop Dental Products by Category | Dentzoo";
+      break;
+    case "/departments":
+      title = "Shop Dental Products by Department | Dentzoo";
+      break;
+    case "/help":
+      title = "Help & Support | Dentzoo";
+      break;
+    case "/free-advice":
+      title = "Free Dental Advice | Dentzoo";
+      break;
+    case "/gallery":
+      title = "Dental Product Gallery | Dentzoo";
+      break;
+    default:
+      break;
+  }
+
+  if (!title && second) {
+    if (first === "brands") {
+      title = `Shop ${humanizeSegment(second)} Dental Products | Dentzoo`;
+      description = `Shop ${humanizeSegment(second)} dental products online at the best prices from Dentzoo.`;
+    } else if (first === "categories") {
+      title = `Shop ${humanizeSegment(second)} Dental Products | Dentzoo`;
+      description = `Shop ${humanizeSegment(second)} dental products online at the best prices from Dentzoo.`;
+    } else if (first === "departments") {
+      title = `Shop ${humanizeSegment(second)} Dental Products | Dentzoo`;
+      description = `Shop ${humanizeSegment(second)} dental products online at the best prices from Dentzoo.`;
+    } else if (first === "products") {
+      title = `${humanizeSegment(second)} | Dentzoo`;
+      description = `Buy ${humanizeSegment(second)} dental products online at the best prices from Dentzoo.`;
+    }
+  }
+
+  title = title || "Dentzoo - Dental Products Online";
+  description =
+    description ||
+    "Dentzoo is India's online dental store for dental equipment, instruments, materials, and consumables from genuine 100% authentic brands.";
+
+  return { canonical: `${origin}${path}`, title, description };
+}
+
+function injectSeo(html, { canonical, title, description }) {
+  if (html.includes(`href="${canonical}"`)) return html;
+  return html
+    .replace(/<title>[^<]*<\/title>/, `<title>${escapeHtml(title)}</title>`)
+    .replace(
+      new RegExp('<meta name="description"[^>]*>'),
+      `<meta name="description" content="${escapeHtml(description)}" />`
+    )
+    .replace(
+      /<link rel="canonical"[^>]*>/,
+      ""
+    )
+    .replace(
+      "</head>",
+      `\n    <link rel="canonical" href="${escapeHtml(canonical)}" />\n  </head>`
+    );
+}
+
+function writeSeoShell(pathname, baseHtml, origin) {
+  const seo = seoForPath(pathname, origin);
+  const html = injectSeo(baseHtml, seo);
+  writeHtml(pathname, html);
+  log(`seo-shell ${pathname} -> ${seo.canonical}`);
+}
+
 async function renderPage(page, pathname, baseHtml) {
   await page.goto(`${BASE_URL}${pathname}`, { waitUntil: "load", timeout: 45000 });
   await page
@@ -111,6 +216,7 @@ async function main() {
       }
     })
     .filter(Boolean);
+  const origin = locs.length > 0 ? new URL(locs[0]).origin : "https://www.dentzoo.com";
   log(`${paths.length} routes found in sitemap`);
 
   const baseHtml = readFileSync(resolve("dist/index.html"), "utf8");
@@ -133,11 +239,11 @@ async function main() {
   try {
     browser = await ensureChromium();
   } catch {
-    log("Chromium unavailable. Writing SPA shell fallback for all routes.");
+    log("Chromium unavailable. Writing static SEO shells for all routes.");
     for (const pathname of paths) {
-      writeHtml(pathname, baseHtml);
+      writeSeoShell(pathname, baseHtml, origin);
     }
-    log(`done: ${paths.length}/${paths.length} routes written as SPA shell (no browser)`);
+    log(`done: ${paths.length}/${paths.length} routes written as SEO shells (no browser)`);
     server.kill();
     process.exit(0);
   }
@@ -165,7 +271,7 @@ async function main() {
       } catch (error) {
         failures.push(pathname);
         log(`failed ${pathname}: ${error.message}`);
-        writeHtml(pathname, baseHtml);
+        writeSeoShell(pathname, baseHtml, origin);
       } finally {
         await page.close();
       }
