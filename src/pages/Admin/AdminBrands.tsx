@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/api";
 import toast from "react-hot-toast";
 import ImageUpload from "@/components/admin/ImageUpload";
+import { downloadCsv, exportFileName } from "@/utils/csv";
 import {
   Search,
   Plus,
@@ -10,6 +11,7 @@ import {
   Trash2,
   X,
   Award,
+  Download,
 } from "lucide-react";
 
 interface Brand {
@@ -105,6 +107,14 @@ export default function AdminBrands() {
     },
   });
 
+  const exportMutation = useMutation({
+    mutationFn: () =>
+      api.get("/admin/brands/export", { responseType: "blob" }),
+    onSuccess: (response) => {
+      downloadCsv(response.data as any, exportFileName("brands"));
+    },
+  });
+
   const generateSlug = (name: string) => {
     return name
       .toLowerCase()
@@ -186,13 +196,23 @@ export default function AdminBrands() {
             Manage product brands and manufacturers
           </p>
         </div>
-        <button
-          onClick={() => openModal()}
-          className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
-        >
-          <Plus className="w-5 h-5" />
-          Add Brand
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => exportMutation.mutate()}
+            disabled={exportMutation.isPending}
+            className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 disabled:opacity-50"
+          >
+            <Download className="w-5 h-5" />
+            {exportMutation.isPending ? "Exporting..." : "Export CSV"}
+          </button>
+          <button
+            onClick={() => openModal()}
+            className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+          >
+            <Plus className="w-5 h-5" />
+            Add Brand
+          </button>
+        </div>
       </div>
 
       <div className="bg-white rounded-lg shadow">

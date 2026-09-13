@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/api";
 import toast from "react-hot-toast";
 import ImageUpload from "@/components/admin/ImageUpload";
+import { downloadCsv, exportFileName } from "@/utils/csv";
 import {
   Search,
   Plus,
@@ -12,6 +13,7 @@ import {
   ChevronLeft,
   ChevronRight,
   FolderTree,
+  Download,
 } from "lucide-react";
 
 interface Category {
@@ -131,6 +133,14 @@ export default function AdminCategories() {
     },
   });
 
+  const exportMutation = useMutation({
+    mutationFn: () =>
+      api.get("/admin/categories/export", { responseType: "blob" }),
+    onSuccess: (response) => {
+      downloadCsv(response.data as any, exportFileName("categories"));
+    },
+  });
+
   const generateSlug = (name: string) => {
     return name
       .toLowerCase()
@@ -215,13 +225,23 @@ export default function AdminCategories() {
             Manage your product categories
           </p>
         </div>
-        <button
-          onClick={() => openModal()}
-          className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
-        >
-          <Plus className="w-5 h-5" />
-          Add Category
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => exportMutation.mutate()}
+            disabled={exportMutation.isPending}
+            className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 disabled:opacity-50"
+          >
+            <Download className="w-5 h-5" />
+            {exportMutation.isPending ? "Exporting..." : "Export CSV"}
+          </button>
+          <button
+            onClick={() => openModal()}
+            className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+          >
+            <Plus className="w-5 h-5" />
+            Add Category
+          </button>
+        </div>
       </div>
 
       <div className="bg-white rounded-lg shadow">

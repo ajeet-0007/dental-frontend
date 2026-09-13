@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import api from "@/api";
 import { useAuthStore } from "@/stores/authStore";
 import { formatPrice } from "@/utils/format";
+import { downloadCsv, exportFileName } from "@/utils/csv";
 import {
   ProductFormModal,
   DeleteProductModal,
@@ -14,6 +15,7 @@ import {
   Trash2,
   ChevronLeft,
   ChevronRight,
+  Download,
 } from "lucide-react";
 
 const DEFAULT_IMAGE =
@@ -54,6 +56,16 @@ export default function AdminProducts() {
     setPage(1);
   };
 
+  const exportMutation = useMutation({
+    mutationFn: () =>
+      api.get(`/admin/products/export?search=${debouncedSearch}`, {
+        responseType: "blob",
+      }),
+    onSuccess: (response) => {
+      downloadCsv(response.data as any, exportFileName("products"));
+    },
+  });
+
   const products = (data?.data as any)?.products || [];
   const totalPages = (data?.data as any)?.totalPages || 1;
   const total = (data?.data as any)?.total || 0;
@@ -88,13 +100,23 @@ export default function AdminProducts() {
           <h1 className="text-2xl font-bold text-gray-900">Products</h1>
           <p className="text-gray-500">Total: {total} products</p>
         </div>
-        <button
-          onClick={() => openModal()}
-          className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
-        >
-          <Plus className="w-5 h-5" />
-          Add Product
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => exportMutation.mutate()}
+            disabled={exportMutation.isPending}
+            className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 disabled:opacity-50"
+          >
+            <Download className="w-5 h-5" />
+            {exportMutation.isPending ? "Exporting..." : "Export CSV"}
+          </button>
+          <button
+            onClick={() => openModal()}
+            className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+          >
+            <Plus className="w-5 h-5" />
+            Add Product
+          </button>
+        </div>
       </div>
 
       {/* Search */}

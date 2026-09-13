@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import api from "@/api";
 import { useAuthStore } from "@/stores/authStore";
 import { formatPrice } from "@/utils/format";
+import { downloadCsv, exportFileName } from "@/utils/csv";
 import {
   ProductFormModal,
   DeleteProductModal,
@@ -29,6 +30,7 @@ import {
   PackageX,
   Edit,
   Trash2,
+  Download,
 } from "lucide-react";
 
 const DEFAULT_IMAGE =
@@ -555,6 +557,17 @@ export default function AdminProductFilters() {
     onError: () => toast.error("Failed to delete products"),
   });
 
+  const exportMutation = useMutation({
+    mutationFn: () =>
+      api.get("/admin/products/export", {
+        params: toParams(appliedFilters || EMPTY_FILTERS, 1, 12, debouncedSearch),
+        responseType: "blob",
+      }),
+    onSuccess: (response) => {
+      downloadCsv(response.data as any, exportFileName("products"));
+    },
+  });
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(search);
@@ -867,14 +880,24 @@ export default function AdminProductFilters() {
             </p>
           </div>
         </div>
-        <button
-          onClick={resetFilters}
-          disabled={!appliedFilters}
-          className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 hover:text-gray-900 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
-        >
-          <RotateCcw className="w-4 h-4" />
-          Reset
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => exportMutation.mutate()}
+            disabled={exportMutation.isPending}
+            className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+          >
+            <Download className="w-4 h-4" />
+            {exportMutation.isPending ? "Exporting..." : "Export CSV"}
+          </button>
+          <button
+            onClick={resetFilters}
+            disabled={!appliedFilters}
+            className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 hover:text-gray-900 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+          >
+            <RotateCcw className="w-4 h-4" />
+            Reset
+          </button>
+        </div>
       </div>
 
       {/* Search */}
