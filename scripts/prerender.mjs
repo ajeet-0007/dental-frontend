@@ -111,6 +111,11 @@ function seoForPath(pathname, origin) {
     case "/gallery":
       title = "Dental Product Gallery | Dentzoo";
       break;
+    case "/about":
+      title = "About Dentzoo | Dentzoo";
+      description =
+        "Learn about Dentzoo — India's online dental store for authentic equipment, instruments, materials and consumables with reliable delivery across India.";
+      break;
     default:
       break;
   }

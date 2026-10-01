@@ -10,6 +10,7 @@ const labelMap: Record<string, string> = {
   profile: 'Profile',
   wishlist: 'Wishlist',
   help: 'Help & Support',
+  about: 'About Us',
   gallery: 'Gallery',
   departments: 'Departments',
   brands: 'Brands',

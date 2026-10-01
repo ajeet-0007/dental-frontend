@@ -1,5 +1,5 @@
 import { Outlet, Link, useNavigate } from 'react-router-dom'
-import { ShoppingCart, User, Menu, X, Package, Heart, Mic, MicOff, Mail, Phone, MapPin, Instagram, Facebook, Twitter, Youtube, Linkedin, Wrench } from 'lucide-react'
+import { ShoppingCart, User, Menu, X, Package, Heart, Mic, MicOff, Mail, Phone, MapPin, Wrench } from 'lucide-react'
 import { Suspense, useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuthStore } from '@/stores/authStore'
@@ -12,6 +12,7 @@ import BackButton from '@/components/common/BackButton'
 import LogoutModal from '@/components/common/LogoutModal'
 import SearchAutocomplete, { type SearchAutocompleteHandle } from '@/components/common/SearchAutocomplete'
 import ContactWidget from '@/components/common/ContactWidget'
+import { ADDRESS_INLINE, COMPANY } from '@/constants/company'
 import { useVoiceSearch } from '@/hooks/useVoiceSearch'
 // import ChatWidget from '@/pages/Chat/ChatWidget'
 
@@ -423,16 +424,10 @@ export default function Layout() {
               <img src="/dentzoo-logo.png" alt="Dentzoo" width="240" height="190" className="h-8 w-auto md:h-12" />
               </Link>
               <p className="text-gray-300 text-sm leading-relaxed mb-6">
-                India's most trusted dental e-commerce platform. Quality products, competitive prices, and reliable delivery for dental professionals nationwide.
+                {COMPANY.aboutBlurb}
               </p>
               <div className="flex items-center gap-3">
-                {[
-                  { icon: Instagram, href: 'https://www.instagram.com/dent.zoo?igsh=MTY4eHJzdzhrZ2hlaA%3D%3D', label: 'Instagram' },
-                  { icon: Facebook, href: 'https://www.facebook.com/profile.php?id=61592577323923', label: 'Facebook' },
-                  { icon: Twitter, href: 'https://x.com/Dentzooo', label: 'Twitter' },
-                  { icon: Youtube, href: 'https://www.youtube.com/@Dentzoo', label: 'YouTube' },
-                  { icon: Linkedin, href: 'https://www.linkedin.com/in/dentzoo-india-b18a66424/', label: 'LinkedIn' },
-                ].map(({ icon: Icon, href, label }) => (
+                {COMPANY.socials.map(({ icon: Icon, href, label }) => (
                   <a
                     key={label}
                     href={href}
@@ -459,6 +454,7 @@ export default function Layout() {
                   { label: 'Brands', href: '/brands' },
                   { label: 'Departments', href: '/departments' },
                   { label: 'Gallery', href: '/gallery' },
+                  { label: 'About Us', href: '/about' },
                 ].map(({ label, href }) => (
                   <li key={label}>
                     <Link to={href} className="text-gray-300 hover:text-white text-sm transition-colors">
@@ -498,18 +494,18 @@ export default function Layout() {
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
                   <MapPin className="w-5 h-5 text-primary-400 flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-300 text-sm">Bareilly, UP, India</span>
+                  <span className="text-gray-300 text-sm">{ADDRESS_INLINE}</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <Phone className="w-4 h-4 text-primary-400 flex-shrink-0" />
-                  <a href="tel:+919275226030" className="text-gray-300 hover:text-white text-sm transition-colors">
-                    +91 9275226030
+                  <a href={`tel:${COMPANY.contact.phone}`} className="text-gray-300 hover:text-white text-sm transition-colors">
+                    {COMPANY.contact.phoneDisplay}
                   </a>
                 </li>
                 <li className="flex items-center gap-3">
                   <Mail className="w-4 h-4 text-primary-400 flex-shrink-0" />
-                    <a href="mailto:support@dentzoo.com" className="text-gray-300 hover:text-white text-sm transition-colors">
-                      support@dentzoo.com
+                    <a href={`mailto:${COMPANY.contact.email}`} className="text-gray-300 hover:text-white text-sm transition-colors">
+                      {COMPANY.contact.email}
                     </a>
                 </li>
               </ul>
@@ -531,7 +527,7 @@ export default function Layout() {
                 ))}
               </div>
               <p className="text-sm text-gray-500">
-                © 2026 Dentzoo. All rights reserved.
+                © 2026 {COMPANY.brandName}. All rights reserved.
               </p>
             </div>
           </div>

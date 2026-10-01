@@ -2,51 +2,261 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.dentzoo.com/</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.dentzoo.com/products</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.dentzoo.com/categories</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.dentzoo.com/departments</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.dentzoo.com/brands</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.dentzoo.com/help</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.4</priority>
   </url>
   <url>
     <loc>https://www.dentzoo.com/free-advice</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.dentzoo.com/gallery</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/about</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/dentaids-flurosid-fluoride-mouthwash-160ml</loc>
+    <lastmod>2026-09-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/dentaids-ultigel-15g</loc>
+    <lastmod>2026-09-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-lidayn-oraspot-gel-15g</loc>
+    <lastmod>2026-09-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/dentaids-lidyan-la-injection-30ml</loc>
+    <lastmod>2026-09-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-lidayn-topical-mint-surface-anaesthetic-spray-100g</loc>
+    <lastmod>2026-09-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-interdental-angular-iso-3</loc>
+    <lastmod>2026-09-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-interdental-angular-iso-2</loc>
+    <lastmod>2026-09-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-interdental-angular-iso-0</loc>
+    <lastmod>2026-09-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/dentaids-periex-mouthwash</loc>
+    <lastmod>2026-09-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-ortho-kit</loc>
+    <lastmod>2026-09-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-denture-care-kit</loc>
+    <lastmod>2026-09-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-denture-box</loc>
+    <lastmod>2026-09-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-flosal</loc>
+    <lastmod>2026-09-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-hoppy-junior-toothbrush</loc>
+    <lastmod>2026-09-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-junior-hoppy-toddler-oral-care-kit</loc>
+    <lastmod>2026-09-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-hoppy-infant-finger-brush-kit</loc>
+    <lastmod>2026-09-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-junior-hoplin-kids-tooth-gel-50g-with-brush</loc>
+    <lastmod>2026-09-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-junior-hoplin-baby-tooth-gel-50g-with-brush</loc>
+    <lastmod>2026-09-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-charcoal-toothpaste-80g</loc>
+    <lastmod>2026-09-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-sonic-electric-toothbrush</loc>
+    <lastmod>2026-09-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-sonic-kids-electric-toothbrush</loc>
+    <lastmod>2026-09-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-floss-picks-40-units-pack-of-2</loc>
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-orthodontic-wax-for-braces-pack-of-2</loc>
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-braces-care-starter-kit-2-brushes-orthodontic-wax</loc>
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-baby-toothbrush-2-units-with-15g-toothpaste</loc>
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-denofit-denture-adhesive-cream-50g</loc>
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-clanden-denture-cleaning-paste-80g-with-denture-brush</loc>
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-kids-toothpaste-50g-with-brush</loc>
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-probiotic-toothpaste-for-gum-care</loc>
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-sentim-sf-toothpaste-for-sensitive-teeth</loc>
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-sentim-toothpaste-for-sensitive-teeth</loc>
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-ri-namel-toothpaste-to-re-mineralize-enamel</loc>
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-saleva-mouthwash-for-dry-mouth</loc>
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/products/stim-silky-toothbrush</loc>
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://www.dentzoo.com/products/stim-tooth-pecker-pack-of-12-25pcs-per-pack</loc>
@@ -4513,7 +4723,7 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.dentzoo.com/products/cbct-scanner</loc>
+    <loc>https://www.dentzoo.com/products/apron-and-collar</loc>
     <lastmod>2026-03-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
@@ -4525,7 +4735,7 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.dentzoo.com/products/apron-and-collar</loc>
+    <loc>https://www.dentzoo.com/products/cbct-scanner</loc>
     <lastmod>2026-03-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
@@ -4543,7 +4753,7 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.dentzoo.com/products/sterilization-pouches</loc>
+    <loc>https://www.dentzoo.com/products/surface-disinfectant</loc>
     <lastmod>2026-03-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
@@ -4555,7 +4765,7 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.dentzoo.com/products/surface-disinfectant</loc>
+    <loc>https://www.dentzoo.com/products/sterilization-pouches</loc>
     <lastmod>2026-03-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>

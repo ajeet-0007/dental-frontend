@@ -1,4 +1,5 @@
 import { SITE_NAME, SITE_URL, absoluteUrl } from "./seoConstants";
+import { COMPANY } from "@/constants/company";
 
 export function stripHtml(html: string): string {
   return html
@@ -41,8 +42,22 @@ export function buildOrganizationJsonLd() {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: SITE_NAME,
+    legalName: COMPANY.legalName,
+    alternateName: [COMPANY.tradeName, COMPANY.brandName],
     url: SITE_URL,
     logo: absoluteUrl("/DentZoo_Logo.svg"),
+    image: absoluteUrl("/og-image.png"),
+    telephone: COMPANY.contact.phoneDisplay,
+    email: COMPANY.contact.email,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: `${COMPANY.address.floor}, ${COMPANY.address.building}, ${COMPANY.address.street}, ${COMPANY.address.locality}`,
+      addressLocality: COMPANY.address.city,
+      addressRegion: COMPANY.address.state,
+      postalCode: COMPANY.address.pin,
+      addressCountry: "IN",
+    },
+    sameAs: COMPANY.socials.map((social) => social.href),
   };
 }
 

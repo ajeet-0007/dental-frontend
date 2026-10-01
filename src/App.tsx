@@ -15,6 +15,7 @@ import Departments from "./pages/Departments/Departments";
 import Brands from "./pages/Brands/Brands";
 import Categories from "./pages/Categories/Categories";
 import HelpSupport from "./pages/HelpSupport/HelpSupport";
+import About from "./pages/About/About";
 import BrandDetail from "./pages/BrandDetail/BrandDetail";
 import CategoryDetail from "./pages/CategoryDetail/CategoryDetail";
 import DepartmentDetail from "./pages/DepartmentDetail/DepartmentDetail";
@@ -70,7 +71,7 @@ const PRIVATE_PATH_PATTERN =
   /^\/(login|register|forgot-password|auth\/callback|admin|cart|checkout|payment-success|orders|returns|profile|wishlist)(\/|$)/;
 
 const PUBLIC_PATH_PATTERN =
-  /^\/(products|brands|categories|departments|gallery)(\/|$)|^\/(help|free-advice)$/;
+  /^\/(products|brands|categories|departments|gallery|about)(\/|$)|^\/(help|free-advice)$/;
 
 function RouteSeo() {
   const location = useLocation();
@@ -149,6 +150,7 @@ function App() {
             <Route path="profile" element={<UserProfile />} />
             <Route path="wishlist" element={<Wishlist />} />
             <Route path="help" element={<HelpSupport />} />
+            <Route path="about" element={<About />} />
             <Route path="free-advice" element={<FreeAdvice />} />
             <Route path="gallery" element={<GalleryPage />} />
             <Route path="gallery/:slug" element={<GalleryPage />} />

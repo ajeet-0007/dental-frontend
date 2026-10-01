@@ -6,7 +6,7 @@ import api from "@/api";
 import {
   Package, Shield, Truck, CreditCard,
   Sparkles, LayoutGrid, Store, Stethoscope,
-  Flame, Trophy, BadgeCheck, Award, Stamp, ShieldCheck, History,
+  Flame, Trophy, History,
   GraduationCap, Wrench, ArrowRight
 } from "lucide-react";
 import ProductCarousel from "@/components/common/ProductCarousel";
@@ -22,6 +22,7 @@ import { useAuthStore } from "@/stores/authStore";
 import { useRecentlyViewedStore } from "@/stores/recentlyViewedStore";
 import Seo from "@/components/seo/Seo";
 import { buildOrganizationJsonLd, buildWebSiteJsonLd } from "@/components/seo/seoHelpers";
+import { COMPANY } from "@/constants/company";
 
 export default function Home() {
   const [cartDrawerProduct, setCartDrawerProduct] = useState<any>(null);
@@ -616,12 +617,7 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-            {[
-              { name: 'ISO 9001:2015', desc: 'Quality Management', color: 'from-emerald-500 to-teal-500', Icon: BadgeCheck },
-              { name: 'GDP Approved', desc: 'Good Distribution', color: 'from-blue-500 to-cyan-500', Icon: ShieldCheck },
-              { name: 'CE Certified', desc: 'Europe Compliance', color: 'from-violet-500 to-purple-500', Icon: Stamp },
-              { name: 'Quality Assurance', desc: 'Standard Verified', color: 'from-amber-500 to-orange-500', Icon: Award },
-            ].map((award, index) => (
+            {COMPANY.awards.map((award, index) => (
               <motion.div
                 key={award.name}
                 initial={{ opacity: 0, y: 20 }}
@@ -629,9 +625,9 @@ export default function Home() {
                 transition={{ delay: index * 0.1 }}
                 className="group bg-gray-50 border border-gray-100 rounded-2xl p-5 hover:shadow-xl hover:shadow-gray-200/50 hover:border-gray-200 transition-all duration-300"
               >
-                <div className={`w-16 h-16 bg-gradient-to-br ${award.color} rounded-2xl flex items-center justify-center mb-4 mx-auto shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                  <award.Icon className="w-8 h-8 text-white" />
-                </div>
+                  <div className={`w-16 h-16 bg-gradient-to-br ${award.color} rounded-2xl flex items-center justify-center mb-4 mx-auto shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                    <award.icon className="w-8 h-8 text-white" />
+                  </div>
                 <h3 className="text-base md:text-lg font-bold text-gray-900 text-center mb-1">{award.name}</h3>
                 <p className="text-xs text-gray-500 text-center">{award.desc}</p>
               </motion.div>
@@ -639,12 +635,7 @@ export default function Home() {
           </div>
 
           <div className="mt-10 flex flex-wrap items-center justify-center gap-6 md:gap-10">
-            {[
-              { value: '10+', label: 'Years Experience' },
-              { value: '500+', label: 'Happy Clients' },
-              { value: '50+', label: 'Brand Partners' },
-              { value: '1000+', label: 'Products' },
-            ].map((stat, index) => (
+            {COMPANY.stats.map((stat, index) => (
               <motion.div
                 key={stat.label}
                 initial={{ opacity: 0, scale: 0.8 }}
