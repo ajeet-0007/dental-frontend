@@ -16,7 +16,7 @@ import api from "@/api";
 import Seo from "@/components/seo/Seo";
 import { absoluteUrl, SITE_NAME, SITE_URL } from "@/components/seo/seoConstants";
 import { buildOrganizationJsonLd } from "@/components/seo/seoHelpers";
-import { ADDRESS_INLINE, ADDRESS_LINES, COMPANY } from "@/constants/company";
+import { ADDRESS_LINES, COMPANY } from "@/constants/company";
 
 function countFrom(data: unknown): number | null {
   if (Array.isArray(data)) return data.length;
@@ -381,7 +381,6 @@ export default function About() {
                         </span>
                       ))}
                     </address>
-                    <p className="mt-3 text-xs text-gray-400">{ADDRESS_INLINE}</p>
                   </div>
                 </div>
               </motion.div>

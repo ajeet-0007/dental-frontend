@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { Newspaper, ArrowRight, ExternalLink } from "lucide-react";
@@ -10,36 +11,45 @@ interface NewsArticle {
   subtitle: string;
   image: string;
   link: string;
+  source: string;
+  publishedAt: string;
 }
 
-function ArticleImage({ 
-  src, 
-  alt, 
+function formatDate(value: string): string {
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return "";
+  return parsed.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
+function ArticleImage({
+  src,
+  alt,
   className
-}: { 
-  src?: string; 
-  alt?: string; 
+}: {
+  src?: string;
+  alt?: string;
   className?: string;
 }) {
-  const hasImage = !!src;
+  const [failed, setFailed] = useState(false);
+  const showImage = !!src && !failed;
 
   return (
     <div className={className}>
-      {src ? (
+      {showImage ? (
         <AppImage
           src={src}
           alt={alt ?? ""}
           className={`w-full h-full object-cover ${className?.includes('group-hover') ? 'group-hover:scale-110 transition-transform duration-300' : ''}`}
           widths={[400, 800, 1200]}
           sizes="(min-width: 1024px) 640px, 100vw"
-          onError={(e) => {
-            (e.target as HTMLElement).style.display = 'none';
-            const fallback = (e.target as HTMLImageElement).parentElement?.querySelector('.img-fallback') as HTMLElement;
-            if (fallback) fallback.style.display = 'flex';
-          }}
+          onError={() => setFailed(true)}
         />
       ) : null}
-      <div className={`img-fallback w-full h-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center ${hasImage ? 'hidden' : ''}`}>
+      <div className={`img-fallback w-full h-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center ${showImage ? 'hidden' : ''}`}>
         <Newspaper className="w-1/3 h-1/3 text-white/50" />
       </div>
     </div>
@@ -101,9 +111,17 @@ export default function NewsSection() {
                 <h3 className="text-lg lg:text-xl font-bold text-white line-clamp-2 mb-2 group-hover:text-blue-200 transition-colors">
                   {featuredArticle.title}
                 </h3>
-                <p className="text-sm text-gray-300 line-clamp-2 mb-3">
-                  {featuredArticle.subtitle}
-                </p>
+                {featuredArticle.subtitle ? (
+                  <p className="text-sm text-gray-300 line-clamp-2 mb-3">
+                    {featuredArticle.subtitle}
+                  </p>
+                ) : null}
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-300 mb-3">
+                  {featuredArticle.source ? <span>{featuredArticle.source}</span> : null}
+                  {formatDate(featuredArticle.publishedAt) ? (
+                    <span>{formatDate(featuredArticle.publishedAt)}</span>
+                  ) : null}
+                </div>
                 <div className="flex items-center gap-1 text-blue-300 text-sm font-medium">
                   <span>Read full article</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -136,22 +154,11 @@ export default function NewsSection() {
                   </h4>
                   <div className="mt-2 flex items-center gap-1 text-xs text-gray-500">
                     <ExternalLink className="w-3 h-3" />
-                    <span>Read more</span>
+                    <span>{article.source || "Read more"}</span>
                   </div>
                 </div>
               </motion.a>
             ))}
-
-            {/* View All Button */}
-            <a
-              href={listArticles[0]?.link || featuredArticle.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 py-3 bg-gray-100 hover:bg-gray-200 rounded-xl text-sm font-medium text-gray-700 transition-colors"
-            >
-              <span>View All News</span>
-              <ArrowRight className="w-4 h-4" />
-            </a>
           </div>
         </div>
       </div>

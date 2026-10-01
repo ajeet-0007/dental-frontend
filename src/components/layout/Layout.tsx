@@ -1,5 +1,5 @@
 import { Outlet, Link, useNavigate } from 'react-router-dom'
-import { ShoppingCart, User, Menu, X, Package, Heart, Mic, MicOff, Mail, Phone, MapPin, Wrench } from 'lucide-react'
+import { ShoppingCart, User, Menu, X, Package, Heart, Mic, MicOff, Mail, Phone, MapPin, Info, Wrench } from 'lucide-react'
 import { Suspense, useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuthStore } from '@/stores/authStore'
@@ -377,6 +377,14 @@ export default function Layout() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
                     </svg>
                     Brands
+                  </Link>
+                  <Link
+                    to="/about"
+                    className="flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:text-primary-600 rounded-lg hover:bg-gray-50 transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Info className="h-5 w-5" />
+                    About Us
                   </Link>
                   <Link
                     to="/orders"
