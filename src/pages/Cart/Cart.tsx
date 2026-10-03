@@ -38,6 +38,11 @@ export default function Cart() {
     enabled: isAuthenticated,
   });
 
+  const { data: shippingConfig } = useQuery({
+    queryKey: ["shipping-config"],
+    queryFn: () => api.get("/shipping/config"),
+  });
+
   const initialSyncDone = useRef(false);
 
   useEffect(() => {
@@ -115,7 +120,14 @@ export default function Cart() {
 
   const totalSavings = totalMrp - subtotal;
 
-  const total = subtotal;
+  const flatCharge = shippingConfig?.data?.flatCharge ?? 100;
+  const freeShippingThreshold = shippingConfig?.data?.freeShippingThreshold ?? 2499;
+
+  const qualifiesForFreeShipping = subtotal >= freeShippingThreshold;
+  const shippingAmount = allItems.length === 0 || qualifiesForFreeShipping ? 0 : flatCharge;
+  const amountToFreeShipping = Math.max(freeShippingThreshold - subtotal, 0);
+
+  const total = subtotal + shippingAmount;
 
   const cartCategories = [...new Set(
     allItems
@@ -410,8 +422,18 @@ export default function Cart() {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500">Delivery</span>
-                    <span className="font-semibold text-emerald-600">Free</span>
+                    {shippingAmount > 0 ? (
+                      <span className="font-semibold text-gray-900">₹{formatPrice(shippingAmount)}</span>
+                    ) : (
+                      <span className="font-semibold text-emerald-600">Free</span>
+                    )}
                   </div>
+
+                  {allItems.length > 0 && !qualifiesForFreeShipping && (
+                    <p className="text-xs text-gray-500">
+                      Add ₹{formatPrice(amountToFreeShipping)} more for free delivery
+                    </p>
+                  )}
 
                   <div className="border-t border-gray-100 pt-4">
                     <div className="flex justify-between items-baseline">
@@ -473,8 +495,14 @@ export default function Cart() {
                         <Truck className="h-4 w-4 text-white" />
                       </div>
                       <div>
-                        <p className="text-[10px] font-bold text-gray-700">Free Delivery</p>
-                        <p className="text-[9px] text-gray-500">On all orders</p>
+                        <p className="text-[10px] font-bold text-gray-700">
+                          {qualifiesForFreeShipping ? "Free Delivery" : `Delivery ₹${formatPrice(flatCharge)}`}
+                        </p>
+                        <p className="text-[9px] text-gray-500">
+                          {qualifiesForFreeShipping
+                            ? "Applied to this order"
+                            : `Free above ₹${formatPrice(freeShippingThreshold)}`}
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2.5 p-3 bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl border border-green-100">
