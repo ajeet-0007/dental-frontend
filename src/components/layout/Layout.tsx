@@ -1,5 +1,5 @@
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom'
-import { ShoppingCart, User, Menu, X, Package, Heart, Mic, MicOff, Mail, Phone, MapPin, Info, Wrench, LayoutGrid, Tags, Sparkles, HelpCircle, RotateCcw, LogOut, FileImage } from 'lucide-react'
+import { ShoppingCart, User, Menu, X, Package, Heart, Mic, MicOff, Mail, Phone, MapPin, Info, Wrench, LayoutGrid, Tags, Sparkles, HelpCircle, RotateCcw, LogOut, LogIn, FileImage } from 'lucide-react'
 import { Suspense, useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuthStore } from '@/stores/authStore'
@@ -160,8 +160,9 @@ export default function Layout() {
                 ) : (
                   <Link
                     to="/login"
-                    className="ml-1 px-3.5 py-2 text-sm font-semibold bg-primary-600 text-white rounded-lg active:bg-primary-700"
+                    className="ml-1 inline-flex items-center gap-1.5 rounded-full bg-primary-600 px-3.5 py-2 text-sm font-semibold tracking-tight text-white shadow-md shadow-primary-600/25 ring-1 ring-inset ring-white/20 transition active:bg-primary-700"
                   >
+                    <LogIn className="h-4 w-4" />
                     Login
                   </Link>
                 )}
@@ -309,8 +310,9 @@ export default function Layout() {
                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                       <Link
                         to="/login"
-                        className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+                        className="inline-flex items-center gap-1.5 rounded-full bg-primary-600 px-4 py-2 text-sm font-semibold tracking-tight text-white shadow-md shadow-primary-600/25 ring-1 ring-inset ring-white/20 transition hover:bg-primary-700 active:bg-primary-700"
                       >
+                        <LogIn className="h-4 w-4" />
                         Login
                       </Link>
                     </motion.div>
@@ -392,8 +394,9 @@ export default function Layout() {
                     <Link
                       to="/login"
                       onClick={closeMenu}
-                      className="block text-center px-4 py-3 bg-primary-600 text-white font-semibold rounded-xl active:bg-primary-700"
+                      className="flex items-center justify-center gap-2 rounded-xl bg-primary-600 px-4 py-3 text-sm font-semibold text-white shadow-md shadow-primary-600/25 ring-1 ring-inset ring-white/20 transition hover:bg-primary-700 active:bg-primary-700"
                     >
+                      <LogIn className="h-4 w-4" />
                       Login
                     </Link>
                   )}
