@@ -20,6 +20,7 @@ import NewsSection from "@/components/common/NewsSection";
 import GalleryPreview from "@/pages/Gallery/GalleryPreview";
 import { useAuthStore } from "@/stores/authStore";
 import { useRecentlyViewedStore } from "@/stores/recentlyViewedStore";
+import BrowseIconRail from "@/components/common/BrowseIconRail";
 import Seo from "@/components/seo/Seo";
 import { buildOrganizationJsonLd, buildWebSiteJsonLd } from "@/components/seo/seoHelpers";
 import { COMPANY } from "@/constants/company";
@@ -133,6 +134,8 @@ export default function Home() {
         Dentzoo - India's Online Dental Store for Dental Equipment, Instruments,
         Materials &amp; Consumables
       </h1>
+      <BrowseIconRail />
+
       {/* Hero Banner Carousel */}
       {banners.length > 0 && (
         <section className="py-4">

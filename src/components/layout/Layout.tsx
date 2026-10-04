@@ -11,8 +11,6 @@ import Breadcrumbs from '@/components/common/Breadcrumbs'
 import BackButton from '@/components/common/BackButton'
 import LogoutModal from '@/components/common/LogoutModal'
 import SearchAutocomplete, { type SearchAutocompleteHandle } from '@/components/common/SearchAutocomplete'
-import CategoryIconRail from '@/components/common/CategoryIconRail'
-// import BrandCircleRail from '@/components/common/BrandCircleRail'
 import ContactWidget from '@/components/common/ContactWidget'
 import { ADDRESS_INLINE, COMPANY } from '@/constants/company'
 import { useVoiceSearch } from '@/hooks/useVoiceSearch'
@@ -322,9 +320,6 @@ export default function Layout() {
             </div>
           </div>
         </div>
-
-        <CategoryIconRail />
-        {/* <BrandCircleRail /> */}
       </header>
 
       {/* Mobile menu slide-over */}
