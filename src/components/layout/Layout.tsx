@@ -1,6 +1,6 @@
-import { Outlet, Link, useNavigate } from 'react-router-dom'
-import { ShoppingCart, User, Menu, X, Package, Heart, Mic, MicOff, Mail, Phone, MapPin, Info, Wrench } from 'lucide-react'
-import { Suspense, useState, useRef } from 'react'
+import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom'
+import { ShoppingCart, User, Menu, X, Package, Heart, Mic, MicOff, Mail, Phone, MapPin, Info, Wrench, LayoutGrid, Tags, Sparkles, HelpCircle, RotateCcw, LogOut, FileImage } from 'lucide-react'
+import { Suspense, useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuthStore } from '@/stores/authStore'
 import { useCartStore } from '@/stores/cartStore'
@@ -11,10 +11,22 @@ import Breadcrumbs from '@/components/common/Breadcrumbs'
 import BackButton from '@/components/common/BackButton'
 import LogoutModal from '@/components/common/LogoutModal'
 import SearchAutocomplete, { type SearchAutocompleteHandle } from '@/components/common/SearchAutocomplete'
+import CategoryIconRail from '@/components/common/CategoryIconRail'
+// import BrandCircleRail from '@/components/common/BrandCircleRail'
 import ContactWidget from '@/components/common/ContactWidget'
 import { ADDRESS_INLINE, COMPANY } from '@/constants/company'
 import { useVoiceSearch } from '@/hooks/useVoiceSearch'
 // import ChatWidget from '@/pages/Chat/ChatWidget'
+
+const drawerContainer = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.04, delayChildren: 0.06 } },
+}
+
+const drawerItem = {
+  hidden: { opacity: 0, x: -12 },
+  show: { opacity: 1, x: 0, transition: { duration: 0.2 } },
+}
 
 export default function Layout() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -22,10 +34,31 @@ export default function Layout() {
   const [showLogoutModal, setShowLogoutModal] = useState(false)
   const mobileSearchRef = useRef<SearchAutocompleteHandle>(null)
   const desktopSearchRef = useRef<SearchAutocompleteHandle>(null)
-  const { isAuthenticated, logout } = useAuthStore()
+  const { isAuthenticated, logout, user } = useAuthStore()
   const { items } = useCartStore()
   const { items: wishlistItems } = useWishlistStore()
   const navigate = useNavigate()
+  const location = useLocation()
+
+  const closeMenu = () => setIsMenuOpen(false)
+
+  useEffect(() => {
+    closeMenu()
+  }, [location.pathname])
+
+  useEffect(() => {
+    if (!isMenuOpen) return
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') closeMenu()
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.body.style.overflow = previousOverflow
+      window.removeEventListener('keydown', onKeyDown)
+    }
+  }, [isMenuOpen])
 
   const { isListening, isSupported, startListening, stopListening } = useVoiceSearch({
     lang: 'en-US',
@@ -47,25 +80,111 @@ export default function Layout() {
 
   const cartCount = items.reduce((sum, item) => sum + item.quantity, 0)
 
+  const shopLinks = [
+    { to: '/departments', label: 'Departments', Icon: LayoutGrid },
+    { to: '/categories', label: 'Categories', Icon: Tags },
+    { to: '/brands', label: 'Brands', Icon: Sparkles },
+    { to: '/free-advice', label: 'Free Equipment Advice', Icon: Wrench },
+    { to: '/gallery', label: 'Gallery', Icon: FileImage },
+  ]
+
+  const accountLinks = [
+    { to: '/orders', label: 'My Orders', Icon: Package },
+    { to: '/returns', label: 'Returns', Icon: RotateCcw },
+  ]
+
+  const supportLinks = [
+    { to: '/help', label: 'Help & Support', Icon: HelpCircle },
+    { to: '/about', label: 'About Us', Icon: Info },
+  ]
+
+  const drawerLinkClass =
+    'flex items-center gap-3 px-3 py-3 rounded-xl text-gray-700 active:bg-gray-100 transition-colors'
+
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="bg-white shadow-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16 gap-4">
-            <Link to="/" className="flex items-center gap-1 leading-none">
-              <img src="/dentzoo-logo.png" alt="Dentzoo" width="240" height="190" className="h-12 w-auto" />
-              <div className="flex flex-col leading-none gap-0">
-                <span className="text-xl md:text-3xl font-bold tracking-tight leading-none"><span className="text-blue-900">Dent</span><span className="text-blue-400">zoo</span></span>
-                <span className="text-gray-500 text-xs tracking-wider text-right leading-none -mt-0.5 font-semibold">.<span className="text-blue-900">co</span><span className="text-blue-400">m</span></span>
-              </div>
-            </Link>
+      <header className="bg-white">
+        <div className="sticky top-0 z-50 bg-white shadow-sm">
+          {/* Mobile row 1: compact logo + wishlist / cart / account / menu */}
+          <div className="md:hidden">
+            <div className="flex items-center justify-between h-14 pl-4 pr-1.5 gap-2">
+              <Link to="/" className="flex items-center gap-1.5 leading-none min-w-0">
+                <img src="/dentzoo-logo.png" alt="Dentzoo" width="240" height="190" className="h-8 w-auto shrink-0" />
+                <span className="text-lg font-bold tracking-tight leading-none whitespace-nowrap">
+                  <span className="text-blue-900">Dent</span>
+                  <span className="text-blue-400">zoo</span>
+                </span>
+              </Link>
 
-            {/* Mobile Search */}
-            <div className="flex-1 md:hidden">
+              <div className="flex items-center gap-0.5 shrink-0">
+                <button
+                  onClick={() => setIsWishlistOpen(true)}
+                  className="relative p-2 rounded-full text-gray-600 active:bg-gray-100 transition-colors"
+                  aria-label={`Wishlist, ${wishlistItems.length} items`}
+                >
+                  <Heart className="h-6 w-6" />
+                  {wishlistItems.length > 0 && (
+                    <motion.span
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="absolute -top-0.5 -right-0.5 bg-primary-600 text-white text-[10px] font-bold rounded-full h-5 min-w-[20px] px-1 flex items-center justify-center"
+                    >
+                      {wishlistItems.length}
+                    </motion.span>
+                  )}
+                </button>
+
+                <Link
+                  to="/cart"
+                  className="relative p-2 rounded-full text-gray-600 active:bg-gray-100 transition-colors"
+                  aria-label={`Cart, ${cartCount} items`}
+                >
+                  <ShoppingCart className="h-6 w-6" />
+                  {cartCount > 0 && (
+                    <motion.span
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="absolute -top-0.5 -right-0.5 bg-primary-600 text-white text-[10px] font-bold rounded-full h-5 min-w-[20px] px-1 flex items-center justify-center"
+                    >
+                      {cartCount > 99 ? '99+' : cartCount}
+                    </motion.span>
+                  )}
+                </Link>
+
+                {isAuthenticated ? (
+                  <Link
+                    to="/profile"
+                    className="p-2 rounded-full text-gray-600 active:bg-gray-100 transition-colors"
+                    aria-label="Your account"
+                  >
+                    <User className="h-6 w-6" />
+                  </Link>
+                ) : (
+                  <Link
+                    to="/login"
+                    className="ml-1 px-3.5 py-2 text-sm font-semibold bg-primary-600 text-white rounded-lg active:bg-primary-700"
+                  >
+                    Login
+                  </Link>
+                )}
+
+                <button
+                  onClick={() => setIsMenuOpen(true)}
+                  className="p-2 rounded-full text-gray-700 active:bg-gray-100 transition-colors"
+                  aria-label="Open menu"
+                  aria-expanded={isMenuOpen}
+                >
+                  <Menu className="h-6 w-6" />
+                </button>
+              </div>
+            </div>
+
+            {/* Mobile row 2: full-width search */}
+            <div className="px-4 pb-3">
               <SearchAutocomplete
                 ref={mobileSearchRef}
                 variant="mobile"
-                placeholder="Search..."
+                placeholder="Search products, brands..."
                 micButton={
                   isSupported ? (
                     <button
@@ -78,330 +197,283 @@ export default function Layout() {
                       }}
                       className={`p-1.5 rounded-full transition-all ${
                         isListening
-                          ? 'bg-red-500 text-white animate-pulse'
-                          : 'hover:bg-gray-200 text-gray-500'
-                      }`}
-                    >
-                      {isListening ? (
-                        <Mic className="h-4 w-4" />
-                      ) : (
-                        <MicOff className="h-4 w-4" />
-                      )}
-                    </button>
-                  ) : null
-                }
-              />
-            </div>
-
-            {/* Desktop Search */}
-            <div className="hidden md:flex items-center flex-1 max-w-lg mx-8">
-              <SearchAutocomplete
-                ref={desktopSearchRef}
-                variant="desktop"
-                placeholder="Search products, brands, categories..."
-                micButton={
-                  isSupported ? (
-                    <button
-                      onClick={() => {
-                        if (isListening) {
-                          stopListening()
-                        } else {
-                          startListening()
-                        }
-                      }}
-                      className={`p-2 rounded-full transition-all ${
-                        isListening
                           ? 'bg-red-500 text-white animate-voice-pulse'
-                          : 'hover:bg-gray-100 text-gray-400'
+                          : 'text-gray-500 hover:bg-gray-200'
                       }`}
-                      title={isListening ? 'Stop listening' : 'Voice search'}
+                      aria-label={isListening ? 'Stop listening' : 'Voice search'}
                     >
-                      {isListening ? (
-                        <Mic className="h-5 w-5" />
-                      ) : (
-                        <MicOff className="h-5 w-5" />
-                      )}
+                      {isListening ? <Mic className="h-4 w-4" /> : <MicOff className="h-4 w-4" />}
                     </button>
                   ) : null
                 }
               />
             </div>
+          </div>
 
-            <div className="flex items-center space-x-1 md:space-x-4">
-              {/* Desktop: Cart, Wishlist, User */}
-              <div className="hidden md:flex items-center space-x-2">
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Link to="/cart" className="relative p-2 text-gray-600 hover:text-primary-600 inline-block" title="Cart">
-                    <ShoppingCart className="h-6 w-6" />
-                    {cartCount > 0 && (
+          {/* Desktop row */}
+          <div className="hidden md:block">
+            <div className="container mx-auto px-4">
+              <div className="flex items-center justify-between h-16 gap-4">
+                <Link to="/" className="flex items-center gap-1 leading-none">
+                  <img src="/dentzoo-logo.png" alt="Dentzoo" width="240" height="190" className="h-12 w-auto" />
+                  <div className="flex flex-col leading-none gap-0">
+                    <span className="text-3xl font-bold tracking-tight leading-none"><span className="text-blue-900">Dent</span><span className="text-blue-400">zoo</span></span>
+                    <span className="text-gray-500 text-xs tracking-wider text-right leading-none -mt-0.5 font-semibold">.<span className="text-blue-900">co</span><span className="text-blue-400">m</span></span>
+                  </div>
+                </Link>
+
+                <div className="flex items-center flex-1 max-w-lg mx-8">
+                  <SearchAutocomplete
+                    ref={desktopSearchRef}
+                    variant="desktop"
+                    placeholder="Search products, brands, categories..."
+                    micButton={
+                      isSupported ? (
+                        <button
+                          onClick={() => {
+                            if (isListening) {
+                              stopListening()
+                            } else {
+                              startListening()
+                            }
+                          }}
+                          className={`p-2 rounded-full transition-all ${
+                            isListening
+                              ? 'bg-red-500 text-white animate-voice-pulse'
+                              : 'hover:bg-gray-100 text-gray-400'
+                          }`}
+                          title={isListening ? 'Stop listening' : 'Voice search'}
+                        >
+                          {isListening ? (
+                            <Mic className="h-5 w-5" />
+                          ) : (
+                            <MicOff className="h-5 w-5" />
+                          )}
+                        </button>
+                      ) : null
+                    }
+                  />
+                </div>
+
+                <div className="flex items-center space-x-4">
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    <Link to="/cart" className="relative p-2 text-gray-600 hover:text-primary-600 inline-block" title="Cart">
+                      <ShoppingCart className="h-6 w-6" />
+                      {cartCount > 0 && (
+                        <motion.span
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          className="absolute -top-1 -right-1 bg-primary-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
+                        >
+                          {cartCount}
+                        </motion.span>
+                      )}
+                    </Link>
+                  </motion.div>
+
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setIsWishlistOpen(true)}
+                    className="relative p-2 text-gray-600 hover:text-primary-600"
+                    title="Wishlist"
+                  >
+                    <Heart className="h-6 w-6" />
+                    {wishlistItems.length > 0 && (
                       <motion.span
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
                         className="absolute -top-1 -right-1 bg-primary-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
                       >
-                        {cartCount}
+                        {wishlistItems.length}
                       </motion.span>
                     )}
-                  </Link>
-                </motion.div>
+                  </motion.button>
 
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setIsWishlistOpen(true)}
-                  className="relative p-2 text-gray-600 hover:text-primary-600"
-                  title="Wishlist"
-                >
-                  <Heart className="h-6 w-6" />
-                  {wishlistItems.length > 0 && (
-                    <motion.span
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      className="absolute -top-1 -right-1 bg-primary-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
-                    >
-                      {wishlistItems.length}
-                    </motion.span>
-                  )}
-                </motion.button>
-
-                {isAuthenticated ? (
-                  <>
-                    <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
-                      <Link to="/profile" className="p-2 text-gray-600 hover:text-primary-600 inline-block" title="Account">
-                        <User className="h-6 w-6" />
+                  {isAuthenticated ? (
+                    <>
+                      <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+                        <Link to="/profile" className="p-2 text-gray-600 hover:text-primary-600 inline-block" title="Account">
+                          <User className="h-6 w-6" />
+                        </Link>
+                      </motion.div>
+                      <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => setShowLogoutModal(true)}
+                        className="p-2 text-gray-600 hover:text-red-600 transition-colors"
+                        title="Logout"
+                      >
+                        <LogOut className="h-5 w-5" />
+                      </motion.button>
+                    </>
+                  ) : (
+                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                      <Link
+                        to="/login"
+                        className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+                      >
+                        Login
                       </Link>
                     </motion.div>
-                    <motion.button
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => setShowLogoutModal(true)}
-                      className="p-2 text-gray-600 hover:text-red-600 transition-colors"
-                      title="Logout"
-                    >
-                      <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M18.36 6.64a9 9 0 1 1-12.73 0" />
-                        <line x1="12" y1="2" x2="12" y2="12" />
-                      </svg>
-                    </motion.button>
-                  </>
-                ) : (
-                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                    <Link
-                      to="/login"
-                      className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
-                    >
-                      Login
-                    </Link>
-                  </motion.div>
-                )}
+                  )}
+                </div>
               </div>
-
-              {/* Mobile: Hamburger Menu */}
-              <motion.button
-                className="md:hidden p-2"
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                whileTap={{ scale: 0.95 }}
-                title={isMenuOpen ? "Close menu" : "Menu"}
-              >
-                <motion.div
-                  initial={false}
-                  animate={{ rotate: isMenuOpen ? 90 : 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  {isMenuOpen ? <X /> : <Menu />}
-                </motion.div>
-              </motion.button>
             </div>
           </div>
         </div>
 
-        {/* Mobile Menu Drawer */}
-        <AnimatePresence>
-          {isMenuOpen && (
+        <CategoryIconRail />
+        {/* <BrandCircleRail /> */}
+      </header>
+
+      {/* Mobile menu slide-over */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <>
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3, ease: 'easeInOut' }}
-              className="md:hidden overflow-hidden bg-white"
+              key="menu-backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onClick={closeMenu}
+              className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm md:hidden"
+            />
+            <motion.div
+              key="menu-panel"
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'spring', stiffness: 320, damping: 32 }}
+              role="dialog"
+              aria-modal="true"
+              aria-label="Menu"
+              className="fixed inset-y-0 left-0 z-[70] w-[85%] max-w-sm bg-white shadow-2xl flex flex-col md:hidden"
             >
-              <div className="p-4 space-y-3">
-                {/* Cart */}
-                <motion.div
-                  initial={{ x: -20, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
+              <div className="flex items-center justify-between h-16 px-5 border-b border-gray-100 shrink-0">
+                <span className="text-lg font-bold tracking-tight leading-none">
+                  <span className="text-blue-900">Dent</span>
+                  <span className="text-blue-400">zoo</span>
+                  <span className="text-gray-400 text-xs tracking-wider">.com</span>
+                </span>
+                <button
+                  onClick={closeMenu}
+                  className="p-2 -mr-2 rounded-full text-gray-500 active:bg-gray-100 transition-colors"
+                  aria-label="Close menu"
                 >
-                  <Link
-                    to="/cart"
-                    className="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-gray-50"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <div className="flex items-center gap-3">
-                      <ShoppingCart className="h-5 w-5 text-gray-600" />
-                      <span className="text-gray-700">Cart</span>
-                    </div>
-                    {cartCount > 0 && (
-                      <motion.span
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="bg-primary-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
-                      >
-                        {cartCount}
-                      </motion.span>
-                    )}
-                  </Link>
-                </motion.div>
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
 
-                {/* Wishlist */}
-                <motion.div
-                  initial={{ x: -20, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 0.2 }}
-                >
-                  <button
-                    onClick={() => {
-                      setIsMenuOpen(false)
-                      setIsWishlistOpen(true)
-                    }}
-                    className="w-full flex items-center justify-between px-3 py-3 rounded-lg hover:bg-gray-50"
-                  >
-                    <div className="flex items-center gap-3">
-                      <Heart className="h-5 w-5 text-gray-600" />
-                      <span className="text-gray-700">Wishlist</span>
-                    </div>
-                    {wishlistItems.length > 0 && (
-                      <motion.span
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="bg-primary-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
-                      >
-                        {wishlistItems.length}
-                      </motion.span>
-                    )}
-                  </button>
-                </motion.div>
-
-                {/* User/Login */}
-                {isAuthenticated ? (
-                  <motion.div
-                    initial={{ x: -20, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ delay: 0.25 }}
-                    className="space-y-1"
-                  >
+              <motion.div
+                variants={drawerContainer}
+                initial="hidden"
+                animate="show"
+                className="flex-1 overflow-y-auto overscroll-contain pb-8"
+              >
+                <motion.div variants={drawerItem} className="px-4 pt-4">
+                  {isAuthenticated ? (
                     <Link
                       to="/profile"
-                      className="flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-gray-50"
-                      onClick={() => setIsMenuOpen(false)}
+                      onClick={closeMenu}
+                      className="flex items-center gap-3 rounded-2xl bg-gray-50 p-3 active:bg-gray-100 transition-colors"
                     >
-                      <User className="h-5 w-5 text-gray-600" />
-                      <span className="text-gray-700">Profile</span>
+                      {user?.avatar ? (
+                        <img src={user.avatar} alt="" className="h-10 w-10 rounded-full object-cover" />
+                      ) : (
+                        <span className="h-10 w-10 rounded-full bg-primary-600 text-white flex items-center justify-center">
+                          <User className="h-5 w-5" />
+                        </span>
+                      )}
+                      <span className="min-w-0">
+                        <span className="block text-sm font-semibold text-gray-900 truncate">
+                          {user?.firstName || 'Your account'}
+                        </span>
+                        <span className="block text-xs text-gray-500 truncate">{user?.email}</span>
+                      </span>
                     </Link>
-                    <button
-                      onClick={() => {
-                        setShowLogoutModal(true)
-                        setIsMenuOpen(false)
-                      }}
-                      className="w-full flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-gray-50 text-left"
-                    >
-                      <svg className="h-5 w-5 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M18.36 6.64a9 9 0 1 1-12.73 0" />
-                        <line x1="12" y1="2" x2="12" y2="12" />
-                      </svg>
-                      <span className="text-gray-700">Logout</span>
-                    </button>
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    initial={{ x: -20, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ delay: 0.25 }}
-                  >
+                  ) : (
                     <Link
                       to="/login"
-                      className="block text-center px-4 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
-                      onClick={() => setIsMenuOpen(false)}
+                      onClick={closeMenu}
+                      className="block text-center px-4 py-3 bg-primary-600 text-white font-semibold rounded-xl active:bg-primary-700"
                     >
                       Login
                     </Link>
+                  )}
+                </motion.div>
+
+                <motion.div variants={drawerItem} className="px-4 pt-3">
+                  <Link
+                    to="/wishlist"
+                    onClick={closeMenu}
+                    className={`${drawerLinkClass} justify-between`}
+                  >
+                    <span className="flex items-center gap-3">
+                      <Heart className="h-5 w-5 text-gray-500" />
+                      Wishlist
+                    </span>
+                    {wishlistItems.length > 0 && (
+                      <span className="text-xs font-bold text-primary-600">
+                        {wishlistItems.length}
+                      </span>
+                    )}
+                  </Link>
+                </motion.div>
+
+                <motion.div variants={drawerItem} className="px-4 pt-5">
+                  <p className="px-3 pb-1 text-[11px] font-bold uppercase tracking-wider text-gray-400">
+                    Shop
+                  </p>
+                  {shopLinks.map(({ to, label, Icon }) => (
+                    <Link key={to} to={to} onClick={closeMenu} className={drawerLinkClass}>
+                      <Icon className="h-5 w-5 text-gray-500" />
+                      {label}
+                    </Link>
+                  ))}
+                </motion.div>
+
+                {isAuthenticated && (
+                  <motion.div variants={drawerItem} className="px-4 pt-4">
+                    <p className="px-3 pb-1 text-[11px] font-bold uppercase tracking-wider text-gray-400">
+                      Your account
+                    </p>
+                    {accountLinks.map(({ to, label, Icon }) => (
+                      <Link key={to} to={to} onClick={closeMenu} className={drawerLinkClass}>
+                        <Icon className="h-5 w-5 text-gray-500" />
+                        {label}
+                      </Link>
+                    ))}
+                    <button
+                      onClick={() => {
+                        closeMenu()
+                        setShowLogoutModal(true)
+                      }}
+                      className={`${drawerLinkClass} w-full text-left text-red-600`}
+                    >
+                      <LogOut className="h-5 w-5" />
+                      Logout
+                    </button>
                   </motion.div>
                 )}
 
-                {/* Navigation Links */}
-                <motion.div
-                  initial={{ x: -20, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 0.3 }}
-                  className="pt-4 border-t space-y-1"
-                >
-                  <Link
-                    to="/"
-                    className="flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:text-primary-600 rounded-lg hover:bg-gray-50 transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <Package className="h-5 w-5" />
-                    Home
-                  </Link>
-                  <Link
-                    to="/products"
-                    className="flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:text-primary-600 rounded-lg hover:bg-gray-50 transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <ShoppingCart className="h-5 w-5" />
-                    Products
-                  </Link>
-                  <Link
-                    to="/free-advice"
-                    className="flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:text-primary-600 rounded-lg hover:bg-gray-50 transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <Wrench className="h-5 w-5" />
-                    Free Equipment Advice
-                  </Link>
-                  <Link
-                    to="/departments"
-                    className="flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:text-primary-600 rounded-lg hover:bg-gray-50 transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                    </svg>
-                    Departments
-                  </Link>
-                  <Link
-                    to="/brands"
-                    className="flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:text-primary-600 rounded-lg hover:bg-gray-50 transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                    </svg>
-                    Brands
-                  </Link>
-                  <Link
-                    to="/about"
-                    className="flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:text-primary-600 rounded-lg hover:bg-gray-50 transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <Info className="h-5 w-5" />
-                    About Us
-                  </Link>
-                  <Link
-                    to="/orders"
-                    className="flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:text-primary-600 rounded-lg hover:bg-gray-50 transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                    </svg>
-                    My Orders
-                  </Link>
+                <motion.div variants={drawerItem} className="px-4 pt-4">
+                  <p className="px-3 pb-1 text-[11px] font-bold uppercase tracking-wider text-gray-400">
+                    Support
+                  </p>
+                  {supportLinks.map(({ to, label, Icon }) => (
+                    <Link key={to} to={to} onClick={closeMenu} className={drawerLinkClass}>
+                      <Icon className="h-5 w-5 text-gray-500" />
+                      {label}
+                    </Link>
+                  ))}
                 </motion.div>
-              </div>
+              </motion.div>
             </motion.div>
-          )}
-        </AnimatePresence>
-      </header>
+          </>
+        )}
+      </AnimatePresence>
 
       <BackButton />
       <Breadcrumbs />

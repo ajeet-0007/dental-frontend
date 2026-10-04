@@ -393,7 +393,7 @@ export default function Cart() {
 
           {/* Order Summary */}
           <div className="lg:col-span-4">
-            <div className="bg-white rounded-3xl border border-gray-100 overflow-hidden sticky top-20 shadow-sm">
+            <div className="bg-white rounded-3xl border border-gray-100 overflow-hidden max-lg:static sticky top-20 shadow-sm">
               {/* Summary Header */}
               <div className="bg-gradient-to-r from-primary-600 to-blue-600 px-6 py-5">
                 <h3 className="font-bold text-white text-lg">Order Summary</h3>

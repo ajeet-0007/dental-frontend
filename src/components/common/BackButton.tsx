@@ -20,7 +20,7 @@ export default function BackButton() {
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.2 }}
       onClick={() => navigate(-1)}
-      className="fixed top-20 left-4 z-40 flex items-center gap-1.5 px-3 py-2 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-full shadow-md hover:shadow-lg hover:bg-white transition-all text-sm text-gray-700 md:hidden"
+      className="fixed top-[124px] left-4 z-40 flex items-center gap-1.5 px-3 py-2 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-full shadow-md hover:shadow-lg hover:bg-white transition-all text-sm text-gray-700 md:hidden"
       aria-label="Go back"
     >
       <ChevronLeft className="h-4 w-4" />

@@ -311,14 +311,14 @@ const SearchAutocomplete = forwardRef<
           className={
             isDesktop
               ? "w-full px-5 py-3 pl-12 pr-24 rounded-full bg-white border-2 border-gray-200 focus:border-primary-500 focus:outline-none focus:ring-4 focus:ring-primary-100 transition-all duration-200 text-sm placeholder-gray-400 shadow-sm"
-              : "w-full px-3 py-1.5 pl-8 pr-16 rounded-full bg-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+              : "w-full h-11 pl-9 pr-16 rounded-full bg-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
           }
         />
         {!value && !focused && (
           <span
             aria-hidden="true"
             className={`absolute top-1/2 -translate-y-1/2 text-sm text-gray-400 pointer-events-none whitespace-nowrap overflow-hidden ${
-              isDesktop ? "left-12 right-16" : "left-8 right-12"
+              isDesktop ? "left-12 right-16" : "left-9 right-12"
             }`}
           >
             {typedText}
@@ -327,7 +327,7 @@ const SearchAutocomplete = forwardRef<
         )}
         <Search
           className={`absolute top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-primary-500 transition-colors ${
-            isDesktop ? "left-4" : "left-2.5 h-4 w-4"
+            isDesktop ? "left-4" : "left-3 h-[18px] w-[18px]"
           }`}
         />
         <div
@@ -363,7 +363,7 @@ const SearchAutocomplete = forwardRef<
             className={
               isDesktop
                 ? "absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden"
-                : "fixed top-16 left-0 right-0 mx-2 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden"
+                : "fixed top-[112px] left-0 right-0 mx-2 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden"
             }
           >
             <div className="px-5 py-3 bg-gray-50 border-b border-gray-100">

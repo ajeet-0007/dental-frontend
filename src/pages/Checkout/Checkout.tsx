@@ -751,7 +751,7 @@ export default function Checkout() {
 
           {/* Right Column - Order Summary */}
           <div className="lg:col-span-4">
-            <div className="bg-white rounded-3xl border border-gray-100 overflow-hidden sticky top-20 shadow-sm">
+            <div className="bg-white rounded-3xl border border-gray-100 overflow-hidden max-lg:static sticky top-20 shadow-sm">
               <div className="bg-gradient-to-r from-primary-600 to-blue-600 px-6 py-5">
                 <h3 className="font-bold text-white text-lg flex items-center gap-2">
                   <Package className="w-5 h-5" />
