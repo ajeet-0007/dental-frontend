@@ -889,7 +889,7 @@ export default function Checkout() {
                         </div>
                         <div>
                           <p className="text-[10px] font-bold text-gray-700">Easy Returns</p>
-                          <p className="text-[9px] text-gray-500">7-day returns</p>
+                          <p className="text-[9px] text-gray-500">10-day returns</p>
                         </div>
                       </div>
                     </div>

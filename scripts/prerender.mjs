@@ -116,6 +116,11 @@ function seoForPath(pathname, origin) {
       description =
         "Learn about Dentzoo — India's online dental store for authentic equipment, instruments, materials and consumables with reliable delivery across India.";
       break;
+    case "/return-policy":
+      title = "Return & Refund Policy | Dentzoo";
+      description =
+        "Dentzoo return, replacement, cancellation and refund policy for dental products. 10-day window, COD handling, non-returnable items, warranty, and contact details.";
+      break;
     default:
       break;
   }

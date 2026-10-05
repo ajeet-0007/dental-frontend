@@ -35,6 +35,7 @@ const HowToUseVideo = lazy(() => import("./pages/ProductDetail/HowToUseVideo"));
 const Returns = lazy(() => import("./pages/Returns/Returns"));
 const ReturnDetail = lazy(() => import("./pages/Returns/ReturnDetail"));
 const InitiateReturn = lazy(() => import("./pages/Returns/InitiateReturn"));
+const ReturnPolicy = lazy(() => import("./pages/ReturnPolicy/ReturnPolicy"));
 const Login = lazy(() => import("./pages/Auth/Login"));
 const Register = lazy(() => import("./pages/Auth/Register"));
 const AuthCallback = lazy(() => import("./pages/Auth/AuthCallback"));
@@ -71,7 +72,7 @@ const PRIVATE_PATH_PATTERN =
   /^\/(login|register|forgot-password|auth\/callback|admin|cart|checkout|payment-success|orders|returns|profile|wishlist)(\/|$)/;
 
 const PUBLIC_PATH_PATTERN =
-  /^\/(products|brands|categories|departments|gallery|about)(\/|$)|^\/(help|free-advice)$/;
+  /^\/(products|brands|categories|departments|gallery|about|return-policy)(\/|$)|^\/(help|free-advice)$/;
 
 function RouteSeo() {
   const location = useLocation();
@@ -154,6 +155,7 @@ function App() {
             <Route path="free-advice" element={<FreeAdvice />} />
             <Route path="gallery" element={<GalleryPage />} />
             <Route path="gallery/:slug" element={<GalleryPage />} />
+            <Route path="return-policy" element={<ReturnPolicy />} />
             <Route path="*" element={<NotFound />} />
             {/* <Route path="chat" element={<ChatPage />} /> */}
           </Route>

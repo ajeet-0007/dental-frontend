@@ -94,7 +94,7 @@ export default function Products({
 
   const { data: categoriesData } = useQuery({
     queryKey: ["categories"],
-    queryFn: () => api.get("/categories"),
+    queryFn: async () => (await api.get("/categories")).data,
   });
 
   const { data: departmentsData } = useQuery({
@@ -113,7 +113,7 @@ export default function Products({
     },
   });
 
-  const categories = categoriesData?.data || [];
+  const categories = Array.isArray(categoriesData) ? categoriesData : categoriesData?.data || [];
   const departments = Array.isArray(departmentsData) ? departmentsData : departmentsData?.data || [];
   const brands = Array.isArray(brandsData) ? brandsData : brandsData?.data || [];
 

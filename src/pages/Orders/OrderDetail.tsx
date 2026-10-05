@@ -716,7 +716,7 @@ export default function OrderDetail() {
                 </div>
                 <div className="flex items-center gap-2 text-xs text-gray-500">
                   <RotateCw className="w-3.5 h-3.5 text-blue-500" />
-                  <span>Easy 7-day Returns</span>
+                  <span>Easy 10-day Returns</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-gray-500">
                   <Package className="w-3.5 h-3.5 text-amber-500" />

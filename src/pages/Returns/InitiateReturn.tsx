@@ -159,7 +159,7 @@ export default function InitiateReturn() {
             <div className="text-sm text-blue-700">
               <p className="font-medium mb-1">Return Policy</p>
               <p>• Returns are only available for online payments (no COD)</p>
-              <p>• Returns must be initiated within 7 days of delivery</p>
+              <p>• Returns must be initiated within 10 days of delivery</p>
               <p>• ₹3 will be deducted from refund for return shipping</p>
               <p>• Orders ≤ ₹500 are auto-approved</p>
             </div>

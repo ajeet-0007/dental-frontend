@@ -43,7 +43,7 @@ export default function Home() {
 
   const { data: categoriesData } = useQuery({
     queryKey: ["categories"],
-    queryFn: () => api.get("/categories"),
+    queryFn: async () => (await api.get("/categories")).data,
   });
 
   const { data: departmentsData } = useQuery({
@@ -101,7 +101,7 @@ export default function Home() {
 
   const products = productsData?.data?.products || productsData?.data || [];
   const topSelling = topSellingData?.data?.products || topSellingData?.data || [];
-  const categories = categoriesData?.data || [];
+  const categories = Array.isArray(categoriesData) ? categoriesData : categoriesData?.data || [];
   const departments = Array.isArray(departmentsData) ? departmentsData : departmentsData?.data || [];
   const brands = Array.isArray(brandsData) ? brandsData : brandsData?.data || [];
   const banners = Array.isArray(bannersData) ? bannersData : [];
@@ -195,7 +195,7 @@ export default function Home() {
               </div>
               <div>
                 <p className="text-xs font-semibold text-gray-900">Easy Returns</p>
-                <p className="text-[9px] text-gray-500">7-Day Returns</p>
+                <p className="text-[9px] text-gray-500">10-Day Returns</p>
               </div>
             </motion.div>
           </div>
@@ -247,7 +247,7 @@ export default function Home() {
               </div>
               <div>
                 <p className="text-base font-bold text-gray-900">Easy Returns & Refunds</p>
-                <p className="text-sm text-gray-500">7-Day Return Policy</p>
+                <p className="text-sm text-gray-500">10-Day Return Policy</p>
               </div>
             </motion.div>
           </div>

@@ -69,7 +69,7 @@ export default function Returns() {
             <RotateCw className="h-16 w-16 text-gray-300 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">No returns yet</h3>
             <p className="text-sm text-gray-500 mb-4">
-              You haven't initiated any returns. Returns can be requested for delivered orders within 7 days.
+              You haven't initiated any returns. Returns can be requested for delivered orders within 10 days.
             </p>
             <Link
               to="/orders"

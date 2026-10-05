@@ -12,8 +12,8 @@ const faqs = [
     answer: 'You can track your order by visiting the Orders section in your profile. Click on any order to see its current status and tracking information.'
   },
   {
-    question: 'What is the return policy?',
-    answer: 'We offer a 7-day return policy for most products. Items must be unused and in original packaging. Contact support for return initiation.'
+      question: 'What is the return policy?',
+      answer: 'We offer a 10-day return policy for most eligible products. Items must be unused and in original packaging. Contact support for return initiation. See full details at /return-policy.'
   },
   {
     question: 'How do I update my profile information?',

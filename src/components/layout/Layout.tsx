@@ -594,14 +594,14 @@ export default function Layout() {
             <div className="flex flex-col md:flex-row items-center justify-between gap-4">
               <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-gray-400">
                 {[
-                  { label: 'Privacy Policy', href: '#' },
-                  { label: 'Terms of Service', href: '#' },
-                  { label: 'Shipping Policy', href: '#' },
-                  { label: 'Return Policy', href: '#' },
+          { label: 'Privacy Policy', href: '/privacy' },
+          { label: 'Terms of Service', href: '/terms' },
+          { label: 'Shipping Policy', href: '/shipping-policy' },
+          { label: 'Return Policy', href: '/return-policy' },
                 ].map(({ label, href }) => (
-                  <a key={label} href={href} className="hover:text-white transition-colors">
-                    {label}
-                  </a>
+              <Link key={label} to={href} className="hover:text-white transition-colors">
+                {label}
+              </Link>
                 ))}
               </div>
               <p className="text-sm text-gray-500">
