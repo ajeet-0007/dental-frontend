@@ -5095,44 +5095,32 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.dentzoo.com/brands/prevest-denpro</loc>
-    <lastmod>2026-08-15</lastmod>
+    <loc>https://www.dentzoo.com/brands/3m-espe</loc>
+    <lastmod>2026-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.dentzoo.com/brands/all-types-of-istruments</loc>
-    <lastmod>2026-08-15</lastmod>
+    <loc>https://www.dentzoo.com/brands/gc</loc>
+    <lastmod>2026-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.dentzoo.com/brands/oracraft</loc>
-    <lastmod>2026-08-15</lastmod>
+    <loc>https://www.dentzoo.com/brands/dentsply</loc>
+    <lastmod>2026-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.dentzoo.com/brands/vatech-india</loc>
-    <lastmod>2026-08-15</lastmod>
+    <loc>https://www.dentzoo.com/brands/safe-endo</loc>
+    <lastmod>2026-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.dentzoo.com/brands/orikam</loc>
-    <lastmod>2026-08-15</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://www.dentzoo.com/brands/voco</loc>
-    <lastmod>2026-08-15</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://www.dentzoo.com/brands/oro-disposables</loc>
-    <lastmod>2026-08-15</lastmod>
+    <loc>https://www.dentzoo.com/brands/shofu-dental-composite-gic-range</loc>
+    <lastmod>2026-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -5167,24 +5155,6 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.dentzoo.com/brands/dentsply</loc>
-    <lastmod>2026-08-22</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://www.dentzoo.com/brands/safe-endo</loc>
-    <lastmod>2026-08-22</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://www.dentzoo.com/brands/shofu-dental-composite-gic-range</loc>
-    <lastmod>2026-08-15</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://www.dentzoo.com/brands/ammdent</loc>
     <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
@@ -5197,19 +5167,7 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.dentzoo.com/brands/3m-espe</loc>
-    <lastmod>2026-08-04</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://www.dentzoo.com/brands/angelus</loc>
-    <lastmod>2026-05-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://www.dentzoo.com/brands/gc</loc>
     <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
@@ -5287,6 +5245,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://www.dentzoo.com/brands/prevest-denpro</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.dentzoo.com/brands/d-tech</loc>
     <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
@@ -5295,6 +5259,12 @@
   <url>
     <loc>https://www.dentzoo.com/brands/ultradent</loc>
     <lastmod>2026-03-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/brands/all-types-of-istruments</loc>
+    <lastmod>2026-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -5311,6 +5281,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://www.dentzoo.com/brands/oracraft</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.dentzoo.com/brands/denmax</loc>
     <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
@@ -5319,6 +5295,12 @@
   <url>
     <loc>https://www.dentzoo.com/brands/prime-dental</loc>
     <lastmod>2026-03-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/brands/vatech-india</loc>
+    <lastmod>2026-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -5377,6 +5359,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://www.dentzoo.com/brands/orikam</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.dentzoo.com/brands/healix</loc>
     <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
@@ -5389,8 +5377,20 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://www.dentzoo.com/brands/voco</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.dentzoo.com/brands/icpa</loc>
     <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.dentzoo.com/brands/oro-disposables</loc>
+    <lastmod>2026-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>

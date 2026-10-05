@@ -16,6 +16,7 @@ import BrandCarousel from "@/components/common/BrandCarousel";
 import CollectionProductsSection from "@/components/common/CollectionProductsSection";
 import HeroCarousel from "@/components/common/HeroCarousel";
 import CartDrawer from "@/components/common/CartDrawer";
+import LoginModal from "@/components/common/LoginModal";
 import NewsSection from "@/components/common/NewsSection";
 import GalleryPreview from "@/pages/Gallery/GalleryPreview";
 import { useAuthStore } from "@/stores/authStore";
@@ -23,6 +24,7 @@ import { useRecentlyViewedStore } from "@/stores/recentlyViewedStore";
 import BrowseIconRail from "@/components/common/BrowseIconRail";
 import Seo from "@/components/seo/Seo";
 import { buildOrganizationJsonLd, buildWebSiteJsonLd } from "@/components/seo/seoHelpers";
+import { useLoginPopup } from "@/hooks/useLoginPopup";
 import { COMPANY } from "@/constants/company";
 
 export default function Home() {
@@ -30,6 +32,7 @@ export default function Home() {
   const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false);
   const { isAuthenticated } = useAuthStore();
   const { items: recentlyViewed, clearItems: clearRecentlyViewed } = useRecentlyViewedStore();
+  const loginPopup = useLoginPopup();
 
   const { data: productsData } = useQuery({
     queryKey: ["products", "featured"],
@@ -658,6 +661,12 @@ export default function Home() {
         isOpen={isCartDrawerOpen}
         onClose={() => setIsCartDrawerOpen(false)}
         product={cartDrawerProduct}
+      />
+
+      <LoginModal
+        isOpen={loginPopup.isOpen}
+        onClose={loginPopup.close}
+        onSuccess={loginPopup.markSeen}
       />
     </div>
     </>
