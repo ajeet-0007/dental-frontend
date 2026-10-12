@@ -239,7 +239,16 @@ export default function Checkout() {
       }
 
       const orderData = {
-        shippingAddress: `${formData.name}, ${formData.addressLine1}, ${formData.addressLine2}, ${formData.city}, ${formData.state} - ${formData.pincode}`,
+        shippingAddress: JSON.stringify({
+          name: formData.name,
+          addressLine1: formData.addressLine1,
+          addressLine2: formData.addressLine2,
+          city: formData.city,
+          state: formData.state,
+          pincode: formData.pincode,
+          country: formData.country || "India",
+          phone: formData.phone,
+        }),
         phone: formData.phone,
         paymentMethod,
       };
@@ -267,7 +276,16 @@ export default function Checkout() {
       if (selectedAddress) {
         createOrderMutation.mutate({
           addressId: selectedAddressId,
-          shippingAddress: `${selectedAddress.name}, ${selectedAddress.addressLine1}, ${selectedAddress.addressLine2 || ""}, ${selectedAddress.city}, ${selectedAddress.state} - ${selectedAddress.pincode}`,
+          shippingAddress: JSON.stringify({
+            name: selectedAddress.name,
+            addressLine1: selectedAddress.addressLine1,
+            addressLine2: selectedAddress.addressLine2 || "",
+            city: selectedAddress.city,
+            state: selectedAddress.state,
+            pincode: selectedAddress.pincode,
+            country: selectedAddress.country || "India",
+            phone: selectedAddress.phone,
+          }),
           phone: selectedAddress.phone,
           paymentMethod,
         });
