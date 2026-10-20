@@ -23,6 +23,7 @@ import {
   Filter,
   BadgePercent,
   Stethoscope,
+  Eye,
 } from "lucide-react";
 
 const adminNavItems = [
@@ -46,6 +47,7 @@ const adminNavItems = [
   { label: "Entity Bulk Upload", path: "/admin/entity-bulk-upload", icon: Upload },
   { label: "Users", path: "/admin/users", icon: Users },
   { label: "Error Logs", path: "/admin/logs", icon: Bug },
+  { label: "Page Visits", path: "/admin/page-visits", icon: Eye },
 ];
 
 export default function AdminLayout() {

@@ -10,6 +10,7 @@ import Home from "./pages/Home/Home";
 import Products from "./pages/Products/Products";
 import ProductDetail from "./pages/ProductDetail/ProductDetail";
 import ScrollToTop from "./components/ScrollToTop";
+import usePageView from "./hooks/usePageView";
 import NotFound from "./pages/NotFound/NotFound";
 import Departments from "./pages/Departments/Departments";
 import Brands from "./pages/Brands/Brands";
@@ -65,6 +66,8 @@ const AdminLogs = lazy(() => import("./pages/Admin/AdminLogs"));
 const AdminLogDetail = lazy(() => import("./pages/Admin/AdminLogDetail"));
 const AdminGallery = lazy(() => import("./pages/Admin/AdminGallery"));
 const AdminAdviceRequests = lazy(() => import("./pages/Admin/AdminAdviceRequests"));
+const AdminPageVisits = lazy(() => import("./pages/Admin/AdminPageVisits"));
+const AdminVisitorJourney = lazy(() => import("./pages/Admin/AdminVisitorJourney"));
 const FreeAdvice = lazy(() => import("./pages/FreeAdvice/FreeAdvice"));
 // import ChatPage from "./pages/Chat/ChatPage";
 
@@ -88,6 +91,11 @@ function PageLoader() {
       <div className="w-10 h-10 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
     </div>
   );
+}
+
+function PageViewTracker() {
+  usePageView();
+  return null;
 }
 
 function App() {
@@ -126,6 +134,7 @@ function App() {
       <HelmetProvider>
         <BrowserRouter>
         <ScrollToTop />
+        <PageViewTracker />
         <RouteSeo />
         <Suspense fallback={<PageLoader />}>
         <Routes>
@@ -188,6 +197,8 @@ function App() {
             <Route path="verification" element={<AdminVerification />} />
             <Route path="gallery" element={<AdminGallery />} />
             <Route path="advice-requests" element={<AdminAdviceRequests />} />
+            <Route path="page-visits" element={<AdminPageVisits />} />
+            <Route path="page-visits/visitor/:visitorId" element={<AdminVisitorJourney />} />
           </Route>
         </Routes>
         </Suspense>
